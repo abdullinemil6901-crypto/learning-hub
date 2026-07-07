@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMIL — Тренажёр</title>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+:root{
+  --bg-0:#070808; --bg-1:#0E100F;
+  --surface-1:#141716; --surface-2:#1C201E; --surface-3:#252A27;
+  --text-1:#F4F6F2; --text-2:#9BA39D; --text-3:#5D655F; --text-on-acid:#0A0C08;
+  --acid:#B9FF47; --acid-strong:#D4FF7A; --acid-dim:rgba(185,255,71,.14);
+  --emerald:#37936F; --emerald-deep:#123227; --emerald-tint:rgba(55,147,111,.16);
+  --ok:#B9FF47; --ok-tint:rgba(185,255,71,.12);
+  --bad:#FF5A5A; --bad-tint:rgba(255,90,90,.12);
+  --fire:#FF7A2F; --fire-tint:rgba(255,122,47,.14);
+  --gold:#FFD34D; --gold-tint:rgba(255,211,77,.13);
+  --hairline:rgba(255,255,255,.08); --hairline-strong:rgba(255,255,255,.16);
+  --code-bg:#0B0D0C; --code-ink:#D9E2DA;
+  --font-display:'Unbounded',system-ui,sans-serif;
+  --font-body:'Manrope',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',Consolas,monospace;
+  --fs-hero:44px; --fs-h1:30px; --fs-h2:22px; --fs-body:15.5px; --fs-small:13.5px; --fs-micro:11.5px; --fs-counter:38px;
+  --ls-micro:.14em;
+  --r-s:12px; --r-m:18px; --r-l:26px; --r-xl:36px; --r-pill:999px;
+  --shadow-card:0 1px 0 rgba(255,255,255,.04) inset, 0 12px 32px rgba(0,0,0,.45);
+  --glow-acid:0 0 20px rgba(185,255,71,.35),0 0 60px rgba(185,255,71,.12);
+  --glow-fire:0 0 20px rgba(255,122,47,.4),0 0 56px rgba(255,122,47,.14);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;font-family:var(--font-body);font-size:var(--fs-body);line-height:1.6;color:var(--text-1);
+  background-color:var(--bg-0);
+  background-image:url("assets/noise.png"),
+    radial-gradient(900px 600px at 12% -8%, rgba(55,147,111,.28), transparent 60%),
+    radial-gradient(700px 500px at 96% 12%, rgba(185,255,71,.10), transparent 55%),
+    radial-gradient(1000px 700px at 50% 115%, rgba(18,50,39,.9), transparent 60%);
+  background-repeat:repeat,no-repeat,no-repeat,no-repeat;
+  background-size:160px 160px,auto,auto,auto;
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto;padding:28px 20px 90px;display:flex;flex-direction:column;gap:20px}
+.mono{font-family:var(--font-mono);font-size:var(--fs-micro);font-weight:600;letter-spacing:var(--ls-micro);text-transform:uppercase;color:var(--text-3)}
+h1.disp{font-family:var(--font-display);font-weight:800;font-size:var(--fs-h1);line-height:1.12;margin:0;letter-spacing:-.01em}
+/* header */
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{font-family:var(--font-display);font-weight:800;font-size:24px}
+.brand i{color:var(--acid)}
+.xpbox{display:flex;align-items:center;gap:12px}
+.xpbar{width:140px;height:8px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--hairline);overflow:visible}
+.xpbar>div{height:100%;border-radius:var(--r-pill);background:var(--acid);box-shadow:var(--glow-acid);transition:width .4s var(--ease)}
+/* nav */
+.navtabs{display:flex;gap:6px;padding:6px;background:var(--surface-1);border:1px solid var(--hairline);border-radius:var(--r-pill);width:fit-content;max-width:100%;overflow-x:auto;position:sticky;top:10px;z-index:9;box-shadow:var(--shadow-card)}
+.navtabs button{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:var(--r-pill);border:none;cursor:pointer;font-family:var(--font-body);font-weight:800;font-size:14px;background:transparent;color:var(--text-2);transition:all .14s var(--ease);white-space:nowrap}
+.navtabs button:hover{background:var(--surface-3);color:var(--text-1)}
+.navtabs button.active{background:var(--acid);color:var(--text-on-acid)}
+/* widget card */
+.widget{background:var(--surface-1);border:1px solid var(--hairline);border-radius:var(--r-l);box-shadow:var(--shadow-card);padding:24px;display:flex;flex-direction:column;gap:16px}
+.wlabel{display:flex;align-items:center;gap:8px}
+.wlabel i{font-size:16px;color:var(--text-3)}
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:var(--r-pill);border:1px solid transparent;font-family:var(--font-body);font-weight:800;font-size:15px;white-space:nowrap;cursor:pointer;background:var(--acid);color:var(--text-on-acid);transition:all .14s var(--ease)}
+.btn:hover{background:var(--acid-strong);box-shadow:var(--glow-acid)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.4;cursor:default;box-shadow:none}
+.btn.secondary{background:var(--surface-2);color:var(--text-1);border:1px solid var(--hairline)}
+.btn.secondary:hover{background:var(--surface-3);box-shadow:none}
+.btn.sm{padding:8px 16px;font-size:13.5px}
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--r-pill);background:var(--surface-2);color:var(--text-2);border:1px solid var(--hairline);font-family:var(--font-mono);font-size:var(--fs-micro);font-weight:600;letter-spacing:var(--ls-micro);text-transform:uppercase;white-space:nowrap}
+.pill i{font-size:13px}
+.pill.ok{background:var(--ok-tint);color:var(--ok);border-color:transparent}
+.pill.acid{background:var(--acid-dim);color:var(--acid);border-color:transparent}
+.pill.bad{background:var(--bad-tint);color:var(--bad);border-color:transparent}
+.pill.fire{background:var(--fire-tint);color:var(--fire);border-color:transparent}
+.pill.gold{background:var(--gold-tint);color:var(--gold);border-color:transparent}
+/* hero */
+.hero{position:relative;overflow:hidden;background:var(--emerald-deep);border:1px solid var(--emerald);border-radius:var(--r-xl);padding:38px 40px;min-height:240px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.hero .char{position:absolute;right:0;top:0;bottom:0;width:300px;overflow:hidden;pointer-events:none}
+.hero .char img{width:100%;height:100%;object-fit:cover;object-position:top;transform:scaleX(-1)}
+.hero h1{font-family:var(--font-display);font-weight:900;font-size:var(--fs-hero);line-height:1.12;margin:0;max-width:520px;position:relative}
+.hero h1 i{color:var(--acid);font-style:normal}
+.hero p{margin:0;max-width:440px;color:var(--text-2);position:relative}
+.hero .mono{color:var(--emerald);position:relative}
+@media(max-width:720px){.hero .char{opacity:.35}.hero h1{font-size:32px}}
+/* grid */
+.grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+/* streak widget */
+.fireicon{width:46px;height:46px;border-radius:14px;background:var(--fire-tint);display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-fire)}
+.fireicon i{font-size:24px;color:var(--fire)}
+.fireicon.cold{box-shadow:none;background:var(--surface-2)}
+.fireicon.cold i{color:var(--text-3)}
+.counter{font-family:var(--font-mono);font-weight:700;font-size:26px;line-height:1}
+.counter small{font-size:13px;color:var(--text-2);font-weight:600}
+.week{display:flex;gap:8px}
+.week .d{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.week .c{width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:2px solid transparent}
+.week .c.done{background:var(--acid)}
+.week .c.done i{font-size:13px;color:var(--text-on-acid)}
+.week .c.active{border-color:var(--acid)}
+.week .l{font-family:var(--font-mono);font-size:10.5px;color:var(--text-2)}
+.week .l.off{color:var(--text-3)}
+/* progress bar */
+.pbar{height:10px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--hairline);overflow:visible;position:relative}
+.pbar>div{height:100%;border-radius:var(--r-pill);background:var(--acid);box-shadow:var(--glow-acid);transition:width .4s var(--ease)}
+.bignum{font-family:var(--font-mono);font-weight:700;font-size:var(--fs-counter);line-height:1}
+.bignum small{font-size:18px;color:var(--text-2)}
+/* quest rows */
+.qrow{display:flex;align-items:center;gap:10px;font-size:var(--fs-small);font-weight:600;color:var(--text-2)}
+.qrow.done{color:var(--text-1)}
+.qrow i{font-size:15px;color:var(--text-3)}
+.qrow.done i{color:var(--acid)}
+.qrow .grow{flex:1}
+/* heatmap */
+.heat{display:grid;grid-template-rows:repeat(7,11px);grid-auto-flow:column;grid-auto-columns:11px;gap:3px;overflow-x:auto;padding-bottom:6px}
+.heat i{border-radius:3px;background:var(--surface-2)}
+.heat i.l1{background:rgba(185,255,71,.25)}.heat i.l2{background:rgba(185,255,71,.55)}.heat i.l3{background:var(--acid)}
+.heat i.today{outline:1.5px solid var(--gold)}
+/* lesson rows */
+.rowlist{display:flex;flex-direction:column;gap:12px}
+.lrow{display:flex;align-items:center;gap:18px;padding:16px 22px;background:var(--surface-1);border:1px solid var(--hairline);border-radius:var(--r-l);cursor:pointer;transition:all .14s var(--ease)}
+.lrow:hover{background:var(--surface-2);border-color:var(--hairline-strong)}
+.lrow:hover .num,.lrow:hover>.arr{color:var(--acid)}
+.lrow .num{font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--text-3);width:44px;flex-shrink:0;transition:color .14s}
+.lrow .mid{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0}
+.lrow .t{font-weight:800;font-size:16px}
+.lrow .pills{display:flex;gap:6px;flex-wrap:wrap}
+.lrow .arr{font-size:20px;color:var(--text-3);transition:color .14s}
+.lrow.locked{opacity:.45;cursor:default}
+.lrow.locked:hover{background:var(--surface-1);border-color:var(--hairline)}
+.lrow.locked:hover .num,.lrow.locked:hover>.arr{color:var(--text-3)}
+/* roadmap blocks */
+.blocklist{display:flex;flex-direction:column;gap:16px}
+.blockcard{background:var(--surface-1);border:1px solid var(--hairline);border-radius:var(--r-l);box-shadow:var(--shadow-card);padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.blockcard.current{border-color:var(--acid);box-shadow:var(--shadow-card),var(--glow-acid)}
+.blockcard.locked{opacity:.72}
+.bhead{display:flex;align-items:center;gap:16px}
+.bnum{font-family:var(--font-display);font-weight:800;font-size:26px;color:var(--acid);min-width:44px}
+.btitle{font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.bsteps{display:flex;flex-direction:column;gap:2px;border-left:2px solid var(--hairline);padding-left:14px;margin-left:6px}
+.mstep{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:var(--r-s);font-size:14.5px;font-weight:600;color:var(--text-2);cursor:pointer;transition:all .14s var(--ease)}
+.mstep i{font-size:16px;color:var(--text-3)}
+.mstep:hover{background:var(--surface-2);color:var(--text-1)}
+.mstep.done{color:var(--text-1)}
+.mstep.done i{color:var(--acid)}
+.mstep.locked{cursor:default}
+.mstep.locked:hover{background:transparent;color:var(--text-2)}
+.bproject{display:flex;align-items:flex-start;gap:9px;padding:11px 14px;background:var(--acid-dim);border-radius:var(--r-s);font-size:14px}
+.bproject i{color:var(--acid);font-size:17px;margin-top:1px}
+.breslabel{margin-top:2px}
+.bres{display:flex;gap:8px;flex-wrap:wrap}
+.reschip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--hairline);color:var(--text-1);font-size:13px;font-weight:700;text-decoration:none;transition:all .14s var(--ease)}
+.reschip:hover{background:var(--surface-3);border-color:var(--hairline-strong);color:var(--acid)}
+.reschip i{font-size:15px;color:var(--text-2)}
+.reschip:hover i{color:var(--acid)}
+/* quiz */
+.q{display:flex;flex-direction:column;gap:8px;margin:6px 0}
+.q .qt{font-weight:800;font-size:15px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:640px){.opts{grid-template-columns:1fr}}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 18px;border-radius:var(--r-m);border:1px solid var(--hairline);background:var(--surface-2);color:var(--text-1);font-weight:600;font-size:15px;cursor:pointer;transition:all .14s var(--ease)}
+.opt:hover{background:var(--surface-3)}
+.opt input{display:none}
+.opt:has(input:checked){border-color:var(--acid);background:var(--acid-dim)}
+.opt .st{font-size:17px;display:none}
+.q.checked .opt{cursor:default}
+.q.checked .opt.correct{border-color:var(--ok);background:var(--ok-tint)}
+.q.checked .opt.correct .st{display:inline;color:var(--ok)}
+.q.checked .opt.wrongpick{border-color:var(--bad);background:var(--bad-tint)}
+.q.checked .opt.wrongpick .st{display:inline;color:var(--bad)}
+.tf{padding:11px 16px;border-radius:var(--r-s);background:var(--surface-2);border:1px solid var(--hairline-strong);color:var(--text-1);font-family:var(--font-mono);font-weight:600;font-size:15px;outline:none;transition:border-color .14s var(--ease);width:240px;max-width:100%}
+.tf:focus{border-color:var(--acid)}
+.q.checked .tf.okv{border-color:var(--ok)}
+.q.checked .tf.badv{border-color:var(--bad)}
+.explain{display:none;font-size:var(--fs-small);color:var(--text-2);align-items:flex-start;gap:7px}
+.explain i{font-size:14px;color:var(--gold);margin-top:3px}
+.q.checked .explain{display:flex}
+.verdict{font-weight:800;margin-top:4px}
+.verdict.ok{color:var(--ok)}.verdict.no{color:var(--bad)}
+/* theory */
+.theory p{margin:8px 0}
+.theory b{color:var(--acid)}
+code{background:var(--surface-2);border:1px solid var(--hairline);padding:1px 7px;border-radius:6px;font-size:.9em;font-family:var(--font-mono);color:var(--code-ink)}
+pre.demo{margin:10px 0;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--hairline);border-radius:var(--r-m);padding:14px 18px;font-family:var(--font-mono);font-size:13.5px;line-height:1.55;overflow:auto}
+table.simple{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}
+table.simple td,table.simple th{border:1px solid var(--hairline);padding:8px 12px;text-align:left}
+table.simple th{background:var(--surface-2);font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:var(--ls-micro);text-transform:uppercase;color:var(--text-2)}
+.fix{border-left:3px solid var(--acid);padding:10px 16px;background:var(--acid-dim);border-radius:0 var(--r-s) var(--r-s) 0;margin:12px 0;font-size:14.5px;display:block}
+.fix .was{color:var(--bad);text-decoration:line-through}
+.fix .now{color:var(--acid);font-weight:700}
+.fix .muted2{color:var(--text-2);font-size:var(--fs-small)}
+.backlink{display:inline-flex;align-items:center;gap:8px;background:none;border:none;color:var(--acid);font-family:var(--font-body);font-weight:800;font-size:14px;cursor:pointer;padding:0;width:fit-content}
+.muted{color:var(--text-2);font-size:var(--fs-small)}
+/* editor */
+textarea.editor{width:100%;min-height:220px;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--hairline);border-radius:var(--r-m);padding:16px;font-family:var(--font-mono);font-size:14px;line-height:1.55;resize:vertical;outline:none}
+textarea.editor:focus{border-color:var(--acid)}
+iframe.preview{width:100%;height:230px;border:1px solid var(--hairline);border-radius:var(--r-m);background:#fff;margin-top:6px}
+/* flashcard */
+.flash{width:420px;max-width:100%;height:230px;perspective:1000px;cursor:pointer;margin:8px auto}
+.flash-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s var(--ease)}
+.flash.flipped .flash-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;border-radius:var(--r-xl);padding:24px;text-align:center}
+.face.front{background:var(--emerald-deep);border:1px solid var(--emerald)}
+.face.front .en{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:var(--ls-micro);text-transform:uppercase;color:var(--emerald)}
+.face.front .w{font-family:var(--font-display);font-weight:800;font-size:30px}
+.face.back{background:var(--surface-1);border:1px solid var(--acid);transform:rotateY(180deg);box-shadow:var(--shadow-card)}
+.face.back .ru{font-family:var(--font-display);font-weight:700;font-size:24px;color:var(--acid)}
+.face.back .ex{font-size:var(--fs-small);color:var(--text-2)}
+.center{text-align:center}
+.centercol{display:flex;flex-direction:column;align-items:center;gap:14px}
+/* toast + fx */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;background:var(--surface-1);border:1px solid var(--acid);color:var(--text-1);font-weight:700;font-size:14.5px;padding:12px 22px;border-radius:var(--r-pill);box-shadow:var(--shadow-card),var(--glow-acid);opacity:0;transition:.35s var(--ease);z-index:99;pointer-events:none}
+.toast.show{opacity:1;bottom:40px}
+canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:98}
+/* welcome overlay */
+.overlay{position:fixed;inset:0;background:rgba(7,8,8,.85);backdrop-filter:blur(10px);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px}
+.wcard{background:var(--surface-1);border:1px solid var(--hairline-strong);border-radius:var(--r-xl);padding:32px;max-width:470px;width:100%;display:flex;flex-direction:column;gap:13px;box-shadow:var(--shadow-card)}
+/* nft collection */
+.nftgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px}
+.nft{border-radius:var(--r-m);overflow:hidden;background:var(--surface-1);border:1px solid var(--hairline);display:flex;flex-direction:column;transition:transform .15s var(--ease)}
+.nft:hover{transform:translateY(-3px)}
+.nft img{width:100%;aspect-ratio:1/1.05;object-fit:cover;display:block}
+.nft.locked img{filter:grayscale(1) brightness(.5)}
+.nft .meta{padding:11px 13px;display:flex;flex-direction:column;gap:7px}
+.nft .nm{font-weight:800;font-size:14.5px}
+.nft .rar{font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+/* sentence builder */
+.chip{padding:8px 14px;border-radius:var(--r-pill);border:1px solid var(--hairline-strong);background:var(--surface-2);color:var(--text-1);font-family:var(--font-mono);font-weight:600;font-size:13.5px;cursor:pointer;transition:all .12s var(--ease)}
+.chip:hover{background:var(--surface-3);border-color:var(--acid)}
+.sbrow{display:flex;flex-wrap:wrap;gap:8px;min-height:46px;padding:10px;border:1px dashed var(--hairline-strong);border-radius:var(--r-m);align-items:center}
+.iconbtn{cursor:pointer}
+.iconbtn:hover{color:var(--acid);border-color:var(--acid)}
+.section-head{display:flex;flex-direction:column;gap:6px;padding:4px 6px 10px}
+.stack{display:flex;flex-direction:column;gap:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+    <span class="brand">EMIL<i>.</i></span>
+    <span class="mono">Тренажёр · Офлайн</span>
+  </div>
+  <div class="xpbox">
+    <span class="pill gold" id="coinTxt" title="Монеты за мастерство — тратятся в «Коллекции»"><i class="ph-bold ph-coins"></i>0</span>
+    <span class="pill acid" id="lvlTxt">LVL 1</span>
+    <div class="xpbar"><div id="xpFill" style="width:0%"></div></div>
+    <span class="mono" id="xpTxt" style="color:var(--text-2)">0 XP</span>
+    <span class="pill iconbtn" title="Скачать прогресс (резервная копия)" onclick="exportProgress()"><i class="ph-bold ph-download-simple"></i></span>
+    <label class="pill iconbtn" title="Загрузить прогресс"><i class="ph-bold ph-upload-simple"></i><input type="file" accept=".json,application/json" style="display:none" onchange="importProgress(this)"></label>
+  </div>
+</header>
+<nav class="navtabs" id="nav"></nav>
+<main id="main" class="stack"></main>
+</div>
+<div class="toast" id="toast"></div>
+<canvas id="fx"></canvas>
+
+<script>
+"use strict";
+/* ============ STATE ============ */
+const KEY="emil_hub_v1";
+let S={xp:0,freezes:2,streak:0,lastActive:null,days:{},prog:{},eng:{},srs:{},errors:[],introduced:0,lastIntro:null,coins:0,owned:[],boost:null,anchor:null,notes:{},lastWelcome:null};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const todayStr=()=>new Date().toISOString().slice(0,10);
+function day(d){return S.days[d]||(S.days[d]={xp:0,code:0,eng:0,words:0});}
+
+let toastLater=null;
+(function(){const t=todayStr();
+ if(S.lastActive&&S.lastActive!==t){
+   const gap=Math.round((new Date(t)-new Date(S.lastActive))/864e5)-1;
+   if(gap>0){
+     const y=new Date(t);y.setDate(y.getDate()-1);const yStr=y.toISOString().slice(0,10);
+     if(S.freezes>=gap){S.freezes-=gap;S.lastActive=yStr;toastLater=`Заморозка спасла твой стрик (${S.streak} дн.). Осталось: ${S.freezes}`;}
+     else{if(S.streak>2)toastLater=`Стрик ${S.streak} дн. сгорел. Начнём новый — сегодня день 1`;S.streak=0;S.lastActive=yStr;}
+     save();}}
+})();
+
+/* ============ XP / LEVEL ============ */
+const LVL=x=>Math.floor(Math.sqrt(x/60))+1;
+const lvlFloor=l=>60*(l-1)*(l-1), lvlNext=l=>60*l*l;
+function addXP(n,label){
+ if(S.boost===todayStr())n*=2;
+ const t=todayStr(),d=day(t);const wasActive=d.xp>=30;
+ S.xp+=n;d.xp+=n;
+ if(!wasActive&&d.xp>=30){
+   if(S.lastActive!==t){S.streak+=1;S.lastActive=t;
+     if(S.streak>0&&S.streak%7===0&&S.freezes<3){S.freezes++;toast(`${S.streak} дней подряд. +1 заморозка`);}
+     else toast(`День засчитан. Стрик: ${S.streak}`);
+     if(S.streak%10===0)confetti(2);}
+ }
+ const before=LVL(S.xp-n);
+ if(LVL(S.xp)>before){toast(`Новый уровень: ${LVL(S.xp)}`);confetti(2);}
+ else if(label)toast(`+${n} XP · ${label}`);
+ save();drawHeader();
+}
+function drawHeader(){const l=LVL(S.xp),f=lvlFloor(l),n=lvlNext(l);
+ document.getElementById("lvlTxt").textContent="LVL "+l;
+ document.getElementById("xpFill").style.width=Math.round((S.xp-f)/(n-f)*100)+"%";
+ document.getElementById("xpTxt").textContent=S.xp+" XP";
+ const c=document.getElementById("coinTxt");if(c)c.innerHTML=`<i class="ph-bold ph-coins"></i>${S.coins||0}`;}
+
+/* ============ TOAST + CONFETTI ============ */
+let toastTimer=null;
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+ clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600);}
+const fx=document.getElementById("fx"),ctx=fx.getContext("2d");let parts=[],fxRun=false;
+function confetti(power=1){
+ fx.width=innerWidth;fx.height=innerHeight;
+ const colors=["#B9FF47","#D4FF7A","#37936F","#FFD34D","#FF7A2F"];
+ for(let i=0;i<90*power;i++)parts.push({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight*0.35,
+  vx:(Math.random()-.5)*11,vy:-Math.random()*10-3,g:.28,s:4+Math.random()*5,r:Math.random()*Math.PI,
+  vr:(Math.random()-.5)*.3,c:colors[i%colors.length],life:110+Math.random()*40});
+ if(!fxRun){fxRun=true;requestAnimationFrame(fxTick);}}
+function fxTick(){ctx.clearRect(0,0,fx.width,fx.height);parts=parts.filter(p=>p.life>0);
+ parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=p.vr;p.life--;
+  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.globalAlpha=Math.min(1,p.life/40);
+  ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);ctx.restore();});
+ if(parts.length)requestAnimationFrame(fxTick);else{fxRun=false;ctx.clearRect(0,0,fx.width,fx.height);}}
+
+/* ============ CONTENT: PROGRAMMING ============ */
+const PROG=[
+{id:"m1",title:"Как работает веб + первая страница",
+theory:`
+<p>Когда ты открываешь сайт, браузер получает от сервера файлы и «рисует» из них страницу. Три главные технологии:</p>
+<table class="simple"><tr><th>Технология</th><th>За что отвечает</th><th>Аналогия</th></tr>
+<tr><td><b>HTML</b></td><td>Структура и содержимое</td><td>Скелет</td></tr>
+<tr><td><b>CSS</b></td><td>Внешний вид</td><td>Одежда</td></tr>
+<tr><td><b>JavaScript</b></td><td>Логика и интерактивность</td><td>Мышцы и мозг</td></tr></table>
+<p>HTML состоит из <b>тегов</b> — слов в угловых скобках. Большинство тегов парные:</p>
+<pre class="demo">&lt;h1&gt;Самый большой заголовок&lt;/h1&gt;
+&lt;p&gt;Абзац обычного текста.&lt;/p&gt;</pre>
+<p>Минимальная страница:</p>
+<pre class="demo">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Название вкладки&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Привет, мир!&lt;/h1&gt;
+    &lt;p&gt;Моя первая страница.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+<p><b>head</b> — служебная информация, <b>body</b> — всё, что видно. Заголовки: от <code>&lt;h1&gt;</code> (крупный) до <code>&lt;h6&gt;</code> (мелкий).</p>`,
+quiz:[
+ {q:"За что отвечает HTML?",o:["Структура и содержимое страницы","Цвета и шрифты","Логика при кликах","Хранение данных на сервере"],a:0,e:"HTML — скелет: из чего страница состоит."},
+ {q:"Какой тег делает САМЫЙ крупный заголовок?",o:["<h6>","<p>","<h1>","<big>"],a:2,e:"h1 — самый крупный, h6 — самый мелкий."},
+ {q:"Где пишут то, что видно на экране?",o:["В <head>","В <body>","В <title>","В <html>"],a:1,e:"body — видимая часть, head — служебная."},
+ {q:"Как выглядит закрывающий тег абзаца?",o:["<p>","</p>","<p/end>","(p)"],a:1,e:"Закрывающий тег — со слэшем: </p>."},
+ {q:"За что отвечает JavaScript?",o:["За красоту","За структуру","За интерактивность и логику","За заголовки"],a:2,e:"JS оживляет страницу."}],
+practice:{type:"html",task:"Сделай первую страницу: заголовок <code>&lt;h1&gt;</code> с твоим именем и абзац <code>&lt;p&gt;</code> о себе. «Запустить» — увидишь результат, потом «Проверить задание».",
+starter:"<!DOCTYPE html>\n<html>\n<body>\n\n  <!-- напиши свой код здесь -->\n\n</body>\n</html>",
+check:c=>/<h1[\s>]/i.test(c)&&/<p[\s>]/i.test(c),hint:"Нужны тег <h1>...</h1> и тег <p>...</p> внутри body."}},
+
+{id:"m2",title:"HTML глубже: списки, ссылки, картинки",
+theory:`
+<p><b>Списки:</b></p>
+<pre class="demo">&lt;ul&gt;              &lt;ol&gt;
+  &lt;li&gt;Хоккей&lt;/li&gt;    &lt;li&gt;Первый&lt;/li&gt;
+  &lt;li&gt;Код&lt;/li&gt;       &lt;li&gt;Второй&lt;/li&gt;
+&lt;/ul&gt;             &lt;/ol&gt;</pre>
+<p><code>ul</code> — маркированный (точки), <code>ol</code> — нумерованный. Пункт — <code>li</code>.</p>
+<p><b>Ссылки:</b></p>
+<pre class="demo">&lt;a href="https://google.com"&gt;Открыть Google&lt;/a&gt;</pre>
+<p><code>href</code> — <b>атрибут</b>: настройка тега, пишется внутри открывающего тега.</p>
+<p><b>Картинки:</b></p>
+<pre class="demo">&lt;img src="photo.jpg" alt="Моё фото"&gt;</pre>
+<p><code>img</code> — одиночный тег, без закрывающей пары. <code>src</code> — путь к файлу, <code>alt</code> — текст, если картинка не загрузилась.</p>
+<p><code>&lt;div&gt;</code> — «коробка» без собственного вида для группировки элементов. Позже будем красить и двигать эти коробки через CSS.</p>`,
+quiz:[
+ {q:"Каким тегом делают нумерованный список?",o:["<ul>","<ol>","<li>","<list>"],a:1,e:"ol = ordered list."},
+ {q:"Что такое href?",o:["Тег","Атрибут ссылки — куда она ведёт","Название сайта","Стиль"],a:1,e:"href — атрибут тега <a>."},
+ {q:"Какой тег НЕ имеет закрывающей пары?",o:["<p>","<a>","<img>","<h1>"],a:2,e:"img — одиночный тег."},
+ {q:"Что делает атрибут alt у картинки?",o:["Меняет размер","Текст, если картинка не загрузилась","Делает её ссылкой","Ничего"],a:1,e:"alt показывается вместо картинки."},
+ {q:"Для чего нужен <div>?",o:["Для заголовков","Коробка для группировки элементов","Для картинок","Для списков"],a:1,e:"div — контейнер без собственного вида."}],
+practice:{type:"html",task:"Страница: заголовок «Мои хобби», маркированный список минимум из 3 пунктов и ссылка на любой сайт.",
+starter:"<!DOCTYPE html>\n<html>\n<body>\n\n  <!-- заголовок, список ul с li, ссылка a -->\n\n</body>\n</html>",
+check:c=>/<(ul|ol)[\s>]/i.test(c)&&(c.match(/<li[\s>]/gi)||[]).length>=3&&/<a\s[^>]*href/i.test(c),hint:"Нужны: <ul> или <ol>, минимум три <li> и ссылка <a href=\"...\">."}},
+
+{id:"m3",title:"CSS: делаем красиво",
+theory:`
+<p>Правило CSS: <b>кому</b> (селектор) → <b>что поменять</b> (свойства):</p>
+<pre class="demo">h1 {
+  color: blue;          /* цвет текста */
+  font-size: 40px;      /* размер шрифта */
+}
+body {
+  background: #f0f0f0;  /* цвет фона */
+}</pre>
+<p>Проще всего писать CSS внутри тега <code>&lt;style&gt;</code> в <code>&lt;head&gt;</code>.</p>
+<p><b>Классы:</b></p>
+<pre class="demo">&lt;p class="important"&gt;Важный текст&lt;/p&gt;
+
+.important { color: red; font-weight: bold; }</pre>
+<p><b>Отступы:</b> <code>margin</code> — снаружи элемента, <code>padding</code> — внутри. Используются постоянно.</p>
+<p>Цвета: словами (<code>red</code>) или кодом (<code>#B9FF47</code>).</p>`,
+quiz:[
+ {q:"Какое свойство меняет цвет текста?",o:["background","color","font-style","text"],a:1,e:"color — текст, background — фон."},
+ {q:"Как обратиться в CSS к классу important?",o:["important","#important",".important","<important>"],a:2,e:"Классы — через точку."},
+ {q:"Что такое padding?",o:["Отступ снаружи","Отступ внутри элемента","Размер шрифта","Цвет рамки"],a:1,e:"padding — внутри, margin — снаружи."},
+ {q:"Где обычно пишут CSS на простой странице?",o:["В теге <style> в head","В <title>","В комментарии","В теге <img>"],a:0,e:"Внутри <style> в head."},
+ {q:"Как задать размер шрифта 20 пикселей?",o:["size: 20","font-size: 20px","text: 20px","font: big"],a:1,e:"font-size: 20px;"}],
+practice:{type:"html",task:"Оформи страницу: через <code>&lt;style&gt;</code> сделай <code>h1</code> любого цвета и поменяй фон страницы (<code>body</code>).",
+starter:"<!DOCTYPE html>\n<html>\n<head>\n<style>\n  /* твой CSS здесь */\n</style>\n</head>\n<body>\n  <h1>Мой сайт</h1>\n  <p>Учусь делать красиво.</p>\n</body>\n</html>",
+check:c=>/<style[\s>]/i.test(c)&&/color\s*:/i.test(c)&&/background[^:]*:/i.test(c),hint:"Внутри <style> нужны color для h1 и background для body."}},
+
+{id:"m4",title:"JavaScript: первые шаги",
+theory:`
+<p><b>Переменные:</b></p>
+<pre class="demo">let age = 20;              // число, можно менять
+const name = "Emil";       // строка, менять нельзя
+let isHockeyPlayer = true; // да/нет</pre>
+<p><code>let</code> — можно перезаписать, <code>const</code> — константа.</p>
+<p><b>Вывод:</b></p>
+<pre class="demo">console.log("Привет!");
+console.log(2 + 2);          // 4
+console.log(name, age);      // Emil 20</pre>
+<p><code>console.log()</code> — главный инструмент программиста: видеть, что происходит.</p>
+<p><b>Строки складываются:</b></p>
+<pre class="demo">let greeting = "Меня зовут " + name;
+console.log(greeting);       // Меня зовут Emil</pre>`,
+quiz:[
+ {q:"Как объявить переменную, которую можно менять?",o:["const x = 5","let x = 5","variable x = 5","x := 5"],a:1,e:"let — изменяемая."},
+ {q:"Что выведет console.log(3 + 4)?",o:["3 + 4","34","7","ошибку"],a:2,e:"Числа складываются: 7."},
+ {q:'Что выведет console.log("3" + "4")?',o:["7","34","ошибку","3 4"],a:1,e:"Строки склеиваются: «34». Частая ловушка!"},
+ {q:"Чем const отличается от let?",o:["Ничем","const нельзя перезаписать","const только для чисел","let устарел"],a:1,e:"const — константа."},
+ {q:"Для чего нужен console.log?",o:["Создать кнопку","Напечатать значение","Сохранить файл","Открыть сайт"],a:1,e:"Инструмент отладки №1."}],
+practice:{type:"js",task:"Объяви <code>name</code> с именем и <code>age</code> с возрастом. Выведи через <code>console.log</code>: «Меня зовут Emil, мне 20 лет».",
+starter:"// объяви переменные и выведи фразу\n\n",
+check:c=>/(let|const)\s+name/.test(c)&&/(let|const)\s+age/.test(c)&&/console\.log/.test(c),hint:"Нужны let/const name, let/const age и console.log(...)."}},
+
+{id:"m5",title:"Условия: код принимает решения",
+theory:`
+<p>Программа становится умной, когда умеет выбирать. <b>if / else</b>:</p>
+<pre class="demo">let age = 20;
+if (age >= 18) {
+  console.log("Взрослый");
+} else {
+  console.log("Ещё нет 18");
+}</pre>
+<p><b>Операторы сравнения:</b></p>
+<table class="simple"><tr><th>Оператор</th><th>Значение</th><th>Пример → результат</th></tr>
+<tr><td><code>===</code></td><td>равно (строго)</td><td><code>5 === 5</code> → true</td></tr>
+<tr><td><code>!==</code></td><td>не равно</td><td><code>5 !== 3</code> → true</td></tr>
+<tr><td><code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></td><td>больше / меньше</td><td><code>10 &gt; 3</code> → true</td></tr></table>
+<p><b>Главная ловушка:</b> <code>=</code> — присваивание, <code>===</code> — сравнение. <code>10 === "10"</code> даёт <b>false</b>: число и строка — разные типы.</p>
+<p><b>Логические операторы:</b> <code>&amp;&amp;</code> — И (оба условия), <code>||</code> — ИЛИ (хотя бы одно), <code>!</code> — НЕ.</p>
+<pre class="demo">if (age >= 18 && hasTicket) { ... }   // и то, и другое
+else if (age >= 14) { ... }           // иначе-если: проверки по цепочке</pre>`,
+quiz:[
+ {q:"Что выведет: let x=5; if(x>3){console.log('да')}else{console.log('нет')}",o:["нет","да","ошибку","ничего"],a:1,e:"5 > 3 — условие истинно, выполняется первая ветка."},
+ {q:"Чем === отличается от = ?",o:["Ничем","= сравнение, === присваивание","= присваивание, === сравнение","=== устарел"],a:2,e:"= кладёт значение в переменную, === сравнивает."},
+ {q:"Что вернёт 10 === \"10\"?",o:["true","false","10","ошибку"],a:1,e:"Строгое сравнение: число ≠ строка → false."},
+ {q:"Какой оператор означает «И» (оба условия верны)?",o:["||","!","&&","=="],a:2,e:"&& — И, || — ИЛИ, ! — НЕ."},
+ {q:"Для чего нужен else if?",o:["Завершить программу","Проверить ещё одно условие, если первое не сработало","Повторить код","Объявить переменную"],a:1,e:"Цепочка проверок: if → else if → else."}],
+practice:{type:"js",task:"Объяви <code>score</code> с числом от 0 до 100. Выведи: от 80 — «Отлично», от 50 — «Нормально», иначе — «Учить ещё». Проверь с разными значениями.",
+starter:"let score = 85;\n\n// if / else if / else\n\n",
+check:c=>/if\s*\(/.test(c)&&/else/.test(c)&&/console\.log/.test(c),hint:"Нужны if (...), else (или else if) и console.log."}},
+
+{id:"m6",title:"Циклы и массивы: много данных без копипасты",
+theory:`
+<p><b>Массив</b> — список значений в одной переменной:</p>
+<pre class="demo">const hobbies = ["хоккей", "код", "английский"];
+console.log(hobbies[0]);      // хоккей — счёт с нуля!
+console.log(hobbies.length);  // 3
+hobbies.push("музыка");       // добавить в конец</pre>
+<p><b>Цикл for</b> повторяет код:</p>
+<pre class="demo">for (let i = 0; i < 3; i++) {
+  console.log("Круг " + i);   // Круг 0, Круг 1, Круг 2
+}</pre>
+<p>Читается: старт <code>i=0</code>; пока <code>i&lt;3</code>; после каждого круга <code>i++</code> (плюс один).</p>
+<p><b>for...of</b> — пройти по массиву без индексов, самый удобный способ:</p>
+<pre class="demo">for (const h of hobbies) {
+  console.log(h);
+}</pre>
+<p><b>while</b> — повторять, пока условие истинно. Осторожно: если условие никогда не станет false — бесконечный цикл.</p>`,
+quiz:[
+ {q:"Какой индекс у ПЕРВОГО элемента массива?",o:["1","0","-1","first"],a:1,e:"Счёт с нуля: arr[0] — первый."},
+ {q:"Что делает hobbies.push(\"музыка\")?",o:["Удаляет элемент","Добавляет в начало","Добавляет в конец","Сортирует"],a:2,e:"push — добавить в конец массива."},
+ {q:"Сколько раз выполнится: for(let i=0;i<3;i++)",o:["2","3","4","бесконечно"],a:1,e:"i = 0, 1, 2 — три раза."},
+ {q:"Как узнать, сколько элементов в массиве arr?",o:["arr.size","arr.count()","arr.length","length(arr)"],a:2,e:"Свойство length, без скобок."},
+ {q:"Что выведет console.log([10,20,30][1])?",o:["10","20","30","ошибку"],a:1,e:"Индекс 1 — второй элемент: 20."}],
+practice:{type:"js",task:"Создай массив минимум из 3 своих целей и выведи каждую циклом (<code>for</code> или <code>for...of</code>).",
+starter:"const goals = [];\n\n// заполни массив и выведи каждую цель циклом\n\n",
+check:c=>/\[[\s\S]*\]/.test(c)&&/for\s*\(/.test(c)&&/console\.log/.test(c),hint:"Нужны массив [...], цикл for и console.log внутри цикла."}},
+
+{id:"m7",title:"Функции и объекты: строительные блоки",
+theory:`
+<p><b>Функция</b> — кусок кода с именем, который можно вызывать сколько угодно раз:</p>
+<pre class="demo">function greet(name) {
+  return "Привет, " + name + "!";
+}
+console.log(greet("Emil"));   // Привет, Emil!</pre>
+<p><code>return</code> возвращает результат и завершает функцию. Параметр <code>name</code> — «входные данные».</p>
+<p><b>Стрелочная функция</b> — короткая запись, увидишь её везде:</p>
+<pre class="demo">const add = (a, b) => a + b;
+console.log(add(2, 3));       // 5</pre>
+<p><b>Объект</b> — данные парами «ключ: значение»:</p>
+<pre class="demo">const user = { name: "Emil", age: 20, isLearning: true };
+console.log(user.name);       // доступ через точку</pre>
+<p><b>Шаблонные строки</b> — строки в обратных кавычках, переменные вставляются через <code>\${...}</code>:</p>
+<pre class="demo">console.log(\`Меня зовут \${user.name}, мне \${user.age}\`);</pre>
+<p>Удобнее склейки через «+» — используй их по умолчанию.</p>`,
+quiz:[
+ {q:"Что делает return в функции?",o:["Печатает текст","Возвращает результат и завершает функцию","Создаёт переменную","Повторяет код"],a:1,e:"return отдаёт значение наружу и останавливает функцию."},
+ {q:"Что выведет: const add=(a,b)=>a+b; console.log(add(2,3))",o:["23","5","a+b","ошибку"],a:1,e:"Стрелочная функция вернёт 2+3 = 5."},
+ {q:"Как получить name из const user={name:\"Emil\"}?",o:["user->name","user[name]","user.name","name.user"],a:2,e:"Доступ к свойству — через точку: user.name."},
+ {q:"В каких кавычках пишется шаблонная строка с ${}?",o:["В одинарных ' '","В двойных \" \"","В обратных ` `","В любых"],a:2,e:"Только обратные кавычки ` ` включают ${...}."},
+ {q:"Как вызвать функцию hello без параметров?",o:["call hello","hello()","hello;","run(hello)"],a:1,e:"Вызов — имя со скобками: hello()."}],
+practice:{type:"js",task:"Напиши функцию <code>intro(name, goal)</code>, которая возвращает шаблонную строку вида «Я Emil, моя цель — стать разработчиком». Вызови её со своими данными и выведи результат.",
+starter:"// function intro(name, goal) { return `...` }\n\n",
+check:c=>/(function\s+\w+|=>)/.test(c)&&/return|=>/.test(c)&&/`/.test(c)&&/console\.log/.test(c),hint:"Нужны функция, return, шаблонная строка в обратных кавычках и console.log(intro(...))."}},
+
+{id:"m8",title:"DOM: JavaScript управляет страницей",
+theory:`
+<p><b>DOM</b> — страница глазами JavaScript: каждый тег — объект, который можно найти и изменить. Именно так работает весь этот тренажёр.</p>
+<p><b>Найти элемент:</b></p>
+<pre class="demo">const title = document.querySelector("h1");      // по тегу
+const btn = document.querySelector("#myBtn");     // по id (#)
+const card = document.querySelector(".card");     // по классу (.)</pre>
+<p><b>Изменить:</b></p>
+<pre class="demo">title.textContent = "Новый текст";
+title.style.color = "lime";</pre>
+<p><b>Реагировать на события:</b></p>
+<pre class="demo">btn.addEventListener("click", () => {
+  title.textContent = "Кнопка нажата!";
+});</pre>
+<p><b>Формы:</b> текст из поля ввода — <code>input.value</code>.</p>
+<p>Схема любого интерактива: <b>найти → повесить обработчик → изменить</b>. Выучишь её — сможешь делать живые страницы.</p>`,
+quiz:[
+ {q:"Что делает document.querySelector(\"#btn\")?",o:["Создаёт кнопку","Находит элемент с id=\"btn\"","Удаляет элемент","Меняет стиль"],a:1,e:"querySelector ищет элемент; # — поиск по id."},
+ {q:"Как поменять текст элемента el?",o:["el.text = \"...\"","el.textContent = \"...\"","el.write(\"...\")","text(el)"],a:1,e:"Свойство textContent."},
+ {q:"Что делает addEventListener(\"click\", fn)?",o:["Кликает сам","Вызывает fn при каждом клике по элементу","Удаляет клики","Создаёт кнопку"],a:1,e:"«Вешает» обработчик: клик → выполняется функция."},
+ {q:"Как прочитать, что пользователь ввёл в input?",o:["input.text","input.value","input.data","read(input)"],a:1,e:"input.value — текущее содержимое поля."},
+ {q:"Как обратиться к элементу с классом card?",o:['querySelector("card")','querySelector("#card")','querySelector(".card")','querySelector("<card>")'],a:2,e:"Класс — через точку, id — через решётку."}],
+practice:{type:"html",task:"Сделай страницу: заголовок <code>&lt;h1&gt;</code>, кнопка и скрипт — по клику на кнопку текст заголовка меняется. Запусти и проверь клик в превью.",
+starter:"<!DOCTYPE html>\n<html>\n<body>\n  <h1 id=\"title\">Привет</h1>\n  <button id=\"btn\">Нажми меня</button>\n  <script>\n    // найди элементы и повесь обработчик клика\n  <\/script>\n</body>\n</html>",
+check:c=>/(addEventListener|onclick)/i.test(c)&&/(textContent|innerHTML)/i.test(c)&&/(querySelector|getElementById)/i.test(c),hint:"Нужны поиск элемента (querySelector/getElementById), addEventListener или onclick и смена textContent."}},
+
+{id:"m9",title:"fetch и async/await: данные из интернета",
+theory:`
+<p>Приложения живут данными: погода, курсы, фильмы. Их отдаёт <b>API</b> — сервер, который отвечает данными в формате <b>JSON</b> (текст, похожий на объект JS).</p>
+<p><b>fetch</b> делает запрос и возвращает <b>промис</b> — «обещание результата в будущем» (ответ приходит не мгновенно):</p>
+<pre class="demo">async function getUser() {
+  const res = await fetch("https://api.github.com/users/octocat");
+  const data = await res.json();   // JSON → объект JS
+  console.log(data.name);
+}
+getUser();</pre>
+<p>Правила: <code>await</code> — «дождись результата», работает только внутри функции со словом <code>async</code>. <code>res.json()</code> превращает ответ в объект.</p>
+<p><b>Ошибки</b> (нет интернета, сервер упал) ловят через try/catch:</p>
+<pre class="demo">try {
+  const res = await fetch(url);
+} catch (err) {
+  console.log("Ошибка: " + err);
+}</pre>
+<p>Тренажёр офлайн, поэтому в практике имитируем «медленный сервер» через промис с задержкой — механика та же.</p>`,
+quiz:[
+ {q:"Что возвращает fetch()?",o:["Сразу данные","Промис — обещание результата","Строку HTML","Ошибку"],a:1,e:"Ответ приходит не мгновенно, поэтому fetch возвращает промис."},
+ {q:"Где можно использовать await?",o:["Где угодно","Только внутри async-функции","Только в циклах","Только в HTML"],a:1,e:"await работает внутри функций, помеченных async."},
+ {q:"Что делает res.json()?",o:["Печатает ответ","Превращает ответ сервера в объект JS","Отправляет данные","Проверяет ошибки"],a:1,e:"JSON-текст → обычный объект, с которым можно работать."},
+ {q:"JSON — это…",o:["Язык программирования","Текстовый формат данных «ключ: значение»","База данных","Фреймворк"],a:1,e:"Формат обмена данными, выглядит как объект JS."},
+ {q:"Зачем нужен try/catch при запросах?",o:["Ускорить запрос","Поймать ошибку, если запрос не удался","Красиво оформить код","Обязателен всегда"],a:1,e:"Сеть ненадёжна: try/catch не даёт программе упасть."}],
+practice:{type:"js",task:"Имитация API: есть функция <code>fakeApi()</code>, она возвращает промис с данными через секунду. Напиши <code>async</code>-функцию, которая ждёт результат через <code>await</code> и выводит имя и уровень.",
+starter:"function fakeApi() {\n  return new Promise(resolve => {\n    setTimeout(() => resolve({ name: \"Emil\", level: \"junior soon\" }), 1000);\n  });\n}\n\n// напиши async-функцию: await fakeApi(), выведи data.name и data.level\n\n",
+check:c=>/async/.test(c)&&/await/.test(c)&&/console\.log/.test(c),hint:"Нужны async function, await fakeApi() и console.log с результатом."}}
+];
+
+/* ============ CONTENT: ENGLISH ============ */
+const ENG=[
+{id:"l1",title:"Present Simple vs Present Continuous",
+theory:`
+<span class="fix"><span class="was">I'm learn English</span> → <span class="now">I'm learning English</span><br><span class="muted2">Твоя ошибка из теста</span></span>
+<table class="simple"><tr><th></th><th>Present Simple</th><th>Present Continuous</th></tr>
+<tr><td>Когда</td><td>Регулярно, вообще</td><td>Прямо сейчас</td></tr>
+<tr><td>Форма</td><td>V / V+s (he, she, it)</td><td>am / is / are + V-ing</td></tr>
+<tr><td>Пример</td><td>I learn English every day</td><td>I am learning English now</td></tr></table>
+<p><b>Правило -s:</b> he/she/it: <i>She go<b>es</b>. He play<b>s</b>.</i></p>
+<p><b>Нельзя:</b> «I'm learn» — либо <i>I'm learning</i>, либо <i>I learn</i>.</p>
+<p>Маркеры Simple: every day, usually, often. Маркеры Continuous: now, at the moment.</p>`,
+ex:[
+ {t:"mc",q:"She ___ to work every day.",o:["go","goes","going","is go"],a:1,e:"he/she/it + -s. «Every day» = Simple."},
+ {t:"mc",q:"I ___ English now.",o:["learn","am learning","learning","am learn"],a:1,e:"«Now» = Continuous."},
+ {t:"fill",q:"He ___ (play) hockey every weekend.",a:["plays"],e:"he → plays."},
+ {t:"fill",q:"Look! It ___ (rain).",a:["is raining","'s raining"],e:"Прямо сейчас → is raining."},
+ {t:"mc",q:"«Я учу английский, потому что хочу стать разработчиком»:",o:["I'm learn English because I will be a developer","I'm learning English because I want to become a developer","I learning English because I be developer","I am learn English for be developer"],a:1,e:"am + learning; want to become."},
+ {t:"mc",q:"They usually ___ dinner at 7.",o:["are having","haves","have","having"],a:2,e:"«Usually» = Simple: have."},
+ {t:"fill",q:"My brother ___ (not/like) coffee.",a:["doesn't like","does not like"],e:"doesn't + глагол без -s."},
+ {t:"mc",q:"___ you working now?",o:["Do","Is","Are","Does"],a:2,e:"you → Are you working now?"}]},
+
+{id:"l2",title:"Past Simple: говорим о прошлом",
+theory:`
+<p><b>Past Simple</b> — законченное действие в прошлом: yesterday, last week, ago.</p>
+<p>Правильные глаголы: + <b>-ed</b>: play → play<b>ed</b>. Неправильные — запоминаем:</p>
+<table class="simple"><tr><th>Глагол</th><th>Прошедшее</th><th>Перевод</th></tr>
+<tr><td>go</td><td>went</td><td>идти</td></tr><tr><td>see</td><td>saw</td><td>видеть</td></tr>
+<tr><td>have</td><td>had</td><td>иметь</td></tr><tr><td>make</td><td>made</td><td>делать</td></tr>
+<tr><td>begin</td><td>began</td><td>начинать</td></tr><tr><td>write</td><td>wrote</td><td>писать</td></tr></table>
+<p><b>Отрицание и вопрос</b> — через did, глагол в начальной форме:</p>
+<pre class="demo">I didn't see the film.   (НЕ "didn't saw")
+Did you finish the task? (НЕ "Did you finished")</pre>
+<span class="fix"><span class="was">hockey carrera</span> → <span class="now">hockey career</span><br><span class="muted2">carrera — это испанский. Время ты выбрал верно</span></span>`,
+ex:[
+ {t:"fill",q:"I ___ (watch) a film yesterday.",a:["watched"],e:"Правильный глагол: + ed."},
+ {t:"fill",q:"She ___ (go) to Moscow last week.",a:["went"],e:"go → went."},
+ {t:"mc",q:"I ___ my homework an hour ago.",o:["finish","finished","have finished","finishing"],a:1,e:"«ago» → finished."},
+ {t:"mc",q:"He didn't ___ the message.",o:["saw","seen","see","sees"],a:2,e:"После didn't — начальная форма."},
+ {t:"fill",q:"___ you ___ (play) hockey yesterday? (вопрос)",a:["did play","did you play"],e:"Did you play...?",w:220},
+ {t:"mc",q:"They ___ a new project last month.",o:["began","begin","begun","beginned"],a:0,e:"begin → began."},
+ {t:"fill",q:"I ___ (not/have) time yesterday.",a:["didn't have","did not have"],e:"didn't + have (не had!)."},
+ {t:"mc",q:"«Я закончил хоккейную карьеру»:",o:["I finish my hockey career","I finished my hockey career","I have finish hockey carrera","I was finish my career"],a:1,e:"finished + career."}]},
+
+{id:"l3",title:"Будущее и цели: will, going to, want to become",
+theory:`
+<table class="simple"><tr><th>Форма</th><th>Когда</th><th>Пример</th></tr>
+<tr><td><b>will + V</b></td><td>Решение сейчас, обещание</td><td>I will help you</td></tr>
+<tr><td><b>going to + V</b></td><td>План (уже решил)</td><td>I'm going to learn JavaScript</td></tr>
+<tr><td><b>want to + V</b></td><td>Желание, цель</td><td>I want to become a developer</td></tr></table>
+<p>«Хочу стать разработчиком»: <b>I want to become a developer</b>.</p>
+<pre class="demo">My goal is to become a junior developer.
+I'm learning English to get a better job.
+I need to practise every day.</pre>
+<span class="fix"><span class="was">i need be a greatest version on me</span> → <span class="now">I need to be the greatest version of myself</span><br><span class="muted2">после need нужен to</span></span>`,
+ex:[
+ {t:"mc",q:"«Я хочу стать разработчиком»:",o:["I will developer","I want to become a developer","I want become developer","I be a developer"],a:1,e:"want + to + become + a developer."},
+ {t:"fill",q:"I ___ (go) to learn CSS next week. (собираюсь)",a:["am going","'m going","am going to learn"],e:"План → am going to.",w:240},
+ {t:"mc",q:"— The phone is ringing! — OK, I ___ answer it.",o:["going to","will","want","am"],a:1,e:"Решение в момент речи → will."},
+ {t:"mc",q:"I need ___ every day.",o:["practise","to practise","practising","for practise"],a:1,e:"need + to + глагол."},
+ {t:"mc",q:"My goal is ___ a junior developer.",o:["become","becoming","to become","became"],a:2,e:"My goal is TO become."},
+ {t:"fill",q:"She ___ (not/will) come tomorrow.",a:["won't","will not"],e:"will not = won't."},
+ {t:"mc",q:"«Пожелай мне удачи»:",o:["Say good luck for me","Wish me luck","Good luck to say me","Luck for me"],a:1,e:"Wish me luck!"}]},
+
+{id:"l4",title:"Работа над ошибками: твой тест",
+theory:`
+<p>Разбор твоих фраз — самый полезный урок: ошибки свои, а не из учебника.</p>
+<span class="fix"><span class="was">i'm learn english because i will be a developer</span><br>
+<span class="now">I'm learning English because I want to become a developer.</span><br>
+<span class="muted2">am + V-ing; want to become; I — всегда с большой буквы.</span></span>
+<span class="fix"><span class="was">i'm 20 yars old and i start lerning new lenguge</span><br>
+<span class="now">I'm 20 years old and I started learning a new language.</span><br>
+<span class="muted2">years, learning, language; started (прошедшее).</span></span>
+<span class="fix"><span class="was">i need be a greatest version on me</span><br>
+<span class="now">I need to be the greatest version of myself.</span><br>
+<span class="muted2">need TO be; the greatest; version OF myself.</span></span>
+<span class="fix"><span class="was">i am very iinteristing guy</span><br>
+<span class="now">I am a very interesting guy.</span><br>
+<span class="muted2">Артикль a: a guy, a developer.</span></span>
+<span class="fix"><span class="was">Just be be say good luck for me</span><br>
+<span class="now">Just wish me luck!</span><br>
+<span class="muted2">Устойчивое выражение.</span></span>
+<p><b>3 направления роста:</b> времена, «to» после need/want/goal, артикли a/the.</p>
+<p>«To look forward to» = <b>ждать с нетерпением</b>: <i>I look forward to my new life.</i></p>`,
+ex:[
+ {t:"mc",q:"I am ___ interesting guy.",o:["very","a very","the very","an very"],a:1,e:"a + very + interesting + guy."},
+ {t:"fill",q:"I started ___ (learn) a new language.",a:["learning","to learn"],e:"start + learning / to learn."},
+ {t:"mc",q:"I need ___ the greatest version of myself.",o:["be","to be","being","am"],a:1,e:"need TO be."},
+ {t:"mc",q:"«I look forward to my first job» означает:",o:["Я смотрю вперёд на работу","Я с нетерпением жду первую работу","Я ищу первую работу","Я боюсь первой работы"],a:1,e:"look forward to = ждать с нетерпением."},
+ {t:"fill",q:"I'm 20 ___ old.",a:["years"],e:"years (не yars)."},
+ {t:"mc",q:"Фраза без ошибок:",o:["I'm learn English every day","I learning English every day","I learn English every day","I am learn English every day"],a:2,e:"I learn (Simple) или I am learning (сейчас)."}]}
+];
+
+/* ============ CONTENT: VOCAB (SRS) ============ */
+const VOCAB=[
+["developer","разработчик","I want to become a developer."],
+["to learn","учить, учиться","I learn English every day."],
+["to teach","обучать (кого-то)","Claude teaches me to code."],
+["language","язык","JavaScript is a programming language."],
+["to improve","улучшать","I want to improve my English."],
+["mistake","ошибка","Don't be afraid of mistakes."],
+["to create","создавать","I created my first web page."],
+["to build","строить, создавать","We are building an app."],
+["website","сайт","This website looks great."],
+["page","страница","Open the main page."],
+["button","кнопка","Click the button."],
+["file","файл","Save the file."],
+["folder","папка","The project is in this folder."],
+["to run","запускать","Run the code."],
+["to save","сохранять","Save your progress."],
+["skill","навык","Coding is a useful skill."],
+["goal","цель","My goal is to become a junior developer."],
+["to achieve","достигать","You can achieve your goal."],
+["career","карьера","I finished my hockey career."],
+["future","будущее","I think about my future."],
+["to practise","практиковаться","I practise every day."],
+["habit","привычка","Learning is my new habit."],
+["to remember","помнить","I remember this word."],
+["to forget","забывать","Don't forget the rules."],
+["to try","пытаться","Try again!"],
+["sentence","предложение","Write a sentence in English."],
+["word","слово","This word is new for me."],
+["meaning","значение","What is the meaning of this word?"],
+["to become","становиться","I want to become a developer."],
+["interesting","интересный","I am a very interesting guy."],
+["to look forward to","ждать с нетерпением","I look forward to my new life."],
+["to wish luck","пожелать удачи","Wish me luck!"]
+];
+const INTERVALS=[1,3,7,16,35];
+function srsIntroduce(){
+ const t=todayStr();
+ if(S.lastIntro!==t){S.lastIntro=t;S.introducedToday=0;}
+ let added=0;
+ for(const [w] of VOCAB){
+  if(S.srs[w])continue;
+  if((S.introducedToday||0)>=10)break;
+  S.srs[w]={due:t,step:-1,reps:0};S.introducedToday=(S.introducedToday||0)+1;added++;}
+ if(added)save();}
+function srsDue(){const t=todayStr();return VOCAB.filter(v=>S.srs[v[0]]&&S.srs[v[0]].due<=t);}
+function srsAnswer(word,ok){
+ const c=S.srs[word],t=new Date();
+ if(ok){c.step=Math.min(c.step+1,INTERVALS.length-1);c.reps++;}
+ else c.step=Math.max(-1,c.step-2);
+ const days=c.step<0?0.5:INTERVALS[c.step];
+ t.setDate(t.getDate()+Math.round(days));c.due=t.toISOString().slice(0,10);
+ if(ok&&c.step>=INTERVALS.length-1)c.learned=true;
+ if(!ok)c.learned=false;
+ save();}
+
+/* ============ SKILL MAP ============ */
+function progDone(m){const st=S.prog[m.id]||{};return st.quiz>=Math.ceil(m.quiz.length*0.8)&&st.practice;}
+function engDone(l){const st=S.eng[l.id]||{};return st.best>=Math.ceil(l.ex.length*0.75);}
+const BLOCKS=[
+ {n:"01",title:"Основы: веб, HTML и CSS",lessons:["m1","m2","m3","m4"],
+  project:"Адаптивная страница-визитка о себе",
+  res:[["Гоша Дударь — вёрстка","yt","Гоша Дударь HTML CSS вёрстка"],["Kevin Powell — CSS","yt","Kevin Powell CSS flexbox grid"],["freeCodeCamp","url","https://www.freecodecamp.org/learn/2022/responsive-web-design/"],["MDN — справочник","url","https://developer.mozilla.org/ru/docs/Web/HTML"]]},
+ {n:"02",title:"JavaScript: фундамент",lessons:["m5","m6","m7","m8","m9"],
+  project:"Интерактивное приложение с данными из API (погода / фильмы)",
+  res:[["Владилен Минин — JS","yt","Владилен Минин JavaScript с нуля"],["Web Dev Simplified","yt","Web Dev Simplified JavaScript"],["freeCodeCamp — JS","url","https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/"],["Codewars — задачи","url","https://www.codewars.com/"]]},
+ {n:"03",title:"Git, GitHub и инструменты",topics:["Git: commit, branch, push","GitHub: репозиторий, pull request","npm и Vite — старт проекта","Деплой на Netlify / Vercel"],
+  project:"Выложить свои проекты на GitHub и в интернет",
+  res:[["Гоша Дударь — Git","yt","Гоша Дударь Git GitHub для начинающих"],["roadmap.sh","url","https://roadmap.sh/frontend"],["The Odin Project","url","https://www.theodinproject.com/paths/foundations/courses/foundations"]]},
+ {n:"04",title:"React",topics:["Компоненты и props","Состояние: useState","Эффекты: useEffect","Списки, формы, работа с API"],
+  project:"Приложение на React с состоянием (трекер / каталог)",
+  res:[["Владилен Минин — React","yt","Владилен Минин React с нуля"],["Traversy Media","yt","Traversy Media React crash course"],["The Net Ninja","yt","Net Ninja React tutorial"],["Scrimba — React","url","https://scrimba.com/learn-react-c0e"]]},
+ {n:"05",title:"TypeScript и немного бэкенда",topics:["Основы типов TypeScript","Node.js + Express","Простой CRUD и база данных","Первый full-stack проект"],
+  project:"Full-stack приложение: React + Node + база",
+  res:[["Ulbi TV — fullstack","yt","Ulbi TV fullstack React TypeScript"],["freeCodeCamp — backend","url","https://www.freecodecamp.org/learn/back-end-development-and-apis/"]]},
+ {n:"06",title:"Портфолио и выход на работу",topics:["Довести 3–5 проектов до деплоя","Оформить GitHub и резюме","Один проект с AI-фичей","Подготовка к собеседованию junior"],
+  project:"Портфолио из 3–5 работающих проектов + резюме",
+  res:[["Frontend Mentor — макеты","url","https://www.frontendmentor.io/challenges"],["roadmap.sh","url","https://roadmap.sh/frontend"]]}
+];
+function blockDone(b){return b.lessons?b.lessons.every(id=>progDone(PROG.find(m=>m.id===id))):false;}
+function ytURL(q){return "https://www.youtube.com/results?search_query="+encodeURIComponent(q);}
+
+/* ============ NAV / ROUTING ============ */
+const TABS=[["dash","Главная","ph-lightning"],["map","Путь","ph-flag"],["code","Код","ph-code"],["eng","Английский","ph-translate"],["words","Слова","ph-cards"],["shop","Коллекция","ph-storefront"]];
+let view={tab:"dash"};
+const nav=document.getElementById("nav"),main=document.getElementById("main");
+function drawNav(){nav.innerHTML="";TABS.forEach(([id,l,ic])=>{const b=document.createElement("button");
+ b.innerHTML=`<i class="ph-bold ${ic}"></i>${l}`;if(view.tab===id)b.className="active";
+ b.onclick=()=>{view={tab:id};draw();};nav.appendChild(b);});}
+function draw(){drawNav();drawHeader();window.scrollTo(0,0);
+ if(view.tab!=="words")wq=null;
+ if(view.tab==="dash")drawDash();
+ else if(view.tab==="map")drawMap();
+ else if(view.tab==="code")view.id?drawProgLesson(view.id):drawCodeList();
+ else if(view.tab==="eng")view.id?drawEngLesson(view.id):drawEngList();
+ else if(view.tab==="shop")drawShop();
+ else drawWords();}
+
+/* ============ DASHBOARD ============ */
+function pct(){let done=0,total=PROG.length*2+ENG.length;
+ PROG.forEach(m=>{const st=S.prog[m.id]||{};if(st.quiz>=Math.ceil(m.quiz.length*0.8))done++;if(st.practice)done++;});
+ ENG.forEach(l=>{if(engDone(l))done++;});
+ return Math.round(done/total*100);}
+function questState(){
+ const d=day(todayStr());
+ return [
+  {ic:"ph-code",tx:"Модуль кода или практика",done:d.code>0},
+  {ic:"ph-translate",tx:"Урок английского",done:d.eng>0},
+  {ic:"ph-cards",tx:"10 карточек слов",done:d.words>=10,extra:`${Math.min(d.words,10)}/10`}];}
+function weekRow(){
+ const labels=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+ const now=new Date();const dow=(now.getDay()+6)%7; // 0=Mon
+ let h="";
+ for(let i=0;i<7;i++){
+  const dt=new Date(now);dt.setDate(now.getDate()-dow+i);
+  const k=dt.toISOString().slice(0,10);
+  const active=((S.days[k]||{}).xp||0)>=30;
+  const isToday=k===todayStr();
+  const cls=active?"done":isToday?"active":"";
+  h+=`<div class="d"><div class="c ${cls}">${active?'<i class="ph-bold ph-check"></i>':""}</div><span class="l ${i>dow?"off":""}">${labels[i]}</span></div>`;}
+ return h;}
+function drawDash(){
+ srsIntroduce();checkLegendaries();
+ const d=day(todayStr()),q=questState(),qd=q.filter(x=>x.done).length;
+ const due=srsDue().length,errs=(S.errors||[]).length;
+ const p=pct(),known=Object.values(S.srs).filter(c=>c.learned).length;
+ let heat="";const now=new Date(),start=new Date(now);start.setDate(now.getDate()-(26*7-1)-now.getDay());
+ for(let i=0;i<26*7+now.getDay()+1;i++){const dt=new Date(start);dt.setDate(start.getDate()+i);
+  if(dt>now)break;const k=dt.toISOString().slice(0,10),x=(S.days[k]||{}).xp||0;
+  const cl=x>=90?"l3":x>=30?"l2":x>0?"l1":"";
+  heat+=`<i class="${cl}${k===todayStr()?" today":""}" title="${k}: ${x} XP"></i>`;}
+ main.innerHTML=`
+ <div class="hero">
+   <div class="char"><img src="assets/character.png" alt=""></div>
+   <span class="mono">Веб-разработка · Английский A2→B1</span>
+   <h1>ПРИВЕТ, ЭМИЛЬ. ПОГНАЛИ<i>.</i></h1>
+   <p>30–45 минут в день: модуль кода или урок английского + 10 карточек. Каждый день понемногу — так работает память.</p>
+   <div style="display:flex;gap:10px;flex-wrap:wrap;position:relative">
+     <button class="btn" onclick="view={tab:'code'};draw()"><i class="ph-bold ph-code"></i>Начать код</button>
+     <button class="btn secondary" onclick="view={tab:'eng'};draw()"><i class="ph-bold ph-translate"></i>Английский</button>
+   </div>
+ </div>
+ <div class="grid">
+  <div class="widget">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="fireicon ${S.streak>0?"":"cold"}"><i class="ph-bold ph-fire"></i></div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span class="mono">Streak</span>
+        <span class="counter">${S.streak} <small>дн.</small></span>
+      </div>
+      <span class="pill ${S.freezes>0?"acid":""}" style="margin-left:auto"><i class="ph-bold ph-snowflake"></i>${S.freezes}</span>
+    </div>
+    <div class="week">${weekRow()}</div>
+    <span class="muted">День засчитывается от 30 XP. Каждые 7 дней — +1 заморозка</span>
+  </div>
+  <div class="widget">
+    <div class="wlabel"><i class="ph-bold ph-chart-line-up"></i><span class="mono">Общий прогресс</span></div>
+    <span class="bignum">${p}<small>%</small></span>
+    <div class="pbar"><div style="width:${p}%"></div></div>
+    <span class="muted">Выучено слов прочно: ${known} из ${VOCAB.length}</span>
+  </div>
+  <div class="widget">
+    <div class="wlabel"><i class="ph-bold ph-target"></i><span class="mono">Квест дня ${qd}/3</span></div>
+    ${q.map(x=>`<div class="qrow ${x.done?"done":""}"><i class="ph-bold ${x.done?"ph-check-fat":"ph-circle"}"></i><span class="grow">${x.tx}</span><span class="mono" style="color:inherit">${x.done?"":(x.extra||"")}</span></div>`).join("")}
+    <span class="muted">Закрой все три — бонус +25 XP</span>
+  </div>
+ </div>
+ <div class="grid" style="grid-template-columns:1fr 1fr">
+  <div class="widget">
+    <div class="wlabel"><i class="ph-bold ph-play"></i><span class="mono">Сегодня стоит сделать</span></div>
+    ${due?`<div class="qrow"><i class="ph-bold ph-cards"></i><span class="grow">Слова к повторению: <b style="color:var(--text-1)">${due}</b></span><button class="btn sm" onclick="view={tab:'words'};draw()">Повторить</button></div>`:""}
+    ${errs?`<div class="qrow"><i class="ph-bold ph-arrows-clockwise"></i><span class="grow">Ошибки к повторению: <b style="color:var(--text-1)">${errs}</b></span><button class="btn sm secondary" onclick="startErrors()">Разобрать</button></div>`:""}
+    <div class="qrow"><i class="ph-bold ph-shuffle"></i><span class="grow">Микс дня: код + английский вперемешку${d.mix?' · <b style="color:var(--acid)">сделан</b>':''}</span><button class="btn sm ${d.mix?"secondary":""}" onclick="startMix()">${d.mix?"Ещё раз":"Начать"}</button></div>
+    <div class="qrow"><i class="ph-bold ph-flag"></i><span class="grow">Следующий шаг на карте</span><button class="btn sm secondary" onclick="view={tab:'map'};draw()">Открыть</button></div>
+  </div>
+  <div class="widget">
+    <div class="wlabel"><i class="ph-bold ph-calendar-blank"></i><span class="mono">Активность · полгода</span></div>
+    <div class="heat">${heat}</div>
+    <span class="muted">Не разрывай цепь: ярче клетка — больше XP</span>
+  </div>
+ </div>`;
+ if(toastLater){toast(toastLater);toastLater=null;}
+ if(qd===3&&!d.bonus){d.bonus=true;save();addXP(25,"квест дня закрыт");addCoins(20,"квест дня");confetti(1.5);}
+ showWelcome();
+}
+
+/* ============ MAP ============ */
+function resChip(r){const href=r[1]==="yt"?ytURL(r[2]):r[2];const ic=r[1]==="yt"?"ph-youtube-logo":"ph-globe";
+ return `<a class="reschip" href="${href}" target="_blank" rel="noopener"><i class="ph-bold ${ic}"></i>${r[0]}</a>`;}
+function drawMap(){
+ let curSet=false;
+ const cards=BLOCKS.map(b=>{
+  const done=blockDone(b);
+  const current=!done&&!curSet; if(current)curSet=true;
+  const state=done?"done":current?"current":"locked";
+  const statusPill=done?'<span class="pill ok"><i class="ph-bold ph-check-fat"></i>Пройдено</span>'
+    :current?'<span class="pill acid"><i class="ph-bold ph-play"></i>Ты здесь</span>'
+    :'<span class="pill"><i class="ph-bold ph-lock-simple"></i>Скоро</span>';
+  let steps;
+  if(b.lessons){
+   steps=b.lessons.map(id=>{const m=PROG.find(x=>x.id===id);const d=progDone(m);
+    return `<div class="mstep ${d?"done":""}" onclick="view={tab:'code',id:'${id}'};draw()"><i class="ph-bold ${d?"ph-check-circle":"ph-circle"}"></i><span>${m.title}</span></div>`;}).join("");
+  } else {
+   steps=b.topics.map(t=>`<div class="mstep locked"><i class="ph-bold ph-circle"></i><span>${t}</span></div>`).join("");
+  }
+  return `<div class="blockcard ${state}">
+   <div class="bhead"><span class="bnum">${b.n}</span><div style="flex:1"><div class="btitle">${b.title}</div></div>${statusPill}</div>
+   <div class="bsteps">${steps}</div>
+   <div class="bproject"><i class="ph-bold ph-flag-checkered"></i><span><b>Проект:</b> ${b.project}</span></div>
+   <div class="breslabel"><span class="mono">Что смотреть</span></div>
+   <div class="bres">${b.res.map(resChip).join("")}</div></div>`;
+ }).join("");
+ const eng=`<div class="blockcard"><div class="bhead"><span class="bnum" style="color:var(--fire)">EN</span><div style="flex:1"><div class="btitle">Английский A2 → B1</div></div><span class="pill fire"><i class="ph-bold ph-translate"></i>Параллельно</span></div>
+   <div class="bsteps">${ENG.map(l=>{const d=engDone(l);return `<div class="mstep ${d?"done":""}" onclick="view={tab:'eng',id:'${l.id}'};draw()"><i class="ph-bold ${d?"ph-check-circle":"ph-circle"}"></i><span>${l.title}</span></div>`;}).join("")}</div>
+   <div class="bproject"><i class="ph-bold ph-flag-checkered"></i><span>Цель: читать документацию и проходить собеседование на английском</span></div></div>`;
+ main.innerHTML=`<div class="section-head"><span class="mono">Дорожная карта · до junior</span>
+  <h1 class="disp">Твой путь</h1>
+  <span class="muted">6 блоков по порядку. Проходи код и английский параллельно — так знания закрепляются лучше.</span></div>
+  <div class="blocklist">${cards}${eng}</div>
+  <div class="widget" style="margin-top:16px">
+   <div class="wlabel"><i class="ph-bold ph-lightbulb"></i><span class="mono">Как учиться эффективно</span></div>
+   <p style="margin:0">30–45 минут в день: один микроурок + карточки. Держим ~80% успеха. Довести 3–5 проектов до конца важнее, чем пройти побольше тем — на рынке 2026 берут за работающие проекты.</p>
+   <p style="margin:0;color:var(--text-2);font-size:var(--fs-small)"><b style="color:var(--text-1)">Пропусти пока:</b> второй фреймворк (Vue / Angular), Redux, глубокий Next.js, Docker, алгоритмы LeetCode. Всё это — после первой работы.</p>
+   <p style="margin:0;color:var(--text-2);font-size:var(--fs-small)">Прошёл блок? Скажи Claude «я прошёл блок» — добавлю следующий блок уроков и задач прямо сюда.</p>
+  </div>`;}
+
+/* ============ QUIZ ENGINE ============ */
+function quizHTML(qs,prefix){
+ return qs.map((q,i)=>{
+  if(q.t==="fill")return `<div class="q" id="${prefix}${i}"><div class="qt">${i+1}. ${q.q}</div><input type="text" class="tf" id="${prefix}${i}in" ${q.w?`style="width:${q.w}px"`:""} placeholder="впиши ответ"><div class="explain"><i class="ph-bold ph-lightbulb"></i><span>${q.e}</span></div></div>`;
+  const ord=q.o.map((_,j)=>j);for(let k=ord.length-1;k>0;k--){const m=Math.floor(Math.random()*(k+1));[ord[k],ord[m]]=[ord[m],ord[k]];}
+  return `<div class="q" id="${prefix}${i}"><div class="qt">${i+1}. ${q.q}</div><div class="opts">${ord.map(j=>`<label class="opt" data-j="${j}"><input type="radio" name="${prefix}${i}" value="${j}"><span>${esc(q.o[j])}</span><i class="ph-bold ph-check-fat st"></i></label>`).join("")}</div><div class="explain"><i class="ph-bold ph-lightbulb"></i><span>${q.e}</span></div></div>`;}).join("");}
+function esc(s){return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function checkQuiz(qs,prefix,errKind,errId){
+ let score=0;
+ qs.forEach((q,i)=>{const el=document.getElementById(prefix+i);el.classList.add("checked");let ok=false;
+  if(q.t==="fill"){const inp=document.getElementById(prefix+i+"in");
+   const v=(inp.value||"").trim().toLowerCase().replace(/\s+/g," ");
+   ok=q.a.some(a=>v===a.toLowerCase()||v.includes(a.toLowerCase()));
+   inp.classList.add(ok?"okv":"badv");}
+  else{const sel=el.querySelector("input:checked");const pick=sel?+sel.value:-1;ok=pick===q.a;
+   el.querySelectorAll(".opt").forEach(lab=>{const j=+lab.dataset.j;
+    if(j===q.a)lab.classList.add("correct");
+    else if(j===pick){lab.classList.add("wrongpick");lab.querySelector(".st").className="ph-bold ph-x st";}
+    lab.querySelector("input").disabled=true;});}
+  if(ok){score++;addXP(2);}
+  else if(errKind){S.errors=S.errors||[];if(!S.errors.some(e=>e.k===errKind&&e.id===errId&&e.i===i))S.errors.push({k:errKind,id:errId,i:i});}});
+ save();return score;}
+
+/* ============ CODE SECTION ============ */
+function drawCodeList(){
+ main.innerHTML=`<div class="section-head"><span class="mono">Путь до junior</span>
+ <h1 class="disp">Программирование</h1>
+ <span class="muted">Иди по порядку: теория → тест → практика в редакторе. Тест засчитывается от 80%.</span></div>
+ <div class="rowlist">`+
+ PROG.map((m,i)=>{const st=S.prog[m.id]||{};
+  return `<div class="lrow" onclick="view={tab:'code',id:'${m.id}'};draw()">
+   <span class="num" ${progDone(m)?'style="color:var(--acid)"':""}>${String(i+1).padStart(2,"0")}</span>
+   <div class="mid"><span class="t">${m.title}</span><div class="pills">
+    ${st.quiz!=null?`<span class="pill ok"><i class="ph-bold ph-check-fat"></i>Тест ${st.quiz}/${m.quiz.length}</span>`:'<span class="pill">Тест не пройден</span>'}
+    ${st.practice?'<span class="pill acid"><i class="ph-bold ph-code"></i>Практика сдана</span>':'<span class="pill">Практика</span>'}</div></div>
+   <i class="ph-bold ph-arrow-right arr"></i></div>`;}).join("")+`</div>`;}
+function drawProgLesson(id){
+ const m=PROG.find(x=>x.id===id),idx=PROG.indexOf(m);
+ main.innerHTML=`
+ <button class="backlink" onclick="view={tab:'code'};draw()"><i class="ph-bold ph-arrow-left"></i>Все модули</button>
+ <div class="section-head" style="padding-top:0"><span class="mono">Модуль ${String(idx+1).padStart(2,"0")}</span>
+ <h1 class="disp">${m.title}</h1></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-brain"></i><span class="mono">Теория</span></div><div class="theory">${m.theory}</div></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-target"></i><span class="mono">Тест · ${m.quiz.length} вопросов</span></div>
+  ${quizHTML(m.quiz,"pq")}
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn" onclick="finishProgQuiz('${id}')">Проверить</button><div id="quizRes" class="verdict"></div></div></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-code"></i><span class="mono">Практика</span></div><p style="margin:0">${m.practice.task}</p>
+  <textarea class="editor" id="code">${m.practice.starter.replace(/</g,"&lt;")}</textarea>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+   <button class="btn" onclick="runCode('${m.practice.type}')"><i class="ph-bold ph-play"></i>Запустить</button>
+   <button class="btn secondary" onclick="checkPractice('${id}')">Проверить задание</button>
+   <div id="pracRes" class="verdict"></div></div>
+  <iframe class="preview" id="preview"></iframe></div>
+ ${noteWidget("m:"+id)}`;}
+function finishProgQuiz(id){const m=PROG.find(x=>x.id===id);const s=checkQuiz(m.quiz,"pq","prog",id);
+ const st=S.prog[id]||(S.prog[id]={});const first=st.quiz==null;const prevBest=first?null:st.quiz;
+ if(first||s>st.quiz)st.quiz=s;save();
+ const need=Math.ceil(m.quiz.length*0.8),r=document.getElementById("quizRes");
+ r.className="verdict "+(s>=need?"ok":"no");
+ if(s>=need){r.textContent=`${s}/${m.quiz.length} · Засчитано`;day(todayStr()).code=1;addXP(20,"урок кода");confetti(1);
+  if(prevBest==null||prevBest<need)addCoins(10,"урок пройден");
+  if(s===m.quiz.length&&prevBest!==m.quiz.length){addCoins(5,"идеальный тест");tryDrop();}}
+ else r.textContent=`${s}/${m.quiz.length}. Перечитай теорию и попробуй ещё раз (нужно ${need}).`;save();}
+function runCode(type){
+ const c=document.getElementById("code").value,f=document.getElementById("preview");
+ if(type==="html"){f.srcdoc=c;}
+ else{const safe=c.replace(/<\/script/gi,"<\\/script");
+  f.srcdoc=`<body style="font-family:Consolas,monospace;background:#0B0D0C;color:#D9E2DA;padding:12px;margin:0"><pre id="out" style="white-space:pre-wrap;margin:0"></pre><script>
+   const out=document.getElementById("out");
+   console.log=(...a)=>{out.textContent+=a.map(x=>typeof x==="object"?JSON.stringify(x):String(x)).join(" ")+"\\n";};
+   window.onerror=m=>{out.textContent+="Ошибка: "+m+"\\n";};
+  <\/script><script>${safe}<\/script><script>if(!out.textContent)out.textContent="(ничего не выведено — добавь console.log)";<\/script></body>`;}}
+function checkPractice(id){
+ const m=PROG.find(x=>x.id===id),c=document.getElementById("code").value,r=document.getElementById("pracRes");
+ if(m.practice.check(c)){const st=S.prog[id]||(S.prog[id]={});
+  if(!st.practice){st.practice=true;day(todayStr()).code=1;addXP(30,"практика сдана");addCoins(10,"практика");confetti(1.5);}
+  save();r.className="verdict ok";r.textContent="Задание сдано. Отличная работа.";}
+ else{r.className="verdict no";r.textContent="Пока не всё: "+m.practice.hint;}}
+
+/* ============ ENGLISH SECTION ============ */
+const ENG_BLOCKS=[
+ {n:"01",title:"Фундамент: времена, A2 → B1",lessons:["l1","l2","l3","l4"],
+  project:"Уверенно рассказать о себе и своих целях на английском",
+  res:[["Полиглот — Дмитрий Петров","yt","Полиглот английский Дмитрий Петров 16 уроков"],["Английский по плейлистам","yt","Английский по плейлистам Ирина Колосова"],["BBC Learning English","url","https://www.bbc.co.uk/learningenglish"],["British Council","url","https://learnenglish.britishcouncil.org"]]},
+ {n:"02",title:"Закрепление B1",topics:["Present Perfect и прошедшие времена","Артикли: a / the / без артикля","Предлоги места и времени","Частотные phrasal verbs","Сравнения прилагательных"],
+  project:"Читать простые новости и короткие тексты",
+  res:[["British Council — грамматика","url","https://learnenglish.britishcouncil.org/grammar"],["News in Levels","url","https://www.newsinlevels.com"],["Reverso Context","url","https://context.reverso.net"],["Anki — слова","url","https://apps.ankiweb.net"]]},
+ {n:"03",title:"Беглость B1 → B2",topics:["Все Perfect + Past Perfect","Условные предложения (0–3)","Модальные глаголы и вероятность","Пассив, reported speech","Письмо: сообщения и письма"],
+  project:"Смотреть видео и подкасты чуть выше уровня",
+  res:[["Веди English","yt","Веди English грамматика английский"],["English with Lucy","yt","English with Lucy grammar"],["mmmEnglish","yt","mmmEnglish phrasal verbs"],["YouGlish","url","https://youglish.com"]]},
+ {n:"04",title:"Английский для IT",topics:["IT-лексика: bug, commit, deploy, merge","Чтение документации (MDN, React)","Code review, pull request, standup","Собеседование junior на английском"],
+  project:"Пройти техническое собеседование на английском",
+  res:[["English4Devs","url","https://english4devs.tech"],["english4it.com","url","https://www.english4it.com"],["Speak Tech English","url","https://speaktechenglish.com"],["MDN — чтение","url","https://developer.mozilla.org/en-US/docs/Web/JavaScript"]]}
+];
+function engBlockDone(b){return b.lessons?b.lessons.every(id=>engDone(ENG.find(l=>l.id===id))):false;}
+function drawEngList(){
+ let curSet=false;
+ const cards=ENG_BLOCKS.map(b=>{
+  const done=engBlockDone(b);
+  const current=!done&&!curSet; if(current)curSet=true;
+  const state=done?"done":current?"current":"locked";
+  const statusPill=done?'<span class="pill ok"><i class="ph-bold ph-check-fat"></i>Пройдено</span>'
+    :current?'<span class="pill acid"><i class="ph-bold ph-play"></i>Ты здесь</span>'
+    :'<span class="pill"><i class="ph-bold ph-lock-simple"></i>Скоро</span>';
+  let steps;
+  if(b.lessons){steps=b.lessons.map(id=>{const l=ENG.find(x=>x.id===id);const d=engDone(l);const st=S.eng[id]||{};
+   return `<div class="mstep ${d?"done":""}" onclick="view={tab:'eng',id:'${id}'};draw()"><i class="ph-bold ${d?"ph-check-circle":"ph-circle"}"></i><span>${l.title}${st.best!=null?` · ${st.best}/${l.ex.length}`:""}</span></div>`;}).join("");}
+  else {steps=b.topics.map(t=>`<div class="mstep locked"><i class="ph-bold ph-circle"></i><span>${t}</span></div>`).join("");}
+  return `<div class="blockcard ${state}">
+   <div class="bhead"><span class="bnum" style="color:var(--fire)">${b.n}</span><div style="flex:1"><div class="btitle">${b.title}</div></div>${statusPill}</div>
+   <div class="bsteps">${steps}</div>
+   <div class="bproject"><i class="ph-bold ph-flag-checkered"></i><span><b>Цель:</b> ${b.project}</span></div>
+   <div class="breslabel"><span class="mono">Что смотреть</span></div>
+   <div class="bres">${b.res.map(resChip).join("")}</div></div>`;
+ }).join("");
+ main.innerHTML=`<div class="section-head"><span class="mono">A2 → B1 → IT English</span>
+  <h1 class="disp">Английский</h1>
+  <span class="muted">Твой уровень — A2. Первый блок построен на твоих ошибках из теста, дальше — до уверенного B1 и английского для работы.</span></div>
+  <div class="blocklist">${cards}</div>
+  <div class="widget" style="margin-top:16px">
+   <div class="wlabel"><i class="ph-bold ph-lightbulb"></i><span class="mono">Как учить эффективно</span></div>
+   <p style="margin:0">Каждый день: 10 карточек слов (раздел «Слова») + один урок или 15–20 минут видео/чтения чуть выше уровня. Читай много — это твой самый сильный канал.</p>
+   <p style="margin:0;color:var(--text-2);font-size:var(--fs-small)"><b style="color:var(--text-1)">Метод:</b> слова учи в контексте предложений (не списком), повторяй за аудио вслух (shadowing), веди словарик новых слов из чтения.</p>
+  </div>`;}
+function drawEngLesson(id){
+ const l=ENG.find(x=>x.id===id),idx=ENG.indexOf(l);
+ main.innerHTML=`
+ <button class="backlink" onclick="view={tab:'eng'};draw()"><i class="ph-bold ph-arrow-left"></i>Все уроки</button>
+ <div class="section-head" style="padding-top:0"><span class="mono">Урок ${String(idx+1).padStart(2,"0")} · Грамматика</span>
+ <h1 class="disp">${l.title}</h1></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-brain"></i><span class="mono">Теория</span></div><div class="theory">${l.theory}</div></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-target"></i><span class="mono">Упражнения · ${l.ex.length}</span></div>
+  ${quizHTML(l.ex,"eq")}
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn" onclick="finishEng('${id}')">Проверить</button><div id="engRes" class="verdict"></div></div></div>
+ ${noteWidget("e:"+id)}`;}
+function finishEng(id){const l=ENG.find(x=>x.id===id);const s=checkQuiz(l.ex,"eq","eng",id);
+ const st=S.eng[id]||(S.eng[id]={});const prevBest=st.best==null?null:st.best;
+ if(st.best==null||s>st.best)st.best=s;save();
+ const need=Math.ceil(l.ex.length*0.75),r=document.getElementById("engRes");
+ r.className="verdict "+(s>=need?"ok":"no");
+ if(s>=need){r.textContent=`${s}/${l.ex.length} · Засчитано`;day(todayStr()).eng=1;addXP(20,"урок английского");confetti(1);
+  if(prevBest==null||prevBest<need)addCoins(10,"урок пройден");
+  if(s===l.ex.length&&prevBest!==l.ex.length){addCoins(5,"идеальный тест");tryDrop();}}
+ else r.textContent=`${s}/${l.ex.length}. Посмотри объяснения и попробуй снова (нужно ${need}).`;save();}
+
+/* ============ ERRORS REVIEW ============ */
+function startErrors(){
+ const errs=(S.errors||[]).slice(0,8);
+ if(!errs.length){toast("Ошибок к повторению нет");return;}
+ const qs=errs.map(e=>{const src=e.k==="prog"?PROG.find(x=>x.id===e.id).quiz:ENG.find(x=>x.id===e.id).ex;return src[e.i];});
+ main.innerHTML=`<button class="backlink" onclick="view={tab:'dash'};draw()"><i class="ph-bold ph-arrow-left"></i>Дашборд</button>
+ <div class="section-head" style="padding-top:0"><span class="mono">Retrieval practice</span>
+ <h1 class="disp">Повторение ошибок</h1>
+ <span class="muted">Вопросы, где ты ошибался. Ответишь верно — вопрос уйдёт из очереди.</span></div>
+ <div class="widget">${quizHTML(qs,"er")}
+ <div style="display:flex;align-items:center;gap:14px"><button class="btn" onclick="finishErrors()">Проверить</button><div id="erRes" class="verdict"></div></div></div>`;
+ window._errBatch=errs;}
+function finishErrors(){
+ const errs=window._errBatch,qs=errs.map(e=>{const src=e.k==="prog"?PROG.find(x=>x.id===e.id).quiz:ENG.find(x=>x.id===e.id).ex;return src[e.i];});
+ let cleared=0;
+ qs.forEach((q,i)=>{const el=document.getElementById("er"+i);el.classList.add("checked");let ok=false;
+  if(q.t==="fill"){const inp=document.getElementById("er"+i+"in");
+   const v=(inp.value||"").trim().toLowerCase().replace(/\s+/g," ");
+   ok=q.a.some(a=>v===a.toLowerCase()||v.includes(a.toLowerCase()));inp.classList.add(ok?"okv":"badv");}
+  else{const sel=el.querySelector("input:checked");const pick=sel?+sel.value:-1;ok=pick===q.a;
+   el.querySelectorAll(".opt").forEach(lab=>{const j=+lab.dataset.j;
+    if(j===q.a)lab.classList.add("correct");
+    else if(j===pick){lab.classList.add("wrongpick");lab.querySelector(".st").className="ph-bold ph-x st";}
+    lab.querySelector("input").disabled=true;});}
+  if(ok){cleared++;S.errors=S.errors.filter(e=>!(e.k===errs[i].k&&e.id===errs[i].id&&e.i===errs[i].i));addXP(3);}});
+ save();const r=document.getElementById("erRes");r.className="verdict ok";
+ r.textContent=`Закрыто: ${cleared}/${qs.length}. В очереди: ${(S.errors||[]).length}`;
+ if(cleared===qs.length&&cleared>0){confetti(1);addCoins(5,"очередь ошибок закрыта");}}
+
+/* ============ WORDS (SRS) ============ */
+function speak(text){try{const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+function speakWord(){const w=wq&&wq[wi];if(w)speak(w);}
+let wq=null,wi=0;
+function drawWords(){
+ srsIntroduce();
+ if(!wq){wq=srsDue().map(v=>v[0]);wi=0;}
+ const learned=Object.values(S.srs).filter(c=>c.learned).length;
+ const inWork=Object.keys(S.srs).length;
+ if(wi>=wq.length){
+  main.innerHTML=`<div class="widget centercol" style="padding:40px 24px">
+  <span class="mono">Интервальные повторения</span>
+  <h1 class="disp">${wq.length?"Все карточки повторены":"Сегодня повторять нечего"}</h1>
+  <span class="muted">В работе: ${inWork}/${VOCAB.length} слов · выучено прочно: ${learned}</span>
+  <span class="muted" style="max-width:460px;text-align:center">Система показывает слово прямо перед тем, как ты его забудешь: интервалы 1 → 3 → 7 → 16 → 35 дней. Ошибся — слово вернётся раньше.</span>
+  <button class="btn secondary" onclick="wq=null;view={tab:'dash'};draw()">На дашборд</button></div>`;return;}
+ const w=VOCAB.find(v=>v[0]===wq[wi]);
+ const card=S.srs[w[0]];
+ if(card&&card.reps>=2&&wi%2===1){
+  const escRe=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  let exB=w[2];w[0].replace(/^to /,"").split(" ").forEach(p=>{exB=exB.replace(new RegExp("\\b"+escRe(p),"ig"),"___");});
+  main.innerHTML=`<div class="centercol" style="padding-top:12px">
+  <span class="mono">Карточка ${wi+1} / ${wq.length} · Режим: впиши сам</span>
+  <h1 class="disp">Слова</h1>
+  <div class="widget centercol" style="width:440px;max-width:100%;padding:30px 24px">
+   <span class="mono" style="color:var(--fire)">Вспомни и впиши по-английски</span>
+   <span style="font-family:var(--font-display);font-weight:800;font-size:26px;color:var(--acid)">${w[1]}</span>
+   <span class="muted">${exB}</span>
+   <input class="tf" id="wIn" placeholder="english word" style="text-align:center" autocomplete="off" onkeydown="if(event.key==='Enter')checkTyped()">
+   <div class="verdict" id="wRes"></div>
+   <div id="wBtns" style="display:flex;gap:10px"><button class="btn" onclick="checkTyped()">Проверить</button></div>
+  </div>
+  <span class="muted">Вспомнить и написать самому — сильнее, чем узнать среди вариантов</span></div>`;
+  return;}
+ main.innerHTML=`<div class="centercol" style="padding-top:12px">
+ <span class="mono">Карточка ${wi+1} / ${wq.length} · Сегодня повторено: ${day(todayStr()).words}</span>
+ <h1 class="disp">Слова</h1>
+ <div class="flash" id="fc" onclick="this.classList.toggle('flipped')">
+  <div class="flash-inner">
+   <div class="face front"><span class="en">EN</span><span class="w">${w[0]}</span></div>
+   <div class="face back"><span class="ru">${w[1]}</span><span class="ex">${w[2]}</span></div>
+  </div></div>
+ <span class="muted">Вспомни перевод до переворота — потом нажми на карту</span>
+ <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+  <button class="btn secondary" onclick="speakWord()"><i class="ph-bold ph-speaker-high"></i>Произнести</button>
+  <button class="btn" onclick="answerWord(true)"><i class="ph-bold ph-check-fat"></i>Знаю</button>
+  <button class="btn secondary" onclick="answerWord(false)"><i class="ph-bold ph-arrows-clockwise"></i>Ещё учу</button>
+ </div></div>`;}
+function answerWord(ok){
+ const w=wq[wi];srsAnswer(w,ok);
+ const d=day(todayStr());d.words++;if(ok){addXP(1);if(S.srs[w].step>=3)addCoins(2);}save();
+ wi++;if(d.words===10)confetti(1);
+ draw();}
+function checkTyped(){
+ const w=VOCAB.find(v=>v[0]===wq[wi]);
+ const inp=document.getElementById("wIn");if(inp.disabled)return;
+ const norm=s=>(s||"").trim().toLowerCase().replace(/^to /,"").replace(/\s+/g," ");
+ const ok=norm(inp.value)===norm(w[0]);
+ inp.disabled=true;inp.classList.add(ok?"okv":"badv");
+ const r=document.getElementById("wRes");r.className="verdict "+(ok?"ok":"no");
+ r.textContent=ok?"Верно!":`Правильно: ${w[0]}`;
+ if(ok)addXP(2);
+ document.getElementById("wBtns").innerHTML=`<button class="btn" onclick="finishTyped(${ok})">Дальше</button>`;
+ speak(w[0]);}
+function finishTyped(ok){
+ const w=wq[wi];srsAnswer(w,ok);
+ const d=day(todayStr());d.words++;if(ok&&S.srs[w].step>=3)addCoins(2);save();
+ wi++;if(d.words===10)confetti(1);
+ draw();}
+
+/* ============ ECONOMY + NFT COLLECTION ============ */
+const RARITY={c:{n:"Common",col:"#9BA39D"},r:{n:"Rare",col:"#4DA3FF"},e:{n:"Epic",col:"#C24DFF"},l:{n:"Legendary",col:"#FFD34D"}};
+const NFTS=[
+ {id:"n1",img:"3 na 4 влево, задумчивый.jpg",name:"Задумчивый",r:"c",price:60},
+ {id:"n2",img:"3 na 4, смотрит на телефон.jpg",name:"Чекает чарты",r:"c",price:60},
+ {id:"n3",img:"Кухня — утро.jpg",name:"Утро на кухне",r:"c",price:60},
+ {id:"n4",img:"SHIMPA V SPALNE.jpg",name:"Chill Zone",r:"c",price:60},
+ {id:"n5",img:"3 na 4 вправо, уверенный.jpg",name:"Уверенный",r:"r",price:150},
+ {id:"n6",img:"SHAMP IN PK ROOM.jpg",name:"За сетапом",r:"r",price:150},
+ {id:"n7",img:"Со спины, капюшон.jpg",name:"Hoodie Mode",r:"r",price:150},
+ {id:"n8",img:"SHAMP IN KITCHEN.jpg",name:"Шеф",r:"r",price:150},
+ {id:"n9",img:"Trading Cave — за мониторами.jpg",name:"Trading Cave",r:"e",price:350},
+ {id:"n10",img:"SHIMPA NA KRYSHE.jpg",name:"На крыше",r:"e",price:350},
+ {id:"n11",img:"REKT — слеза.jpg",name:"REKT",r:"e",price:350},
+ {id:"n12",img:"Крыша — победа.jpg",name:"Победа",r:"l",cond:"Закрой весь Блок 1: все тесты и практика",check:()=>blockDone(BLOCKS[0])},
+ {id:"n13",img:"Профиль, вид снизу, героический.jpg",name:"Герой",r:"l",cond:"Стрик 30 дней подряд",check:()=>S.streak>=30},
+ {id:"n14",img:"Крыша — спокойный, закат.jpg",name:"Закат",r:"l",cond:"Выучи прочно все слова из «Слов»",check:()=>Object.values(S.srs).filter(c=>c.learned).length>=VOCAB.length}
+];
+function addCoins(n,label){S.coins=(S.coins||0)+n;save();drawHeader();if(label)toast(`+${n} монет · ${label}`);}
+function spend(n){if((S.coins||0)<n){toast("Не хватает монет — зарабатывай на идеальных тестах");return false;}S.coins-=n;save();drawHeader();return true;}
+function buyNFT(id){const c=NFTS.find(n=>n.id===id);if(!c||S.owned.includes(id))return;
+ if(!spend(c.price))return;S.owned.push(id);save();confetti(1.5);toast(`Карточка «${c.name}» теперь твоя`);drawShop();}
+function buyFreeze(){if(S.freezes>=3){toast("Максимум 3 заморозки");return;}if(!spend(120))return;S.freezes++;save();toast("+1 заморозка стрика");drawShop();}
+function buyX2(){const t=todayStr();if(S.boost===t){toast("x2 XP уже активен сегодня");return;}if(!spend(100))return;S.boost=t;save();confetti(1);toast("x2 XP до конца дня!");drawShop();}
+function tryDrop(){
+ const pool=NFTS.filter(n=>(n.r==="c"||n.r==="r")&&!S.owned.includes(n.id));
+ if(!pool.length||Math.random()>=0.25)return;
+ const c=pool[Math.floor(Math.random()*pool.length)];S.owned.push(c.id);save();
+ setTimeout(()=>{confetti(2);toast(`ДРОП! За идеальный тест выпала карточка «${c.name}»`);},900);}
+function checkLegendaries(){
+ NFTS.filter(n=>n.r==="l"&&!S.owned.includes(n.id)&&n.check()).forEach(n=>{
+  S.owned.push(n.id);save();confetti(2.5);toast(`ЛЕГЕНДАРКА получена: «${n.name}»`);});}
+function drawShop(){
+ checkLegendaries();
+ const cards=NFTS.map(c=>{
+  const own=S.owned.includes(c.id),col=RARITY[c.r].col;
+  return `<div class="nft ${own?"":"locked"}" style="${own?`border-color:${col};box-shadow:0 0 18px ${col}33`:""}">
+   <img src="${encodeURI(c.img)}" alt="${c.name}" loading="lazy">
+   <div class="meta"><span class="rar" style="color:${col}">${RARITY[c.r].n}</span><span class="nm">${c.name}</span>
+   ${own?'<span class="pill ok" style="width:fit-content"><i class="ph-bold ph-check-fat"></i>В коллекции</span>'
+    :c.r==="l"?`<span class="muted">${c.cond}</span>`
+    :`<button class="btn sm" onclick="buyNFT('${c.id}')" ${(S.coins||0)<c.price?"disabled":""}><i class="ph-bold ph-coins"></i>${c.price}</button>`}
+   </div></div>`;}).join("");
+ main.innerHTML=`<div class="section-head"><span class="mono">Монеты за мастерство · NFT-коллекция EMIL</span>
+  <h1 class="disp">Коллекция</h1>
+  <span class="muted">Собрано: ${S.owned.length}/${NFTS.length}. Монеты капают за качество, а не за время: идеальные тесты, закрытые квесты, слова, которые помнишь неделями. Идеальный тест — шанс 25% на дроп карточки.</span></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-lightning"></i><span class="mono">Усиления</span></div>
+  <div class="qrow"><i class="ph-bold ph-snowflake"></i><span class="grow">Заморозка стрика (у тебя ${S.freezes}/3)</span><button class="btn sm secondary" onclick="buyFreeze()" ${(S.coins||0)<120||S.freezes>=3?"disabled":""}><i class="ph-bold ph-coins"></i>120</button></div>
+  <div class="qrow"><i class="ph-bold ph-rocket-launch"></i><span class="grow">x2 XP до конца дня${S.boost===todayStr()?' · <b style="color:var(--acid)">активен</b>':''}</span><button class="btn sm secondary" onclick="buyX2()" ${(S.coins||0)<100||S.boost===todayStr()?"disabled":""}><i class="ph-bold ph-coins"></i>100</button></div>
+ </div>
+ <div class="nftgrid">${cards}</div>
+ <span class="muted" style="padding:0 6px">Легендарки не продаются — только за реальные достижения. Так и должно быть.</span>`;}
+
+/* ============ WELCOME / EXPORT / NOTES ============ */
+function showWelcome(){
+ const t=todayStr();if(S.lastWelcome===t)return;
+ const y=new Date();y.setDate(y.getDate()-1);const yk=y.toISOString().slice(0,10);
+ const yxp=(S.days[yk]||{}).xp||0,due=srsDue().length,errs=(S.errors||[]).length;
+ const ov=document.createElement("div");ov.className="overlay";ov.id="welc";
+ ov.innerHTML=`<div class="wcard">
+  <span class="mono">${t}</span>
+  <h1 class="disp" style="font-size:26px">Привет, Эмиль<span style="color:var(--acid)">.</span></h1>
+  <div class="qrow"><i class="ph-bold ph-fire"></i><span class="grow">Стрик</span><b>${S.streak} дн.</b></div>
+  <div class="qrow"><i class="ph-bold ph-lightning"></i><span class="grow">Вчера набрано</span><b>${yxp} XP</b></div>
+  <div class="qrow"><i class="ph-bold ph-cards"></i><span class="grow">Слов к повторению</span><b>${due}</b></div>
+  ${errs?`<div class="qrow"><i class="ph-bold ph-arrows-clockwise"></i><span class="grow">Ошибок в очереди</span><b>${errs}</b></div>`:""}
+  <div class="qrow"><i class="ph-bold ph-alarm"></i><span class="grow">Моё время занятий</span><input type="time" class="tf" style="width:120px;padding:7px 10px" id="anchorIn" value="${S.anchor||"19:00"}"></div>
+  <span class="muted">План «в это время я открываю тренажёр» почти удваивает шанс дойти до цели (наука: d≈0.65).</span>
+  <button class="btn" onclick="closeWelcome()">Начать день</button></div>`;
+ document.body.appendChild(ov);}
+function closeWelcome(){
+ const v=document.getElementById("anchorIn");if(v&&v.value)S.anchor=v.value;
+ S.lastWelcome=todayStr();save();
+ const el=document.getElementById("welc");if(el)el.remove();}
+function exportProgress(){
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"}));
+ a.download=`emil-hub-progress-${todayStr()}.json`;a.click();toast("Прогресс скачан — храни файл как бэкап");}
+function importProgress(inp){
+ const f=inp.files&&inp.files[0];if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{try{const d=JSON.parse(r.result);if(typeof d.xp!=="number")throw 0;
+  S=Object.assign({},S,d);save();toast("Прогресс загружен");draw();}
+  catch(e){toast("Файл не похож на сохранённый прогресс");}};
+ r.readAsText(f);inp.value="";}
+function noteWidget(key){const k=key.replace(":","_");
+ return `<div class="widget"><div class="wlabel"><i class="ph-bold ph-chat-teardrop-text"></i><span class="mono">Объясни своими словами</span></div>
+ <p class="muted" style="margin:0">Перескажи тему, как будто объясняешь другу. Объяснение — самый сильный способ понять самому. +5 XP за первое объяснение (от 20 символов).</p>
+ <textarea class="editor" style="min-height:90px" id="note_${k}">${esc(S.notes[key]||"")}</textarea>
+ <div style="display:flex;gap:10px;align-items:center"><button class="btn secondary sm" onclick="saveNote('${key}')">Сохранить</button><span class="muted" id="noteRes_${k}"></span></div></div>`;}
+function saveNote(key){const k=key.replace(":","_");
+ const v=document.getElementById("note_"+k).value.trim();
+ const first=!S.notes[key]&&v.length>=20;
+ S.notes[key]=v;save();
+ document.getElementById("noteRes_"+k).textContent="Сохранено";
+ if(first)addXP(5,"объяснил своими словами");}
+
+/* ============ MIX OF THE DAY + SENTENCE BUILDER ============ */
+function sbInit(sent){
+ const words=sent.replace(/[.!?]/g,"").split(" ").filter(Boolean);
+ window._sb={target:words,bank:words.map((w,i)=>({w,i})),ans:[]};
+ for(let k=window._sb.bank.length-1;k>0;k--){const m=Math.floor(Math.random()*(k+1));[window._sb.bank[k],window._sb.bank[m]]=[window._sb.bank[m],window._sb.bank[k]];}}
+function sbRender(){const s=window._sb;
+ document.getElementById("sbAns").innerHTML=s.ans.length?s.ans.map((o,k)=>`<button class="chip" style="border-color:var(--acid)" onclick="sbBack(${k})">${esc(o.w)}</button>`).join(""):'<span class="muted">Нажимай на слова внизу — собирай предложение сюда</span>';
+ document.getElementById("sbBank").innerHTML=s.bank.length?s.bank.map((o,k)=>`<button class="chip" onclick="sbPick(${k})">${esc(o.w)}</button>`).join(""):'<span class="muted">Все слова использованы</span>';}
+function sbPick(k){const s=window._sb;s.ans.push(s.bank.splice(k,1)[0]);sbRender();}
+function sbBack(k){const s=window._sb;s.bank.push(s.ans.splice(k,1)[0]);sbRender();}
+function startMix(){
+ const pool=[];
+ PROG.forEach(m=>{if((S.prog[m.id]||{}).quiz!=null)m.quiz.forEach(q=>pool.push(q));});
+ ENG.forEach(l=>{if((S.eng[l.id]||{}).best!=null)l.ex.forEach(q=>pool.push(q));});
+ if(pool.length<5){toast("Микс откроется после первого урока кода и английского");return;}
+ const qs=(S.errors||[]).slice(0,2).map(e=>(e.k==="prog"?PROG.find(x=>x.id===e.id).quiz:ENG.find(x=>x.id===e.id).ex)[e.i]);
+ let guard=0;
+ while(qs.length<5&&guard++<300){const q=pool[Math.floor(Math.random()*pool.length)];if(!qs.includes(q))qs.push(q);}
+ for(let k=qs.length-1;k>0;k--){const m=Math.floor(Math.random()*(k+1));[qs[k],qs[m]]=[qs[m],qs[k]];}
+ window._mix=qs;
+ const v=VOCAB[Math.floor(Math.random()*VOCAB.length)];sbInit(v[2]);window._sbWord=v;
+ main.innerHTML=`<button class="backlink" onclick="view={tab:'dash'};draw()"><i class="ph-bold ph-arrow-left"></i>Дашборд</button>
+ <div class="section-head" style="padding-top:0"><span class="mono">Interleaving · вперемешку запоминается прочнее</span>
+ <h1 class="disp">Микс дня</h1>
+ <span class="muted">Код и английский вперемешку + собери предложение. Первыми идут вопросы, где ты ошибался.</span></div>
+ <div class="widget">${quizHTML(qs,"mx")}
+  <div class="q"><div class="qt">${qs.length+1}. Собери предложение со словом «${esc(v[0])}» (${esc(v[1])})</div>
+  <div class="sbrow" id="sbAns"></div><div class="sbrow" id="sbBank" style="border-style:solid"></div>
+  <div class="verdict" id="sbV"></div></div>
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn" id="mxBtn" onclick="finishMix()">Проверить</button><div id="mxRes" class="verdict"></div></div></div>`;
+ sbRender();window.scrollTo(0,0);}
+function finishMix(){
+ const b=document.getElementById("mxBtn");if(b.disabled)return;b.disabled=true;
+ const qs=window._mix,s0=checkQuiz(qs,"mx");
+ const sb=window._sb,okSb=sb.ans.map(o=>o.w).join(" ")===sb.target.join(" ");
+ const v=document.getElementById("sbV");v.className="verdict "+(okSb?"ok":"no");
+ v.textContent=okSb?"Собрано верно":"Правильно: "+window._sb.target.join(" ");
+ if(okSb)addXP(4);
+ const s=s0+(okSb?1:0),total=qs.length+1,need=Math.ceil(total*0.8);
+ const d=day(todayStr()),r=document.getElementById("mxRes");
+ r.className="verdict "+(s>=need?"ok":"no");
+ r.textContent=`${s}/${total}`+(s>=need?" · Засчитано":" · Нужно "+need);
+ if(s>=need&&!d.mix){d.mix=1;addXP(15,"микс дня");
+  if(s===total){addCoins(12,"идеальный микс");tryDrop();}else addCoins(6,"микс дня");
+  confetti(1);}
+ save();}
+
+/* ============ INIT v2 ============ */
+srsIntroduce();
+draw();
+if(toastLater){toast(toastLater);toastLater=null;}
+</script>
+</body>
+</html>

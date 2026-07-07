@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EMIL — Тренажёр</title>
+<meta name="theme-color" content="#070808">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
@@ -87,7 +92,12 @@ header{display:flex;align-items:center;justify-content:space-between;gap:16px;fl
 .hero h1 i{color:var(--acid);font-style:normal}
 .hero p{margin:0;max-width:440px;color:var(--text-2);position:relative}
 .hero .mono{color:var(--emerald);position:relative}
-@media(max-width:720px){.hero .char{opacity:.35}.hero h1{font-size:32px}}
+@media(max-width:720px){.hero .char{opacity:.35}.hero h1{font-size:32px}
+ .navtabs{position:fixed;left:10px;right:10px;bottom:10px;top:auto;width:auto;justify-content:space-between;gap:2px;padding:8px 6px calc(8px + env(safe-area-inset-bottom));border-radius:var(--r-l);backdrop-filter:blur(14px);background:rgba(20,23,22,.92)}
+ .navtabs button{flex:1;flex-direction:column;gap:3px;padding:7px 4px;font-size:10px;border-radius:14px}
+ .navtabs button i{font-size:19px}
+ .wrap{padding-bottom:130px}
+}
 /* grid */
 .grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px}
 @media(max-width:860px){.grid{grid-template-columns:1fr}}
@@ -252,6 +262,7 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:98}
     <span class="pill acid" id="lvlTxt">LVL 1</span>
     <div class="xpbar"><div id="xpFill" style="width:0%"></div></div>
     <span class="mono" id="xpTxt" style="color:var(--text-2)">0 XP</span>
+    <span class="pill iconbtn" id="cloudBtn" title="Облачная синхронизация" onclick="cloudClick()"><i class="ph-bold ph-cloud-slash"></i></span>
     <span class="pill iconbtn" title="Скачать прогресс (резервная копия)" onclick="exportProgress()"><i class="ph-bold ph-download-simple"></i></span>
     <label class="pill iconbtn" title="Загрузить прогресс"><i class="ph-bold ph-upload-simple"></i><input type="file" accept=".json,application/json" style="display:none" onchange="importProgress(this)"></label>
   </div>
@@ -262,13 +273,14 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:98}
 <div class="toast" id="toast"></div>
 <canvas id="fx"></canvas>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 "use strict";
 /* ============ STATE ============ */
 const KEY="emil_hub_v1";
 let S={xp:0,freezes:2,streak:0,lastActive:null,days:{},prog:{},eng:{},srs:{},errors:[],introduced:0,lastIntro:null,coins:0,owned:[],boost:null,anchor:null,notes:{},lastWelcome:null};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function save(){S.ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}schedulePush();}
 const todayStr=()=>new Date().toISOString().slice(0,10);
 function day(d){return S.days[d]||(S.days[d]={xp:0,code:0,eng:0,words:0});}
 
@@ -1279,6 +1291,81 @@ function finishMix(){
   if(s===total){addCoins(12,"идеальный микс");tryDrop();}else addCoins(6,"микс дня");
   confetti(1);}
  save();}
+
+/* ============ CLOUD SYNC (Supabase) ============ */
+var SB_URL="https://qdwdybqbdjfsjvtxsxfp.supabase.co";
+var SB_KEY="sb_publishable_bow0yhdcgOEhWRcBOm84Xg_G9v6Oohs";
+var sbc=null,sbUser=null,sbTimer=null,sbPulling=false;
+function schedulePush(){
+ if(!sbc||!sbUser||sbPulling)return;
+ clearTimeout(sbTimer);sbTimer=setTimeout(pushCloud,1500);}
+async function pushCloud(){
+ if(!sbc||!sbUser)return;
+ try{const{error}=await sbc.from("progress").upsert({user_id:sbUser.id,state:S,updated_at:new Date().toISOString()});
+  if(error)throw error;setCloudIcon("ok");}
+ catch(e){setCloudIcon("err");}}
+async function pullCloud(){
+ if(!sbc||!sbUser)return;
+ try{const{data,error}=await sbc.from("progress").select("state").eq("user_id",sbUser.id).maybeSingle();
+  if(error)throw error;
+  const cloud=data&&data.state;
+  if(cloud&&typeof cloud.xp==="number"&&(cloud.ts||0)>(S.ts||0)){
+   sbPulling=true;S=Object.assign({},S,cloud);save();sbPulling=false;
+   draw();toast("Прогресс подтянут из облака");}
+  else pushCloud();
+  setCloudIcon("ok");}
+ catch(e){sbPulling=false;setCloudIcon("err");}}
+function setCloudIcon(st){const b=document.getElementById("cloudBtn");if(!b)return;
+ b.classList.toggle("acid",st==="ok");
+ b.title=st==="ok"?"Облако подключено — прогресс синхронизируется":st==="err"?"Ошибка синхронизации — нажми, чтобы проверить":"Облачная синхронизация — нажми, чтобы включить";
+ b.innerHTML=`<i class="ph-bold ${st==="ok"?"ph-cloud-check":st==="err"?"ph-cloud-warning":"ph-cloud-slash"}"></i>`;}
+function cloudClick(){
+ const old=document.getElementById("cloudOv");if(old)old.remove();
+ const ov=document.createElement("div");ov.className="overlay";ov.id="cloudOv";
+ if(sbUser){
+  ov.innerHTML=`<div class="wcard">
+   <span class="mono">Облако подключено</span>
+   <h1 class="disp" style="font-size:22px">${esc(sbUser.email||"")}</h1>
+   <p class="muted" style="margin:0">Прогресс автоматически сохраняется в облако. Зайди с любого устройства под этой почтой — всё подтянется.</p>
+   <button class="btn" onclick="document.getElementById('cloudOv').remove()">Отлично</button>
+   <button class="btn secondary" onclick="cloudLogout()">Выйти из облака</button></div>`;}
+ else{
+  ov.innerHTML=`<div class="wcard">
+   <span class="mono">Облачная синхронизация</span>
+   <h1 class="disp" style="font-size:22px">Вход по ссылке<span style="color:var(--acid)">.</span></h1>
+   <p class="muted" style="margin:0">Введи почту — придёт письмо со ссылкой для входа. Пароль не нужен. После входа прогресс хранится в облаке и доступен с любого устройства.</p>
+   <input type="email" class="tf" id="cloudEmail" placeholder="you@example.com" autocomplete="email">
+   <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn" onclick="cloudLogin()">Отправить ссылку</button>
+    <button class="btn secondary" onclick="document.getElementById('cloudOv').remove()">Позже</button></div>
+   <span class="muted" id="cloudMsg"></span></div>`;}
+ document.body.appendChild(ov);}
+async function cloudLogin(){
+ const em=(document.getElementById("cloudEmail").value||"").trim();
+ const msg=document.getElementById("cloudMsg");
+ if(!/.+@.+\..+/.test(em)){msg.textContent="Похоже, это не почта — проверь адрес";return;}
+ msg.textContent="Отправляю…";
+ try{const{error}=await sbc.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+location.pathname}});
+  if(error)throw error;
+  msg.textContent="Готово! Открой письмо и перейди по ссылке — вернёшься сюда уже со входом.";}
+ catch(e){msg.textContent="Не получилось отправить: "+(e.message||e);}}
+async function cloudLogout(){
+ try{await sbc.auth.signOut();}catch(e){}
+ sbUser=null;setCloudIcon("off");
+ const el=document.getElementById("cloudOv");if(el)el.remove();
+ toast("Вышел из облака. Прогресс продолжает сохраняться на этом устройстве");}
+(function(){
+ if(!window.supabase)return;
+ sbc=window.supabase.createClient(SB_URL,SB_KEY);
+ sbc.auth.onAuthStateChange((ev,session)=>{
+  sbUser=session&&session.user||null;
+  setCloudIcon(sbUser?"ok":"off");
+  if(sbUser&&(ev==="SIGNED_IN"||ev==="INITIAL_SESSION"))pullCloud();});
+})();
+
+/* ============ PWA ============ */
+if("serviceWorker"in navigator&&location.protocol==="https:")
+ navigator.serviceWorker.register("sw.js").catch(()=>{});
 
 /* ============ INIT v2 ============ */
 srsIntroduce();

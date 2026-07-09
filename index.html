@@ -853,10 +853,22 @@ function weekRow(){
   const cls=active?"done":isToday?"active":"";
   h+=`<div class="d"><div class="c ${cls}">${active?'<i class="ph-bold ph-check"></i>':""}</div><span class="l ${i>dow?"off":""}">${labels[i]}</span></div>`;}
  return h;}
+function nextAction(){
+ const due=srsDue().length;
+ if(due>0)return{label:`Повторить слова · ${due}`,icon:"ph-cards",go:()=>{view={tab:'words'};draw();}};
+ if((S.errors||[]).length>0)return{label:`Разобрать ошибки · ${S.errors.length}`,icon:"ph-arrows-clockwise",go:()=>{view={tab:'dash'};draw();startErrors();}};
+ const nm=PROG.find(m=>!progDone(m));
+ if(nm)return{label:"Продолжить код",icon:"ph-code",go:()=>{view={tab:'code',id:nm.id};draw();}};
+ const nl=ENG.find(l=>!engDone(l));
+ if(nl)return{label:"Продолжить английский",icon:"ph-translate",go:()=>{view={tab:'eng',id:nl.id};draw();}};
+ return{label:"Учить новые слова",icon:"ph-cards",go:()=>{view={tab:'words'};draw();}};
+}
+function doNext(){nextAction().go();}
 function drawDash(){
  srsIntroduce();checkLegendaries();
  const d=day(todayStr()),q=questState(),qd=q.filter(x=>x.done).length;
  const due=srsDue().length,errs=(S.errors||[]).length;
+ const na=nextAction();
  const p=pct(),known=Object.values(S.srs).filter(c=>c.learned).length;
  let heat="";const now=new Date(),start=new Date(now);start.setDate(now.getDate()-(26*7-1)-now.getDay());
  for(let i=0;i<26*7+now.getDay()+1;i++){const dt=new Date(start);dt.setDate(start.getDate()+i);
@@ -870,7 +882,8 @@ function drawDash(){
    <h1>ПРИВЕТ, ЭМИЛЬ. ПОГНАЛИ<i>.</i></h1>
    <p>30–45 минут в день: модуль кода или урок английского + 10 карточек. Каждый день понемногу — так работает память.</p>
    <div style="display:flex;gap:10px;flex-wrap:wrap;position:relative">
-     <button class="btn" onclick="view={tab:'code'};draw()"><i class="ph-bold ph-code"></i>Начать код</button>
+     <button class="btn" onclick="doNext()"><i class="ph-bold ${na.icon}"></i>${na.label}</button>
+     <button class="btn secondary" onclick="view={tab:'code'};draw()"><i class="ph-bold ph-code"></i>Код</button>
      <button class="btn secondary" onclick="view={tab:'eng'};draw()"><i class="ph-bold ph-translate"></i>Английский</button>
    </div>
  </div>
@@ -1394,23 +1407,51 @@ function cloudClick(){
  else{
   ov.innerHTML=`<div class="wcard">
    <span class="mono">Облачная синхронизация</span>
-   <h1 class="disp" style="font-size:22px">Вход по ссылке<span style="color:var(--acid)">.</span></h1>
-   <p class="muted" style="margin:0">Введи почту — придёт письмо со ссылкой для входа. Пароль не нужен. После входа прогресс хранится в облаке и доступен с любого устройства.</p>
-   <input type="email" class="tf" id="cloudEmail" placeholder="you@example.com" autocomplete="email" style="width:100%">
-   <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <button class="btn" onclick="cloudLogin()">Отправить ссылку</button>
-    <button class="btn secondary" onclick="document.getElementById('cloudOv').remove()">Позже</button></div>
+   <h1 class="disp" style="font-size:22px">Вход по коду<span style="color:var(--acid)">.</span></h1>
+   <p class="muted" style="margin:0" id="cloudHint">Введи почту — пришлём 6-значный код. Пароль и ссылки не нужны. После входа прогресс хранится в облаке и доступен с любого устройства.</p>
+   <div id="cloudStep1">
+    <input type="email" class="tf" id="cloudEmail" placeholder="you@example.com" autocomplete="email" inputmode="email" style="width:100%;margin-bottom:10px" onkeydown="if(event.key==='Enter')cloudLogin()">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+     <button class="btn" onclick="cloudLogin()">Получить код</button>
+     <button class="btn secondary" onclick="document.getElementById('cloudOv').remove()">Позже</button></div>
+   </div>
+   <div id="cloudStep2" style="display:none">
+    <input type="text" class="tf" id="cloudCode" placeholder="• • • • • •" inputmode="numeric" autocomplete="one-time-code" maxlength="6" style="width:100%;letter-spacing:.35em;text-align:center;font-size:22px;margin-bottom:10px" onkeydown="if(event.key==='Enter')cloudVerify()">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+     <button class="btn" onclick="cloudVerify()">Войти</button>
+     <button class="btn secondary" onclick="cloudBackToEmail()">Другая почта</button></div>
+   </div>
    <span class="muted" id="cloudMsg"></span></div>`;}
  document.body.appendChild(ov);}
 async function cloudLogin(){
  const em=(document.getElementById("cloudEmail").value||"").trim();
  const msg=document.getElementById("cloudMsg");
  if(!/.+@.+\..+/.test(em)){msg.textContent="Похоже, это не почта — проверь адрес";return;}
- msg.textContent="Отправляю…";
- try{const{error}=await sbc.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.href.split('#')[0]}});
+ msg.textContent="Отправляю код…";
+ try{const{error}=await sbc.auth.signInWithOtp({email:em,options:{shouldCreateUser:true,emailRedirectTo:location.href.split('#')[0]}});
   if(error)throw error;
-  msg.textContent="Готово! Открой письмо и перейди по ссылке — вернёшься сюда уже со входом.";}
+  window._cloudEmail=em;
+  document.getElementById("cloudStep1").style.display="none";
+  document.getElementById("cloudStep2").style.display="block";
+  document.getElementById("cloudHint").innerHTML=`Код отправлен на <b style="color:var(--text-1)">${esc(em)}</b>. Открой письмо и введи 6 цифр — код действует около часа.`;
+  const cc=document.getElementById("cloudCode");if(cc)cc.focus();
+  msg.textContent="";}
  catch(e){msg.textContent="Не получилось отправить: "+(e.message||e);}}
+async function cloudVerify(){
+ const token=(document.getElementById("cloudCode").value||"").replace(/\D/g,"");
+ const msg=document.getElementById("cloudMsg");
+ if(token.length<6){msg.textContent="Введи 6 цифр из письма";return;}
+ msg.textContent="Проверяю…";
+ try{const{error}=await sbc.auth.verifyOtp({email:window._cloudEmail,token:token,type:"email"});
+  if(error)throw error;
+  const el=document.getElementById("cloudOv");if(el)el.remove();
+  toast("Вход выполнен — прогресс теперь в облаке");}
+ catch(e){msg.textContent="Код не подошёл или истёк — проверь письмо: "+(e.message||e);}}
+function cloudBackToEmail(){
+ const s2=document.getElementById("cloudStep2"),s1=document.getElementById("cloudStep1");
+ if(s2)s2.style.display="none";if(s1)s1.style.display="block";
+ const h=document.getElementById("cloudHint");if(h)h.textContent="Введи почту — пришлём 6-значный код.";
+ const m=document.getElementById("cloudMsg");if(m)m.textContent="";}
 async function cloudLogout(){
  try{await sbc.auth.signOut();}catch(e){}
  sbUser=null;setCloudIcon("off");

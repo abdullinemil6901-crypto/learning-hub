@@ -1,5 +1,5 @@
 /* EMIL — Тренажёр: service worker (офлайн + быстрая загрузка) */
-const CACHE = "emil-hub-v1";
+const CACHE = "emil-hub-v2";
 const SHELL = [
   "./",
   "index.html",

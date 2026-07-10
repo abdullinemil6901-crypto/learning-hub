@@ -1,5 +1,5 @@
 /* EMIL — Тренажёр: service worker v3 (офлайн + CDN-кэш + обновления) */
-const CACHE = "emil-hub-v8";
+const CACHE = "emil-hub-v9";
 const SHELL = [
   "./",
   "index.html",
@@ -66,7 +66,22 @@ self.addEventListener("fetch", e => {
     return;
   }
 
-  // Свои файлы: отдаём из кэша сразу, в фоне обновляем копию
+  // Приложение (страница и его код) — network-first: онлайн всегда свежее,
+  // офлайн — из кэша. Так обновления видны сразу, без второй перезагрузки.
+  const isApp = e.request.mode === "navigate"
+    || /\/(index\.html|content\.js)$/.test(url.pathname)
+    || url.pathname === "/" || url.pathname.endsWith("/learning-hub/");
+  if (isApp) {
+    e.respondWith(
+      fetch(e.request).then(resp => {
+        if (resp && resp.ok) { const clone = resp.clone(); caches.open(CACHE).then(c => c.put(e.request, clone)); }
+        return resp;
+      }).catch(() => caches.match(e.request).then(hit => hit || caches.match("index.html")))
+    );
+    return;
+  }
+
+  // Прочие свои файлы (картинки и т.п.): из кэша сразу, в фоне обновляем
   e.respondWith(
     caches.match(e.request).then(hit => {
       const net = fetch(e.request).then(resp => {

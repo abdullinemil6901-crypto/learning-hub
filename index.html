@@ -281,6 +281,12 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:98}
 .scenedots i{width:7px;height:7px;border-radius:50%;background:var(--hairline-strong)}
 .scenedots i.on{background:var(--acid)}
 .chart{width:100%;height:auto;display:block;margin:2px 0 4px}
+.labdots{display:flex;gap:5px;margin-left:auto}
+.labdot{width:9px;height:9px;border-radius:50%;background:var(--surface-3);border:1px solid var(--hairline-strong)}
+.labdot.on{background:var(--acid);border-color:var(--acid)}
+.labdot.cur{border-color:var(--acid);box-shadow:0 0 0 3px var(--acid-dim)}
+.diagram{width:100%;height:auto;display:block;margin:12px 0;background:var(--code-bg);border:1px solid var(--hairline);border-radius:var(--r-m)}
+.diagram text{font-family:var(--font-body)}
 .rings{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-around}
 .ringbox{display:flex;flex-direction:column;align-items:center;gap:4px}
 /* juice animations (off under body.anim-off / reduced-motion) */
@@ -897,6 +903,73 @@ function drawCodeList(){
     ${st.quiz!=null?`<span class="pill ok"><i class="ph-bold ph-check-fat"></i>Тест ${st.quiz}/${m.quiz.length}</span>`:'<span class="pill">Тест не пройден</span>'}
     ${st.practice?'<span class="pill acid"><i class="ph-bold ph-code"></i>Практика сдана</span>':'<span class="pill">Практика</span>'}</div></div>
    <i class="ph-bold ph-arrow-right arr"></i></div>`;}).join("")+`</div>`;}
+/* ============ PRACTICE LAB v2: код запускается, проверяется РЕЗУЛЬТАТ ============ */
+/* Задание с настоящей проверкой:
+   HTML — рендерим в песочнице и смотрим получившуюся страницу (DOM/раскладку).
+   JS   — выполняем код и прогоняем тест-кейсы (как в Boot.dev): add(2,3) → 5. */
+function labProg(id){const st=S.prog[id]||(S.prog[id]={});st.lab=st.lab||{};return st.lab;}
+function labStep(id,m){const lp=labProg(id);for(let i=0;i<m.lab.length;i++){if(!(lp["p"+i]))return i;}return m.lab.length-1;}
+function labDone(m,id){const lp=labProg(id);return m.lab.every((_,i)=>lp["p"+i]);}
+/* запуск кода в изолированном iframe и проверка результата */
+function runLab(code,task){return new Promise(resolve=>{
+ const f=document.createElement("iframe");
+ f.setAttribute("sandbox","allow-scripts allow-same-origin");
+ f.style.cssText="position:fixed;left:-9999px;top:0;width:420px;height:640px;border:0";
+ document.body.appendChild(f);
+ let settled=false;const finish=r=>{if(settled)return;settled=true;try{f.remove();}catch(e){}resolve(r);};
+ const guard=setTimeout(()=>finish(task.tests.map(t=>({t:t.t,pass:false,err:"долго"}))),2500);
+ f.onload=()=>{setTimeout(()=>{clearTimeout(guard);
+  let res;
+  try{
+   if(task.type==="js"){const win=f.contentWindow;
+    res=task.tests.map(t=>{try{const got=win.eval(t.expr);
+     const ok=t.fn?!!t.fn(got):JSON.stringify(got)===JSON.stringify(t.expect);
+     return {t:t.t,pass:ok};}catch(e){return {t:t.t,pass:false};}});
+   }else{const doc=f.contentDocument,win=f.contentWindow;
+    res=task.tests.map(t=>{try{return {t:t.t,pass:!!t.fn(doc,win)};}catch(e){return {t:t.t,pass:false};}});}
+  }catch(e){res=task.tests.map(t=>({t:t.t,pass:false}));}
+  finish(res);
+ },task.type==="js"?40:60);};
+ if(task.type==="js"){f.srcdoc=`<!DOCTYPE html><body><script>try{\n${code}\n}catch(e){window.__err=(e&&e.message)||String(e);}<\/script></body>`;}
+ else{f.srcdoc=code;}
+});}
+function labRunPreview(id){const m=PROG.find(x=>x.id===id),task=m.lab[labStep(id,m)];
+ const code=document.getElementById("labCode").value,f=document.getElementById("labPrev");
+ if(task.type==="js"){const safe=code.replace(/<\/script/gi,"<\\/script");
+  f.srcdoc=`<body style="font-family:Consolas,monospace;background:#0B0D0C;color:#D9E2DA;padding:12px;margin:0"><pre id="o" style="white-space:pre-wrap;margin:0"></pre><script>const o=document.getElementById("o");console.log=(...a)=>{o.textContent+=a.map(x=>typeof x==="object"?JSON.stringify(x):String(x)).join(" ")+"\\n";};window.onerror=(m)=>{o.textContent+="Ошибка: "+m+"\\n";};<\/script><script>${safe}<\/script><script>if(!o.textContent)o.textContent="(добавь console.log, чтобы увидеть вывод)";<\/script></body>`;}
+ else f.srcdoc=code;}
+function labSaveDraft(id){const lp=labProg(id),m=PROG.find(x=>x.id===id),i=labStep(id,m);
+ lp["d"+i]=document.getElementById("labCode").value;save();}
+async function checkLab(id){const m=PROG.find(x=>x.id===id),i=labStep(id,m),task=m.lab[i];
+ const code=document.getElementById("labCode").value,r=document.getElementById("labRes");
+ r.className="verdict";r.textContent="Запускаю и проверяю…";
+ labRunPreview(id);
+ const results=await runLab(code,task);
+ results.forEach((res,k)=>{const row=document.getElementById("lt"+k);if(row){row.classList.toggle("done",res.pass);row.classList.toggle("fail",!res.pass);row.querySelector("i").className="ph-bold "+(res.pass?"ph-check-circle":"ph-x-circle");}});
+ const all=results.every(x=>x.pass);
+ if(all){const lp=labProg(id);if(!lp["p"+i]){lp["p"+i]=1;save();fbQuiz(true);
+   if(labDone(m,id)){const st=S.prog[id];const first=!st.practice;if(!st.practice){st.practice=true;day(todayStr()).code=1;save();if(first){addXP(30,"практика сдана");addCoins(10,"практика");confetti(1.5);}}
+    r.className="verdict ok";r.textContent="Все задания сделаны — практика пройдена!";setTimeout(()=>drawProgLesson(id),700);return;}
+   r.className="verdict ok";r.textContent="Задание зачтено! Дальше →";setTimeout(()=>drawProgLesson(id),700);return;}
+  r.className="verdict ok";r.textContent="Верно ✓";}
+ else{fbQuiz(false);r.className="verdict no";r.textContent="Пока не всё — смотри проверки ниже.";}}
+function labHTML(id){const m=PROG.find(x=>x.id===id);const lp=labProg(id);
+ const i=labStep(id,m),task=m.lab[i],allDone=labDone(m,id);
+ const passed=m.lab.filter((_,k)=>lp["p"+k]).length;
+ const dots=m.lab.map((_,k)=>`<i class="labdot ${lp["p"+k]?"on":k===i&&!allDone?"cur":""}"></i>`).join("");
+ const draft=(lp["d"+i]!=null?lp["d"+i]:task.starter);
+ const kindLabel={predict:"Предскажи",fix:"Почини",fill:"Допиши",build:"Собери сам",challenge:"Челлендж"}[task.kind]||"Задание";
+ return `<div class="widget"><div class="wlabel"><i class="ph-bold ph-flask"></i><span class="mono">Практика · задание ${i+1} из ${m.lab.length}</span><span class="labdots">${dots}</span></div>
+  ${allDone?`<div class="verdict ok" style="margin:0">Практика пройдена ✓ — можешь пересмотреть задания или идти дальше.</div>`:""}
+  <span class="pill acid" style="width:fit-content">${kindLabel}</span>
+  <div class="theory" style="margin:0">${task.prompt}</div>
+  <textarea class="editor" id="labCode" oninput="labSaveDraft('${id}')">${esc(draft)}</textarea>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+   <button class="btn secondary" onclick="labRunPreview('${id}')"><i class="ph-bold ph-play"></i>Запустить</button>
+   <button class="btn" onclick="checkLab('${id}')"><i class="ph-bold ph-check-fat"></i>Проверить</button>
+   <div id="labRes" class="verdict"></div></div>
+  <div class="pclist">${task.tests.map((t,k)=>`<div class="qrow" id="lt${k}"><i class="ph-bold ph-circle"></i><span class="grow">${esc(t.t)}</span></div>`).join("")}</div>
+  <iframe class="preview" id="labPrev"></iframe></div>`;}
 function drawProgLesson(id){
  const m=PROG.find(x=>x.id===id),idx=PROG.indexOf(m);
  main.innerHTML=`
@@ -907,14 +980,14 @@ function drawProgLesson(id){
  <div class="widget"><div class="wlabel"><i class="ph-bold ph-target"></i><span class="mono">Тест · ${m.quiz.length} вопросов</span></div>
   ${quizHTML(m.quiz,"pq")}
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn" onclick="finishProgQuiz('${id}')">Проверить</button><div id="quizRes" class="verdict"></div></div></div>
- <div class="widget"><div class="wlabel"><i class="ph-bold ph-code"></i><span class="mono">Практика</span></div><div class="theory" style="margin:0">${m.practice.task}</div>
+ ${m.lab?labHTML(id):`<div class="widget"><div class="wlabel"><i class="ph-bold ph-code"></i><span class="mono">Практика</span></div><div class="theory" style="margin:0">${m.practice.task}</div>
   ${pcHTML(m)}
   <textarea class="editor" id="code">${m.practice.starter.replace(/</g,"&lt;")}</textarea>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
    <button class="btn" onclick="runCode('${m.practice.type}')"><i class="ph-bold ph-play"></i>Запустить</button>
    <button class="btn secondary" onclick="checkPractice('${id}')">Проверить задание</button>
    <div id="pracRes" class="verdict"></div></div>
-  <iframe class="preview" id="preview"></iframe></div>
+  <iframe class="preview" id="preview"></iframe></div>`}
  ${noteWidget("m:"+id)}`;}
 function finishProgQuiz(id){const m=PROG.find(x=>x.id===id);const s=checkQuiz(m.quiz,"pq","prog",id);
  const st=S.prog[id]||(S.prog[id]={});const first=st.quiz==null;const prevBest=first?null:st.quiz;

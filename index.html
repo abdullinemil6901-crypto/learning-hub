@@ -500,7 +500,7 @@ function drawNav(){nav.innerHTML="";TABS.forEach(([id,l,ic])=>{const b=document.
 function draw(){drawNav();drawHeader();window.scrollTo(0,0);
  if(view.tab!=="words")wq=null;
  if(view.tab==="dash")drawDash();
- else if(view.tab==="map")drawStory();
+ else if(view.tab==="map")view.boss?drawBoss(view.boss):drawStory();
  else if(view.tab==="code")view.id?drawProgLesson(view.id):drawCodeList();
  else if(view.tab==="eng")view.id?drawEngLesson(view.id):drawEngList();
  else if(view.tab==="shop")drawShop();
@@ -649,15 +649,51 @@ function sceneNext(){const s=_scene;if(!s)return;
  const cb=s.cb;_scene=null;const ov=document.getElementById("sceneOv");if(ov)ov.remove();if(cb)cb();}
 function startQuest(id){const q=findQuest(id),open=()=>{view={tab:'code',id:id};draw();};
  if(q&&q.intro&&!storySeen('in:'+id)){storyMark('in:'+id);scene(q.intro,open);}else open();}
-function bossScene(id){const q=findQuest(id);if(q&&q.intro)scene(q.intro);}
+function bossDone(id){return !!(S.story&&S.story.done&&S.story.done[id]);}
+function bossReady(q){return (q.need||[]).every(id=>{const m=PROG.find(x=>x.id===id);return m&&progDone(m);});}
+function openBoss(id){const q=findQuest(id);if(!q)return;
+ if(q.intro&&!storySeen('in:'+id)){storyMark('in:'+id);scene(q.intro,()=>{view={tab:'map',boss:id};draw();});}
+ else{view={tab:'map',boss:id};draw();}}
+let _bossDraftT=null;
+function bossDraft(id){clearTimeout(_bossDraftT);_bossDraftT=setTimeout(()=>{S.story=S.story||{};S.story.draft=S.story.draft||{};S.story.draft[id]=document.getElementById('code').value;save();},800);}
+function grantCard(cardId){S.owned=S.owned||[];if(S.owned.includes(cardId))return;S.owned.push(cardId);save();const c=NFTS.find(x=>x.id===cardId);toast(c?`Карточка «${c.name}» — твоя!`:"Новая карточка!");}
+function drawBoss(id){
+ const q=findQuest(id);if(!q||!q.checks){view={tab:'map'};return drawStory();}
+ if(!bossReady(q)){view={tab:'map'};return drawStory();}
+ const done=bossDone(id);
+ const draft=(S.story&&S.story.draft&&S.story.draft[id])||q.starter||"";
+ main.innerHTML=`
+ <button class="backlink" onclick="view={tab:'map'};draw()"><i class="ph-bold ph-arrow-left"></i>К истории</button>
+ <div class="section-head" style="padding-top:0"><span class="mono">Босс-заказ${done?" · сдан":""}</span><h1 class="disp">${esc(q.t)}</h1></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-briefcase"></i><span class="mono">Бриф от заказчика</span></div><div class="theory" style="margin:0">${q.brief}</div></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-list-checks"></i><span class="mono">Критерии приёмки</span></div>
+  <div class="pclist" style="border:none;background:transparent;padding:0">${q.checks.map((c,k)=>`<div class="qrow ${done?"done":""}" id="bc${k}"><i class="ph-bold ${done?"ph-check-circle":"ph-circle"}"></i><span class="grow">${c.t}</span></div>`).join("")}</div></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-code"></i><span class="mono">Редактор · черновик сохраняется</span></div>
+  <textarea class="editor" id="code" oninput="bossDraft('${id}')">${esc(draft)}</textarea>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+   <button class="btn" onclick="runCode('${q.type}')"><i class="ph-bold ph-play"></i>Запустить</button>
+   <button class="btn ${done?"secondary":""}" onclick="checkBoss('${id}')"><i class="ph-bold ph-flag-checkered"></i>${done?"Проверить снова":"Сдать заказ"}</button>
+   <div id="bossRes" class="verdict ${done?"ok":""}">${done?"Заказ сдан ✓":""}</div></div>
+  <iframe class="preview" id="preview"></iframe></div>
+ <div class="widget"><span class="muted">Награда: ${q.reward.xp} XP · ${q.reward.coins} монет${q.reward.card?" · коллекционная карточка":""}. Собери всё из критериев — и заказ твой.</span></div>`;
+}
+function checkBoss(id){const q=findQuest(id),c=document.getElementById("code").value,r=document.getElementById("bossRes");
+ let all=true;q.checks.forEach((chk,k)=>{const ok=!!chk.fn(c);if(!ok)all=false;const row=document.getElementById("bc"+k);
+  if(row){row.classList.toggle("done",ok);row.classList.toggle("fail",!ok);row.querySelector("i").className="ph-bold "+(ok?"ph-check-circle":"ph-x-circle");}});
+ if(all){if(!bossDone(id))finishBoss(id);else{r.className="verdict ok";r.textContent="Всё на месте ✓";}}
+ else{r.className="verdict no";r.textContent="Пока не всё — смотри критерии выше.";}}
+function finishBoss(id){const q=findQuest(id);S.story=S.story||{};S.story.done=S.story.done||{};S.story.done[id]=1;day(todayStr()).code=1;save();
+ addXP(q.reward.xp,"босс-заказ");addCoins(q.reward.coins,"заказ сдан");if(q.reward.card)grantCard(q.reward.card);confetti(2.5);
+ const r=document.getElementById("bossRes");if(r){r.className="verdict ok";r.textContent="Заказ сдан ✓";}
+ if(q.outro){storyMark("out:"+id);scene(q.outro,()=>{view={tab:"map"};draw();});}}
 function storyCurId(){for(const a of STORY){if(a.locked)continue;for(const q of a.quests){if(q.id&&!q.boss){const m=PROG.find(x=>x.id===q.id);if(m&&!progDone(m))return q.id;}}}return null;}
 function drawStory(){
  const curId=storyCurId();
  const html=STORY.map(a=>{
   const nodes=a.quests.map(q=>{
    if(a.locked||q.locked)return `<div class="snode locked"><div class="dot"><i class="ph-bold ph-lock-simple"></i></div><div class="body"><div class="qt">${esc(q.t)}</div></div></div>`;
-   if(q.boss){const ready=(q.need||[]).every(id=>{const m=PROG.find(x=>x.id===id);return m&&progDone(m);});
-    return `<div class="snode boss ${ready?"":"locked"}" ${ready?`onclick="bossScene('${q.id}')"`:""}><div class="dot"><i class="ph-bold ph-flag-checkered"></i></div><div class="body"><div class="qt">${esc(q.t)}</div><div class="qs">${ready?"Готов к сдаче":"Пройди уроки акта"}</div></div></div>`;}
+   if(q.boss){const ready=bossReady(q),bdone=bossDone(q.id);const cls=bdone?"done":ready?"":"locked";
+    return `<div class="snode boss ${cls}" ${ready?`onclick="openBoss('${q.id}')"`:""}><div class="dot"><i class="ph-bold ${bdone?"ph-check-fat":"ph-flag-checkered"}"></i></div><div class="body"><div class="qt">${esc(q.t)}</div><div class="qs">${bdone?"Заказ сдан ✓":ready?"Готов к сдаче":"Пройди уроки акта"}</div></div></div>`;}
    const m=PROG.find(x=>x.id===q.id),done=m&&progDone(m),cur=q.id===curId,st=done?"done":cur?"current":"";
    return `<div class="snode ${st}" onclick="startQuest('${q.id}')"><div class="dot"><i class="ph-bold ${done?"ph-check-fat":cur?"ph-play":"ph-code"}"></i></div><div class="body"><div class="qt">${esc(q.t)}</div><div class="qs">${m?esc(m.title):""}</div></div></div>`;
   }).join("");
@@ -996,7 +1032,7 @@ function tryDrop(){
  const c=pool[Math.floor(Math.random()*pool.length)];S.owned.push(c.id);save();
  setTimeout(()=>{confetti(2);toast(`ДРОП! За идеальный тест выпала карточка «${c.name}»`);},900);}
 function checkLegendaries(){
- NFTS.filter(n=>n.r==="l"&&!S.owned.includes(n.id)&&n.check()).forEach(n=>{
+ NFTS.filter(n=>n.r==="l"&&!S.owned.includes(n.id)&&n.check&&n.check()).forEach(n=>{
   S.owned.push(n.id);save();confetti(2.5);toast(`ЛЕГЕНДАРКА получена: «${n.name}»`);});}
 function nftFallback(img){const d=document.createElement("div");d.className="nftph";d.innerHTML='<i class="ph-bold ph-image"></i>';img.replaceWith(d);}
 function drawShop(){

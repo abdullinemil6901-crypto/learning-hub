@@ -501,6 +501,142 @@ checks:[
  {t:"Внутри методов — стрелочные функции (=>)",fn:c=>/=>/.test(c)},
  {t:"Итог выведен через console.log(...)",fn:c=>/console\.log\s*\(/.test(c)}],
 hint:"Каркас: const total = prices.filter(p => p > 0).map(p => p * 0.9).reduce((sum, p) => sum + p, 0); console.log(\"К оплате: \" + total + \" руб.\");"}},
+{id:"m13",title:"Объекты глубже: this, деструктуризация, ?.",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> реальные данные приходят объектами — профиль пользователя, заказ, товар. Достанешь поле не так — приложение падает красной ошибкой прямо на глазах заказчика. Сегодня научишься вскрывать объекты аккуратно и безопасно.</p>
+
+<p><b>Объект</b> — набор «поле: значение». У него бывают <b>методы</b> — функции внутри объекта:</p>
+<pre class="demo">const player = {
+  name: "Эмиль",
+  level: 5,
+  hello() { return "Я " + this.name; }
+};
+console.log(player.hello());   // Я Эмиль</pre>
+<p>Разбор: <code>hello</code> — метод. Внутри него <code>this</code> — это «тот объект, у которого метод вызвали». Вызвали <code>player.hello()</code> — значит <code>this</code> = <code>player</code>, и <code>this.name</code> даёт «Эмиль». Простое правило: <b>кто слева от точки — тот и this</b>.</p>
+
+<p><b>Деструктуризация</b> — достать несколько полей одной строкой:</p>
+<pre class="demo">const { name, level } = player;
+console.log(name, level);   // Эмиль 5</pre>
+<p>Разбор: слева в фигурных скобках перечисляешь имена полей — и получаешь готовые переменные <code>name</code> и <code>level</code>. Это короче, чем <code>player.name</code>, <code>player.level</code> по отдельности. Так же можно доставать из массива, только через квадратные скобки: <code>const [first, second] = arr;</code>.</p>
+
+<p><b>Optional chaining</b> <code>?.</code> — безопасный доступ вглубь, когда поля может не быть:</p>
+<pre class="demo">const user = { name: "Аня" };
+console.log(user.address.city);    // 💥 ошибка: address — undefined
+console.log(user.address?.city);   // undefined, без падения</pre>
+<p>Разбор: обычная точка <code>user.address.city</code> роняет программу, если <code>address</code> нет. Знак <code>?.</code> говорит «если слева пусто — верни undefined и не падай». Рядом живёт <code>??</code> — «значение по умолчанию»: <code>user.address?.city ?? "не указан"</code> вернёт «не указан» вместо undefined.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">this в обычной стрелочной функции внутри объекта</span> → <span class="now">обычный метод hello() { ... }</span><br><span class="muted2">у стрелок нет своего this — для методов объекта пиши обычную функцию</span></span>
+<span class="fix"><span class="was">const name = player.name; const level = player.level;</span> → <span class="now">const { name, level } = player;</span><br><span class="muted2">деструктуризация делает то же самое одной строкой и читается чище</span></span>
+<span class="fix"><span class="was">user.address.city когда address может отсутствовать</span> → <span class="now">user.address?.city</span><br><span class="muted2">одна опечатка ?. спасает от «Cannot read properties of undefined»</span></span>`,
+quiz:[
+ {q:"Что такое this внутри метода объекта?",o:["Объект, у которого метод вызвали","Всегда window","Первый аргумент функции","Копия объекта"],a:0,e:"Кто слева от точки при вызове — тот и this."},
+ {t:"output",q:"Что выведет console.log?",code:"const o = { a: 1 };\nconsole.log(o.b);",o:["1","undefined","null","ошибка"],a:1,e:"Поля b нет — обращение к несуществующему полю даёт undefined (без падения)."},
+ {t:"cloze",q:"Дополни: достань name и level из player одной строкой",code:"const {0} name, level {1} = player;",gaps:["{","}"],e:"Деструктуризация: имена полей в фигурных скобках слева от =."},
+ {t:"bug",q:"В какой строке приложение упадёт, если address нет?",code:["const user = { name: 'Аня' };","console.log(user.name);","console.log(user.address.city);"],a:2,e:"user.address — undefined, а у undefined нельзя взять .city. Спасает user.address?.city."},
+ {q:"Что вернёт user.address?.city, если address отсутствует?",o:["Ошибку","undefined без падения","Пустую строку","null"],a:1,e:"?. возвращает undefined и не роняет программу."}],
+practice:{type:"js",
+task:`<p><b>Что делаем:</b> карточку игрока с методом и безопасным доступом к полю, которого может не быть.</p><p><b>Шаги:</b></p><ol><li>Создай объект player с полями name, level и методом (обычная функция, не стрелка), где через this и шаблонную строку соберёшь описание.</li><li>Достань name и level через деструктуризацию: const { name, level } = player;</li><li>Выведи через console.log результат метода и деструктурированные поля.</li><li>Попробуй достать поле, которого нет (например player.stats?.wins) через ?. и тоже выведи.</li></ol>`,
+starter:"// TODO: объект player с name, level и методом с this\n\n// TODO: деструктуризация const { name, level } = player;\n\n// TODO: console.log метода, полей и player.stats?.wins через ?.\n",
+checks:[
+ {t:"Есть деструктуризация const { ... } = ...",fn:c=>/\{[^}{]*\}\s*=/.test(c)},
+ {t:"Использован optional chaining ?.",fn:c=>/\?\./.test(c)},
+ {t:"В методе используется this.",fn:c=>/this\./.test(c)},
+ {t:"Результат выведен через console.log",fn:c=>/console\.log\s*\(/.test(c)}],
+hint:"const player={name:'Эмиль',level:5,card(){return `${this.name}, ур.${this.level}`}}; const {name,level}=player; console.log(player.card(), name, level, player.stats?.wins);"}},
+{id:"m14",title:"Строки и шаблоны: работа с текстом",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> весь интерфейс — это текст: имена, цены, сообщения, кнопки. Криво склеенная строка выглядит как непрофессионализм и в коде, и на экране. Сегодня научишься собирать текст чисто и приводить его в порядок.</p>
+
+<p><b>Шаблонные литералы</b> — строки в обратных кавычках, куда можно вставлять значения через <code>\${}</code>:</p>
+<pre class="demo">const name = "Эмиль", level = 5;
+const msg = \`Игрок \${name}, уровень \${level}\`;
+console.log(msg);   // Игрок Эмиль, уровень 5</pre>
+<p>Разбор: строка в обратных кавычках <code>\` \`</code> (клавиша над Tab). Внутри <code>\${name}</code> подставляется значение переменной прямо в текст. Сравни со старым способом через плюсы: <code>"Игрок " + name + ", уровень " + level</code> — легко потерять пробел или запутаться в кавычках. Шаблон читается как обычная фраза.</p>
+
+<p><b>Главные методы строк</b> — каждый возвращает <b>новую</b> строку, оригинал не меняется:</p>
+<table class="simple"><tr><th>Метод</th><th>Что делает</th><th>Пример</th></tr>
+<tr><td><code>toUpperCase()</code></td><td>ВСЁ заглавными</td><td>"код" → "КОД"</td></tr>
+<tr><td><code>trim()</code></td><td>убирает пробелы по краям</td><td>"  hi  " → "hi"</td></tr>
+<tr><td><code>includes(x)</code></td><td>есть ли подстрока (true/false)</td><td>"заказ".includes("каз") → true</td></tr>
+<tr><td><code>slice(0,1)</code></td><td>вырезать кусок по позициям</td><td>"код".slice(0,1) → "к"</td></tr>
+<tr><td><code>replace(a,b)</code></td><td>заменить</td><td>"1-2".replace("-","+") → "1+2"</td></tr></table>
+
+<p>Комбинируем — сделать первую букву имени заглавной:</p>
+<pre class="demo">const raw = "  эмиль ";
+const clean = raw.trim();                 // "эмиль"
+const nice = clean.slice(0,1).toUpperCase() + clean.slice(1);
+console.log(nice);   // Эмиль</pre>
+<p>Разбор: сначала <code>trim()</code> убирает пробелы. Потом <code>slice(0,1)</code> берёт первую букву и <code>toUpperCase()</code> делает её заглавной, а <code>slice(1)</code> — весь остаток строки; склеиваем плюсом. Это классический приём «капитализации», его просят на собеседованиях.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">"Привет " + name + "!"</span> → <span class="now">\`Привет \${name}!\`</span><br><span class="muted2">в шаблоне не потеряешь пробел и не запутаешься в кавычках</span></span>
+<span class="fix"><span class="was">str.toUpperCase (без скобок)</span> → <span class="now">str.toUpperCase()</span><br><span class="muted2">метод вызывают со скобками, иначе получишь саму функцию, а не результат</span></span>
+<span class="fix"><span class="was">ждать, что trim() изменит саму строку</span> → <span class="now">const clean = str.trim()</span><br><span class="muted2">методы строк возвращают новую строку — результат надо сохранить в переменную</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет console.log?",code:"const n = 3;\nconsole.log(\"Их \" + n + \"!\");",o:["Их 3!","Их n!","Их3!","ошибка"],a:0,e:"Плюс склеивает строку и число: получается «Их 3!»."},
+ {q:"Как правильно вставить переменную name в шаблонную строку?",o:["`Привет $name`","`Привет ${name}`","'Привет {name}'","\"Привет +name\""],a:1,e:"Внутри обратных кавычек значение вставляют через ${name}."},
+ {t:"cloze",q:"Дополни: обрезать пробелы и сделать ГРОМКО",code:"const clean = raw.{0}();\nconst loud = clean.{1}();",gaps:["trim","toUpperCase"],e:"trim() убирает пробелы по краям, toUpperCase() переводит в верхний регистр."},
+ {t:"pairs",q:"Соедини метод с результатом",pairs:[["'  hi  '.trim()","'hi'"],["'код'.toUpperCase()","'КОД'"],["'заказ'.includes('за')","true"],["'код'.slice(0,1)","'к'"]],e:"trim чистит края, toUpperCase поднимает регистр, includes проверяет подстроку, slice режет по позициям."},
+ {q:"Что вернёт 'hi'.toUpperCase(), а чему станет равна сама 'hi'?",o:["Вернёт 'HI', строка станет 'HI'","Вернёт 'HI', сама 'hi' не меняется","Изменит строку на 'HI', ничего не вернёт","Вернёт true"],a:1,e:"Методы строк возвращают новую строку, оригинал остаётся прежним."}],
+practice:{type:"js",
+task:`<p><b>Что делаем:</b> генератор приветствия, который наводит красоту в имени.</p><p><b>Шаги:</b></p><ol><li>Заведи переменные с сырым именем (с лишними пробелами) и уровнем.</li><li>Очисти имя: trim(), затем сделай первую букву заглавной через slice и toUpperCase.</li><li>Собери приветствие шаблонной строкой в обратных кавычках с \${}.</li><li>Выведи результат через console.log.</li></ol>`,
+starter:"const raw = \"  эмиль \";\nconst level = 5;\n\n// TODO: очисти имя (trim + первая буква заглавной через slice/toUpperCase)\n\n// TODO: собери приветствие шаблонной строкой с ${} и выведи через console.log\n",
+checks:[
+ {t:"Использована шаблонная строка с ${...}",fn:c=>/`[^`]*\$\{[^}]+\}/.test(c)},
+ {t:"Есть минимум два строковых метода",fn:c=>(c.match(/\.(toUpperCase|toLowerCase|includes|slice|replace|trim|split)\s*\(/g)||[]).length>=2},
+ {t:"Результат выведен через console.log",fn:c=>/console\.log\s*\(/.test(c)}],
+hint:"const clean=raw.trim(); const nice=clean.slice(0,1).toUpperCase()+clean.slice(1); console.log(`Привет, ${nice}! Уровень ${level}`);"}},
+{id:"m15",title:"Ошибки под контролем: try / catch / throw",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> интернет отваливается, пользователи вводят ерунду, сервер молчит. Код без защиты падает белым экраном — и заказчик видит «сломалось». Junior отличается от новичка именно тем, что его код <b>переживает</b> ошибку и показывает понятное сообщение.</p>
+
+<p><b>try / catch</b> — «попробуй, а если сломается — поймай»:</p>
+<pre class="demo">try {
+  const data = JSON.parse(text);   // может упасть
+  console.log(data.name);
+} catch (e) {
+  console.log("Не смог разобрать данные");
+}</pre>
+<p>Разбор: код в <code>try</code> выполняется как обычно. Если внутри случается ошибка — программа не падает, а прыгает в <code>catch</code>. В скобках <code>catch (e)</code> — объект ошибки, у него есть <code>e.message</code> с текстом причины. Без этой обёртки одна кривая строка <code>text</code> уронила бы всю страницу.</p>
+
+<p><b>throw</b> — самому сообщить о проблеме, когда данные не устраивают:</p>
+<pre class="demo">function checkAge(age) {
+  if (age < 0) throw new Error("Возраст не может быть отрицательным");
+  return age;
+}</pre>
+<p>Разбор: <code>throw new Error("...")</code> создаёт и «бросает» ошибку с твоим текстом. Дальше код функции не выполняется — управление улетает в ближайший <code>catch</code>. Так ты сам ставишь защиту: «с такими данными работать не буду».</p>
+
+<p>Собираем вместе — типичный боевой паттерн:</p>
+<pre class="demo">try {
+  const order = JSON.parse(input);
+  if (!order.id) throw new Error("У заказа нет id");
+  console.log("Заказ принят:", order.id);
+} catch (e) {
+  console.log("Ошибка заказа:", e.message);
+}</pre>
+<p>Разбор: пробуем разобрать заказ. Если строка кривая — падает <code>JSON.parse</code>. Если id нет — падаем сами через <code>throw</code>. Оба случая ловит один <code>catch</code> и показывает <code>e.message</code>. Есть ещё <code>finally { ... }</code> — блок, который выполнится в любом случае (например, спрятать спиннер загрузки), но он нужен реже.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">throw "текст ошибки"</span> → <span class="now">throw new Error("текст ошибки")</span><br><span class="muted2">бросай объект Error — у него есть message и стек, по строке ошибку не отладить</span></span>
+<span class="fix"><span class="was">catch { } — пустой блок</span> → <span class="now">catch (e) { console.log(e.message) }</span><br><span class="muted2">проглоченная ошибка — худший баг: приложение молча делает не то, и никто не знает почему</span></span>
+<span class="fix"><span class="was">оборачивать в try весь файл целиком</span> → <span class="now">try только вокруг рискованной строки</span><br><span class="muted2">оборачивай то, что реально может упасть — так понятно, где именно проблема</span></span>`,
+quiz:[
+ {q:"Что происходит, когда код в try падает с ошибкой?",o:["Вся страница ломается","Управление переходит в блок catch","Ошибка игнорируется молча","Программа перезапускается"],a:1,e:"try ловит ошибку и передаёт управление в catch — программа не падает."},
+ {t:"output",q:"Что выведет console.log?",code:"try {\n  JSON.parse(\"кривая строка\");\n} catch (e) {\n  console.log(\"Поймал\");\n}",o:["кривая строка","Поймал","ошибка в консоли","ничего"],a:1,e:"JSON.parse падает на кривой строке — управление уходит в catch, выводится «Поймал»."},
+ {t:"order",q:"Собери безопасную обработку данных по порядку",lines:["try {","  const data = JSON.parse(input);","  console.log(data.name);","} catch (e) {","  console.log(e.message);","}"],e:"Сначала try с рискованным кодом, затем catch с сообщением об ошибке."},
+ {t:"bug",q:"В какой строке ошибка — брошено не то?",code:["function check(x) {","  if (x < 0) throw \"плохо\";","  return x;","}"],a:1,e:"Бросать нужно объект: throw new Error(\"плохо\") — у строки нет .message и стека."},
+ {q:"Зачем нужен throw new Error(...)?",o:["Чтобы завершить программу навсегда","Чтобы самому сообщить об ошибке и уйти в catch","Чтобы ускорить код","Чтобы вывести текст в консоль"],a:1,e:"throw создаёт ошибку с твоим текстом; управление уходит в ближайший catch."}],
+practice:{type:"js",
+task:`<p><b>Что делаем:</b> безопасный парсер заказа, который не падает на кривых данных.</p><p><b>Шаги:</b></p><ol><li>Напиши функцию, которая принимает строку и внутри try делает JSON.parse.</li><li>Если в разобранном заказе нет обязательного поля (например id) — брось ошибку через throw new Error(...).</li><li>В catch (e) выведи понятное сообщение с e.message через console.log.</li><li>Вызови функцию дважды: с хорошей строкой и с кривой — убедись, что второй вызов не роняет программу.</li></ol>`,
+starter:"function parseOrder(input) {\n  // TODO: try { JSON.parse, проверка поля, throw new Error если плохо }\n  // TODO: catch (e) { console.log с e.message }\n}\n\n// TODO: вызови parseOrder с хорошей и с кривой строкой\n",
+checks:[
+ {t:"Есть блок try { ... }",fn:c=>/try\s*\{/.test(c)},
+ {t:"Есть блок catch ( ... )",fn:c=>/catch\s*\(/.test(c)},
+ {t:"Ошибка брошена через throw",fn:c=>/throw\s/.test(c)},
+ {t:"Использован JSON.parse",fn:c=>/JSON\.parse\s*\(/.test(c)},
+ {t:"Сообщение выведено через console.log",fn:c=>/console\.log\s*\(/.test(c)}],
+hint:"function parseOrder(s){ try{ const o=JSON.parse(s); if(!o.id) throw new Error('нет id'); console.log('ок',o.id);}catch(e){console.log('Ошибка:',e.message);} } parseOrder('{\"id\":1}'); parseOrder('кривая');"}},
 {id:"m8",title:"DOM: JavaScript управляет страницей",
 theory:`
 <p>🎯 <b>Зачем это тебе:</b> DOM — это то, за что платят во фронтенде: живые интерфейсы. «По клику открой меню», «посчитай сумму корзины», «проверь форму перед отправкой» — каждый такой заказ решается через DOM.</p>
@@ -732,10 +868,10 @@ const VOCAB=[
 const INTERVALS=[1,3,7,16,35];
 
 const BLOCKS=[
- {n:"01",title:"Основы: веб, HTML и CSS",lessons:["m1","m2","m3","m4"],
+ {n:"01",title:"Основы: веб, HTML и CSS",lessons:["m1","m2","m3","m10","m11"],
   project:"Адаптивная страница-визитка о себе",
   res:[["Гоша Дударь — вёрстка","yt","Гоша Дударь HTML CSS вёрстка"],["Kevin Powell — CSS","yt","Kevin Powell CSS flexbox grid"],["freeCodeCamp","url","https://www.freecodecamp.org/learn/2022/responsive-web-design/"],["MDN — справочник","url","https://developer.mozilla.org/ru/docs/Web/HTML"]]},
- {n:"02",title:"JavaScript: фундамент",lessons:["m5","m6","m7","m8","m9"],
+ {n:"02",title:"JavaScript: фундамент",lessons:["m4","m5","m6","m7","m12","m13","m14","m15"],
   project:"Интерактивное приложение с данными из API (погода / фильмы)",
   res:[["Владилен Минин — JS","yt","Владилен Минин JavaScript с нуля"],["Web Dev Simplified","yt","Web Dev Simplified JavaScript"],["freeCodeCamp — JS","url","https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/"],["Codewars — задачи","url","https://www.codewars.com/"]]},
  {n:"03",title:"Git, GitHub и инструменты",topics:["Git: commit, branch, push","GitHub: репозиторий, pull request","npm и Vite — старт проекта","Деплой на Netlify / Vercel"],
@@ -763,7 +899,13 @@ const STORY=[
    {id:"m3",t:"Сделать красиво",
      intro:[{who:"Ментор",text:"Голый HTML никто не купит. Пора наводить красоту — это CSS."}],
      outro:[{who:"EMIL",text:"О, вот это уже можно показать людям."},{who:"Ментор",text:"Кстати. Есть заказчик — кафе за углом. Нужен лендинг."}]},
-   {boss:true,id:"b1",t:"Заказ: лендинг кафе",need:["m1","m2","m3"],
+   {id:"m10",t:"Научиться раскладке",
+     intro:[{who:"Ментор",text:"Блоки друг под другом — это не дизайн. Flexbox и Grid расставляют всё по местам."}],
+     outro:[{who:"EMIL",text:"Сетка слушается. Теперь я решаю, где что стоит."}]},
+   {id:"m11",t:"Собрать форму заявки",
+     intro:[{who:"Ментор",text:"Заказчику нужны заявки от клиентов. Форма — это деньги, пусть работает как часы."}],
+     outro:[{who:"EMIL",text:"Форма ловит данные, страница размечена по-взрослому."},{who:"Ментор",text:"Всё, инструменты собраны. Кафе ждёт свой лендинг."}]},
+   {boss:true,id:"b1",t:"Заказ: лендинг кафе",need:["m1","m2","m3","m10","m11"],
      intro:[{who:"Ментор",text:"Первый настоящий заказ. Собери всё, что выучил, в одну страницу — и ты уже не ноль."},{who:"EMIL",text:"Погнали. Первые деньги за код."}]}
  ]},
  {act:"02",title:"Оживи это",sub:"Страница начинает думать",quests:[
@@ -778,7 +920,21 @@ const STORY=[
      outro:[{who:"EMIL",text:"Одна петля — и работа сделана за меня."}]},
    {id:"m7",t:"Собирать из блоков",
      intro:[{who:"Ментор",text:"Хватит копипастить. Заворачивай логику в функции."}],
-     outro:[{who:"EMIL",text:"Собираю код как из деталей. Кайф."}]}
+     outro:[{who:"EMIL",text:"Собираю код как из деталей. Кайф."}]},
+   {id:"m12",t:"Обработать данные как профи",
+     intro:[{who:"Ментор",text:"Вот список заказов. Обработай его в три строки: map, filter, reduce. Циклы для этого слишком многословны."}],
+     outro:[{who:"EMIL",text:"Три метода — и любой список у меня в кармане."}]},
+   {id:"m13",t:"Приручить объекты",
+     intro:[{who:"Ментор",text:"Данные из API приходят объектами. Вскрывай их аккуратно — деструктуризация и ?. спасают от красных ошибок."}],
+     outro:[{who:"EMIL",text:"Объекты раскладываются сами. Красные ошибки — мимо."}]},
+   {id:"m14",t:"Навести красоту в тексте",
+     intro:[{who:"Ментор",text:"Пользователь видит текст. Кривая строка — кривое впечатление о всём приложении."}],
+     outro:[{who:"EMIL",text:"Строки собираются шаблонами — чисто и читаемо."}]},
+   {id:"m15",t:"Пережить любую ошибку",
+     intro:[{who:"Ментор",text:"Код падает — это нормально. Разница между новичком и джуном: чей код переживает падение."}],
+     outro:[{who:"EMIL",text:"Теперь ошибки под моим контролем, а не наоборот."},{who:"Ментор",text:"Второй акт почти закрыт. Есть заказ посерьёзнее."}]},
+   {boss:true,id:"b2",t:"Заказ: каталог с корзиной",need:["m4","m5","m6","m7","m12","m13","m14","m15"],
+     intro:[{who:"Ментор",text:"Большой заказ: каталог товаров с подсчётом корзины. Всё, что выучил во втором акте, — в дело."},{who:"EMIL",text:"Погнали. Это уже настоящая разработка."}]}
  ]},
  {act:"03",title:"Данные из мира",sub:"Приложение с реальными данными",quests:[
    {id:"m8",t:"Управлять страницей из кода",

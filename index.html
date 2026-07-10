@@ -280,6 +280,33 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:98}
 .scenedots{display:flex;gap:6px;justify-content:center}
 .scenedots i{width:7px;height:7px;border-radius:50%;background:var(--hairline-strong)}
 .scenedots i.on{background:var(--acid)}
+/* interactive quiz types */
+.chip.code{font-family:var(--font-mono);font-size:12px;text-align:left;line-height:1.45}
+.sbrow.ans{border-style:solid;min-height:52px}
+.sbrow.okv{border-color:var(--ok);background:var(--ok-tint)}
+.sbrow.badv{border-color:var(--bad)}
+.chip.done{cursor:default;opacity:.85}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pairs.okv .pbtn.done{border-color:var(--ok)}
+.pairs.badv{outline:1px solid var(--bad);outline-offset:6px;border-radius:var(--r-s)}
+.pcol{display:flex;flex-direction:column;gap:8px}
+.pbtn{padding:11px 12px;border-radius:var(--r-m);border:1px solid var(--hairline-strong);background:var(--surface-2);color:var(--text-1);font-weight:600;font-size:13.5px;cursor:pointer;transition:all .12s var(--ease);text-align:left;font-family:var(--font-body)}
+.pbtn.sel{border-color:var(--acid);background:var(--acid-dim)}
+.pbtn.done{opacity:.4;border-color:var(--ok);cursor:default}
+.pbtn.bad{border-color:var(--bad);background:var(--bad-tint)}
+.opts.buglist{grid-template-columns:1fr}
+.opt.code span{font-family:var(--font-mono);font-size:12.5px}
+.opt.code .ln{color:var(--text-3);font-weight:700;margin-right:6px}
+pre.clozepre{line-height:2}
+input.clz{width:92px;margin:0 2px;padding:3px 9px;background:var(--surface-2);border:1px solid var(--hairline-strong);border-radius:6px;color:var(--acid);font-family:var(--font-mono);font-size:12.5px;outline:none}
+input.clz:focus{border-color:var(--acid)}
+input.clz.okv{border-color:var(--ok);color:var(--ok)}
+input.clz.badv{border-color:var(--bad);color:var(--bad)}
+.pclist{display:flex;flex-direction:column;gap:8px;padding:12px 16px;background:var(--surface-2);border:1px dashed var(--hairline-strong);border-radius:var(--r-m)}
+.pclist .qrow.done{color:var(--text-1)}
+.pclist .qrow.done i{color:var(--ok)}
+.pclist .qrow.fail{color:var(--text-1)}
+.pclist .qrow.fail i{color:var(--bad)}
 /* ===================== RESPONSIVE ===================== */
 /* second dashboard grid is inline 1fr 1fr — collapse it too */
 @media(max-width:760px){
@@ -645,24 +672,85 @@ function drawStory(){
 }
 
 /* ============ QUIZ ENGINE ============ */
+function shuffle(a){for(let k=a.length-1;k>0;k--){const m=Math.floor(Math.random()*(k+1));[a[k],a[m]]=[a[m],a[k]];}return a;}
+/* Типы вопросов: mc (по умолчанию), fill, output (код+варианты), bug (найди строку),
+   order (собери код из строк), pairs (соедини пары), cloze (пропуски в коде).
+   Каждый тип — мгновенная подсветка + объяснение e (Hattie: обратная связь сразу). */
 function quizHTML(qs,prefix){
  return qs.map((q,i)=>{
-  if(q.t==="fill")return `<div class="q" id="${prefix}${i}"><div class="qt">${i+1}. ${q.q}</div><input type="text" class="tf" id="${prefix}${i}in" ${q.w?`style="width:${q.w}px"`:""} placeholder="впиши ответ"><div class="explain"><i class="ph-bold ph-lightbulb"></i><span>${q.e}</span></div></div>`;
-  const ord=q.o.map((_,j)=>j);for(let k=ord.length-1;k>0;k--){const m=Math.floor(Math.random()*(k+1));[ord[k],ord[m]]=[ord[m],ord[k]];}
-  return `<div class="q" id="${prefix}${i}"><div class="qt">${i+1}. ${q.q}</div><div class="opts">${ord.map(j=>`<label class="opt" data-j="${j}"><input type="radio" name="${prefix}${i}" value="${j}"><span>${esc(q.o[j])}</span><i class="ph-bold ph-check-fat st"></i></label>`).join("")}</div><div class="explain"><i class="ph-bold ph-lightbulb"></i><span>${q.e}</span></div></div>`;}).join("");}
+  const qid=prefix+i;
+  const ex=`<div class="explain"><i class="ph-bold ph-lightbulb"></i><span>${q.e}</span></div>`;
+  if(q.t==="fill")
+   return `<div class="q" id="${qid}"><div class="qt">${i+1}. ${q.q}</div><input type="text" class="tf" id="${qid}in" ${q.w?`style="width:${q.w}px"`:""} placeholder="впиши ответ">${ex}</div>`;
+  if(q.t==="cloze"){
+   const html=esc(q.code).replace(/\{(\d+)\}/g,(_,k)=>`<input class="clz" data-g="${k}" autocomplete="off" autocapitalize="off" spellcheck="false">`);
+   return `<div class="q" id="${qid}" data-t="cloze"><div class="qt">${i+1}. ${q.q}</div><pre class="demo clozepre">${html}</pre>${ex}</div>`;}
+  if(q.t==="order"){
+   const ord=shuffle(q.lines.map((_,j)=>j));
+   return `<div class="q" id="${qid}" data-t="order"><div class="qt">${i+1}. ${q.q}</div>
+    <div class="sbrow ans" id="${qid}ans"></div>
+    <div class="sbrow" id="${qid}bank">${ord.map(j=>`<button type="button" class="chip code" data-k="${j}" onclick="qOrder(this)">${esc(q.lines[j])}</button>`).join("")}</div>${ex}</div>`;}
+  if(q.t==="pairs"){
+   const r=shuffle(q.pairs.map((_,j)=>j));
+   return `<div class="q" id="${qid}" data-t="pairs"><div class="qt">${i+1}. ${q.q}</div>
+    <div class="pairs" data-miss="0">
+     <div class="pcol">${q.pairs.map((p,j)=>`<button type="button" class="pbtn" data-side="l" data-k="${j}" onclick="qPair(this)">${esc(p[0])}</button>`).join("")}</div>
+     <div class="pcol">${r.map(j=>`<button type="button" class="pbtn" data-side="r" data-k="${j}" onclick="qPair(this)">${esc(q.pairs[j][1])}</button>`).join("")}</div>
+    </div>${ex}</div>`;}
+  const isBug=q.t==="bug";
+  const opts=isBug?q.code:q.o;
+  const ord=opts.map((_,j)=>j);if(!isBug)shuffle(ord); // строки кода в bug не перемешиваем — это программа по порядку
+  const codeBlock=q.t==="output"?`<pre class="demo">${esc(q.code)}</pre>`:"";
+  return `<div class="q" id="${qid}"><div class="qt">${i+1}. ${q.q}</div>${codeBlock}<div class="opts${isBug?" buglist":""}">${ord.map(j=>`<label class="opt${isBug?" code":""}" data-j="${j}"><input type="radio" name="${qid}" value="${j}"><span>${isBug?`<b class="ln">${j+1}</b>`:""}${esc(opts[j])}</span><i class="ph-bold ph-check-fat st"></i></label>`).join("")}</div>${ex}</div>`;
+ }).join("");}
 function esc(s){return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+/* интеракции: собери код */
+function qOrder(btn){const q=btn.closest(".q");if(q.classList.contains("checked"))return;
+ q.querySelector(".sbrow.ans").appendChild(btn);btn.onclick=()=>qOrderBack(btn);}
+function qOrderBack(btn){const q=btn.closest(".q");if(q.classList.contains("checked"))return;
+ q.querySelector('[id$="bank"]').appendChild(btn);btn.onclick=()=>qOrder(btn);}
+/* интеракции: соедини пары */
+function qPair(btn){
+ const q=btn.closest(".q");if(q.classList.contains("checked")||btn.classList.contains("done"))return;
+ const p=btn.closest(".pairs"),sel=p.querySelector(".pbtn.sel");
+ if(!sel){btn.classList.add("sel");return;}
+ if(sel===btn){btn.classList.remove("sel");return;}
+ if(sel.dataset.side===btn.dataset.side){sel.classList.remove("sel");btn.classList.add("sel");return;}
+ if(sel.dataset.k===btn.dataset.k){sel.classList.remove("sel");sel.classList.add("done");btn.classList.add("done");}
+ else{p.dataset.miss=(+p.dataset.miss||0)+1;sel.classList.remove("sel");sel.classList.add("bad");btn.classList.add("bad");
+  setTimeout(()=>{sel.classList.remove("bad");btn.classList.remove("bad");},420);}}
+/* единый грейдер вопроса — используется тестами, работой над ошибками и миксом */
+function gradeQ(q,qid){
+ const el=document.getElementById(qid);el.classList.add("checked");let ok=false;
+ const norm=s=>(s||"").trim().toLowerCase().replace(/[’‘`]/g,"'").replace(/\s+/g," ");
+ if(q.t==="fill"){const inp=document.getElementById(qid+"in");
+  ok=q.a.some(a=>norm(inp.value)===norm(a));inp.classList.add(ok?"okv":"badv");}
+ else if(q.t==="cloze"){ok=true;
+  el.querySelectorAll("input.clz").forEach(inp=>{const k=+inp.dataset.g;
+   const acc=Array.isArray(q.gaps[k])?q.gaps[k]:[q.gaps[k]];
+   const good=acc.some(a=>norm(inp.value)===norm(a));
+   inp.classList.add(good?"okv":"badv");inp.disabled=true;
+   if(!good){inp.value=acc[0];ok=false;}});}
+ else if(q.t==="order"){
+  const ans=el.querySelector(".sbrow.ans");
+  const seq=[...ans.querySelectorAll(".chip")].map(c=>+c.dataset.k);
+  ok=seq.length===q.lines.length&&seq.every((v,j)=>v===j);
+  ans.classList.add(ok?"okv":"badv");
+  if(!ok)ans.innerHTML=q.lines.map(l=>`<span class="chip code done">${esc(l)}</span>`).join("");}
+ else if(q.t==="pairs"){
+  const p=el.querySelector(".pairs");
+  const total=p.querySelectorAll(".pbtn").length,done=p.querySelectorAll(".pbtn.done").length;
+  ok=done===total&&(+p.dataset.miss||0)<=1;
+  p.classList.add(ok?"okv":"badv");}
+ else{const sel=el.querySelector("input:checked");const pick=sel?+sel.value:-1;ok=pick===q.a;
+  el.querySelectorAll(".opt").forEach(lab=>{const j=+lab.dataset.j;
+   if(j===q.a)lab.classList.add("correct");
+   else if(j===pick){lab.classList.add("wrongpick");lab.querySelector(".st").className="ph-bold ph-x st";}
+   lab.querySelector("input").disabled=true;});}
+ return ok;}
 function checkQuiz(qs,prefix,errKind,errId){
  let score=0;
- qs.forEach((q,i)=>{const el=document.getElementById(prefix+i);el.classList.add("checked");let ok=false;
-  if(q.t==="fill"){const inp=document.getElementById(prefix+i+"in");
-   const v=(inp.value||"").trim().toLowerCase().replace(/[’‘`]/g,"'").replace(/\s+/g," ");
-   ok=q.a.some(a=>v===a.toLowerCase().replace(/[’‘`]/g,"'"));
-   inp.classList.add(ok?"okv":"badv");}
-  else{const sel=el.querySelector("input:checked");const pick=sel?+sel.value:-1;ok=pick===q.a;
-   el.querySelectorAll(".opt").forEach(lab=>{const j=+lab.dataset.j;
-    if(j===q.a)lab.classList.add("correct");
-    else if(j===pick){lab.classList.add("wrongpick");lab.querySelector(".st").className="ph-bold ph-x st";}
-    lab.querySelector("input").disabled=true;});}
+ qs.forEach((q,i)=>{const ok=gradeQ(q,prefix+i);
   if(ok)score++;
   else if(errKind){S.errors=S.errors||[];if(!S.errors.some(e=>e.k===errKind&&e.id===errId&&e.i===i))S.errors.push({k:errKind,id:errId,i:i});}});
  save();return score;}
@@ -690,7 +778,8 @@ function drawProgLesson(id){
  <div class="widget"><div class="wlabel"><i class="ph-bold ph-target"></i><span class="mono">Тест · ${m.quiz.length} вопросов</span></div>
   ${quizHTML(m.quiz,"pq")}
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn" onclick="finishProgQuiz('${id}')">Проверить</button><div id="quizRes" class="verdict"></div></div></div>
- <div class="widget"><div class="wlabel"><i class="ph-bold ph-code"></i><span class="mono">Практика</span></div><p style="margin:0">${m.practice.task}</p>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-code"></i><span class="mono">Практика</span></div><div class="theory" style="margin:0">${m.practice.task}</div>
+  ${pcHTML(m)}
   <textarea class="editor" id="code">${m.practice.starter.replace(/</g,"&lt;")}</textarea>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
    <button class="btn" onclick="runCode('${m.practice.type}')"><i class="ph-bold ph-play"></i>Запустить</button>
@@ -716,12 +805,25 @@ function runCode(type){
    console.log=(...a)=>{out.textContent+=a.map(x=>typeof x==="object"?JSON.stringify(x):String(x)).join(" ")+"\\n";};
    window.onerror=m=>{out.textContent+="Ошибка: "+m+"\\n";};
   <\/script><script>${safe}<\/script><script>if(!out.textContent)out.textContent="(ничего не выведено — добавь console.log)";<\/script></body>`;}}
+/* критерии приёмки практики: видимый чек-лист (обратная совместимость со старым check) */
+function pcList(m){
+ if(m.practice.checks)return m.practice.checks;
+ return [{t:m.practice.hint||"Выполни задание по описанию",fn:m.practice.check}];}
+function pcHTML(m){
+ const cs=pcList(m);
+ return `<div class="pclist"><span class="mono" style="color:var(--text-3)">Критерии приёмки</span>
+  ${cs.map((c,k)=>`<div class="qrow" id="pc${k}"><i class="ph-bold ph-circle"></i><span class="grow">${c.t}</span></div>`).join("")}</div>`;}
 function checkPractice(id){
  const m=PROG.find(x=>x.id===id),c=document.getElementById("code").value,r=document.getElementById("pracRes");
- if(m.practice.check(c)){const st=S.prog[id]||(S.prog[id]={});
+ const cs=pcList(m);let all=true;
+ cs.forEach((chk,k)=>{const ok=!!chk.fn(c);if(!ok)all=false;
+  const row=document.getElementById("pc"+k);if(!row)return;
+  row.classList.toggle("done",ok);row.classList.toggle("fail",!ok);
+  row.querySelector("i").className="ph-bold "+(ok?"ph-check-circle":"ph-x-circle");});
+ if(all){const st=S.prog[id]||(S.prog[id]={});
   if(!st.practice){st.practice=true;day(todayStr()).code=1;addXP(30,"практика сдана");addCoins(10,"практика");confetti(1.5);}
   save();r.className="verdict ok";r.textContent="Задание сдано. Отличная работа.";}
- else{r.className="verdict no";r.textContent="Пока не всё: "+m.practice.hint;}}
+ else{r.className="verdict no";r.textContent="Пока не всё — смотри критерии выше."+(m.practice.hint?" Подсказка: "+m.practice.hint:"");}}
 
 /* ============ ENGLISH SECTION ============ */
 const ENG_BLOCKS=[
@@ -804,15 +906,7 @@ function startErrors(){
 function finishErrors(){
  const errs=window._errBatch,qs=errs.map(e=>{const src=e.k==="prog"?PROG.find(x=>x.id===e.id).quiz:ENG.find(x=>x.id===e.id).ex;return src[e.i];});
  let cleared=0;
- qs.forEach((q,i)=>{const el=document.getElementById("er"+i);el.classList.add("checked");let ok=false;
-  if(q.t==="fill"){const inp=document.getElementById("er"+i+"in");
-   const v=(inp.value||"").trim().toLowerCase().replace(/[’‘`]/g,"'").replace(/\s+/g," ");
-   ok=q.a.some(a=>v===a.toLowerCase().replace(/[’‘`]/g,"'"));inp.classList.add(ok?"okv":"badv");}
-  else{const sel=el.querySelector("input:checked");const pick=sel?+sel.value:-1;ok=pick===q.a;
-   el.querySelectorAll(".opt").forEach(lab=>{const j=+lab.dataset.j;
-    if(j===q.a)lab.classList.add("correct");
-    else if(j===pick){lab.classList.add("wrongpick");lab.querySelector(".st").className="ph-bold ph-x st";}
-    lab.querySelector("input").disabled=true;});}
+ qs.forEach((q,i)=>{const ok=gradeQ(q,"er"+i);
   if(ok){const ek=errs[i],bn=S.errors.length;S.errors=S.errors.filter(e=>!(e.k===ek.k&&e.id===ek.id&&e.i===ek.i));if(S.errors.length<bn){cleared++;addXP(3);}}});
  save();const r=document.getElementById("erRes");r.className="verdict ok";
  r.textContent=`Закрыто: ${cleared}/${qs.length}. В очереди: ${(S.errors||[]).length}`;

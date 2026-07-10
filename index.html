@@ -1338,12 +1338,12 @@ function cloudClick(){
  else{
   ov.innerHTML=`<div class="wcard">
    <span class="mono">Облачная синхронизация</span>
-   <h1 class="disp" style="font-size:22px">Вход по коду<span style="color:var(--acid)">.</span></h1>
-   <p class="muted" style="margin:0" id="cloudHint">Введи почту — пришлём 6-значный код. Пароль и ссылки не нужны. После входа прогресс хранится в облаке и доступен с любого устройства.</p>
+   <h1 class="disp" style="font-size:22px">Вход по почте<span style="color:var(--acid)">.</span></h1>
+   <p class="muted" style="margin:0" id="cloudHint">Введи почту — пришлём письмо со ссылкой для входа. Пароль не нужен. После входа прогресс хранится в облаке и доступен с любого устройства.</p>
    <div id="cloudStep1">
     <input type="email" class="tf" id="cloudEmail" placeholder="you@example.com" autocomplete="email" inputmode="email" style="width:100%;margin-bottom:10px" onkeydown="if(event.key==='Enter')cloudLogin()">
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-     <button class="btn" onclick="cloudLogin()">Получить код</button>
+     <button class="btn" onclick="cloudLogin()">Отправить письмо</button>
      <button class="btn secondary" onclick="document.getElementById('cloudOv').remove()">Позже</button></div>
    </div>
    <div id="cloudStep2" style="display:none">
@@ -1364,7 +1364,7 @@ async function cloudLogin(){
   window._cloudEmail=em;
   document.getElementById("cloudStep1").style.display="none";
   document.getElementById("cloudStep2").style.display="block";
-  document.getElementById("cloudHint").innerHTML=`Письмо отправлено на <b style="color:var(--text-1)">${esc(em)}</b>. Введи 6 цифр из письма. <b>Нет цифр, только ссылка?</b> Просто нажми ссылку в письме — тоже войдёшь.`;
+  document.getElementById("cloudHint").innerHTML=`Письмо на <b style="color:var(--text-1)">${esc(em)}</b>. Открой его и нажми ссылку <b>«Sign in»</b> — войдёшь автоматически. <span style="opacity:.7">Если внутри 6 цифр — можешь ввести их ниже.</span>`;
   const cc=document.getElementById("cloudCode");if(cc)cc.focus();
   msg.textContent="";}
  catch(e){msg.textContent="Не получилось отправить: "+(e.message||e);}}
@@ -1381,7 +1381,7 @@ async function cloudVerify(){
 function cloudBackToEmail(){
  const s2=document.getElementById("cloudStep2"),s1=document.getElementById("cloudStep1");
  if(s2)s2.style.display="none";if(s1)s1.style.display="block";
- const h=document.getElementById("cloudHint");if(h)h.textContent="Введи почту — пришлём 6-значный код.";
+ const h=document.getElementById("cloudHint");if(h)h.textContent="Введи почту — пришлём письмо для входа.";
  const m=document.getElementById("cloudMsg");if(m)m.textContent="";}
 async function cloudLogout(){
  try{await sbc.auth.signOut();}catch(e){}

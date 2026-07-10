@@ -8,50 +8,103 @@
 const PROG=[
 {id:"m1",title:"Как работает веб + первая страница",
 theory:`
-<p>🎯 <b>Зачем это тебе:</b> любой заказ на фрилансе — лендинг, визитка, страница магазина — начинается с HTML. Сегодня соберёшь свою первую страницу: это тот навык, с которого берут первые деньги.</p>
-<p>Когда ты открываешь сайт, браузер получает от <b>сервера</b> (это просто компьютер, который хранит и раздаёт файлы сайта) набор файлов и «рисует» из них страницу. Три главные технологии:</p>
-<table class="simple"><tr><th>Технология</th><th>За что отвечает</th><th>Аналогия</th></tr>
-<tr><td><b>HTML</b></td><td>Структура и содержимое</td><td>Скелет</td></tr>
-<tr><td><b>CSS</b></td><td>Внешний вид</td><td>Одежда</td></tr>
-<tr><td><b>JavaScript</b></td><td>Логика и интерактивность</td><td>Мышцы и мозг</td></tr></table>
-<p>HTML состоит из <b>тегов</b> — команд в угловых скобках, которые говорят браузеру, чем является кусок текста: заголовком, абзацем, картинкой. Большинство тегов парные: открывающий и закрывающий.</p>
-<pre class="demo">&lt;h1&gt;Самый большой заголовок&lt;/h1&gt;
-&lt;p&gt;Абзац обычного текста.&lt;/p&gt;</pre>
-<p>Что здесь происходит: <code>&lt;h1&gt;</code> открывает заголовок, <code>&lt;/h1&gt;</code> — со слэшем — закрывает его; всё между ними браузер покажет крупно и жирно. Вторая строка устроена так же, но <code>&lt;p&gt;</code> — обычный абзац. Сами теги на экране не видны — видно только содержимое.</p>
-<p>Минимальная страница выглядит так:</p>
+<p>🎯 <b>Зачем это тебе:</b> прежде чем писать сайты, надо понять, что вообще происходит, когда человек открывает страницу. Без этой картинки код кажется магией. С ней — ты понимаешь, что делаешь. Это фундамент под всё дальнейшее.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">1. Что происходит, когда ты открываешь сайт</h3>
+<p>Ты вводишь адрес — браузер отправляет <b>запрос</b> на <b>сервер</b> (чужой компьютер, где лежит сайт). Сервер отвечает <b>файлами</b>. Браузер их получает и «рисует» из них страницу.</p>
+<svg viewBox="0 0 600 150" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker>
+  <marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#37936F"/></marker></defs>
+  <rect x="20" y="45" width="150" height="60" rx="10" fill="#141716" stroke="#B9FF47"/>
+  <text x="95" y="72" text-anchor="middle" fill="#F4F6F2" font-size="14" font-weight="700">Браузер</text>
+  <text x="95" y="90" text-anchor="middle" fill="#9BA39D" font-size="10">твой телефон</text>
+  <rect x="430" y="45" width="150" height="60" rx="10" fill="#141716" stroke="#37936F"/>
+  <text x="505" y="72" text-anchor="middle" fill="#F4F6F2" font-size="14" font-weight="700">Сервер</text>
+  <text x="505" y="90" text-anchor="middle" fill="#9BA39D" font-size="10">где лежит сайт</text>
+  <line x1="175" y1="62" x2="423" y2="62" stroke="#B9FF47" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="300" y="55" text-anchor="middle" fill="#B9FF47" font-size="11">запрос: «дай сайт»</text>
+  <line x1="425" y1="90" x2="177" y2="90" stroke="#37936F" stroke-width="2" marker-end="url(#ag)"/>
+  <text x="300" y="108" text-anchor="middle" fill="#37936F" font-size="11">ответ: файлы HTML, CSS, JS</text>
+</svg>
+<p>Разбор: страница — это не картинка, которую прислали целиком. Это <b>инструкции</b> (файлы), по которым браузер сам собирает то, что ты видишь. Поэтому один и тот же сайт открывается и на телефоне, и на компе — браузер соберёт под свой экран.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">2. Три технологии — три слоя</h3>
+<p>Любая страница держится на трёх вещах. У каждой своя работа:</p>
+<svg viewBox="0 0 600 140" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="25" width="170" height="90" rx="10" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="115" y="55" text-anchor="middle" fill="#B9FF47" font-size="15" font-weight="700">HTML</text>
+  <text x="115" y="77" text-anchor="middle" fill="#F4F6F2" font-size="11">структура</text>
+  <text x="115" y="95" text-anchor="middle" fill="#9BA39D" font-size="10">скелет: что есть</text>
+  <rect x="215" y="25" width="170" height="90" rx="10" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="300" y="55" text-anchor="middle" fill="#FFD34D" font-size="15" font-weight="700">CSS</text>
+  <text x="300" y="77" text-anchor="middle" fill="#F4F6F2" font-size="11">внешний вид</text>
+  <text x="300" y="95" text-anchor="middle" fill="#9BA39D" font-size="10">одежда: как выглядит</text>
+  <rect x="400" y="25" width="170" height="90" rx="10" fill="#1C201E" stroke="#FF7A2F"/>
+  <text x="485" y="55" text-anchor="middle" fill="#FF7A2F" font-size="15" font-weight="700">JavaScript</text>
+  <text x="485" y="77" text-anchor="middle" fill="#F4F6F2" font-size="11">поведение</text>
+  <text x="485" y="95" text-anchor="middle" fill="#9BA39D" font-size="10">мышцы: что делает</text>
+</svg>
+<p>Сегодня мы про <b>HTML</b> — скелет. CSS и JS будут дальше. Порядок не случаен: сначала строят каркас, потом красят, потом оживляют.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">3. HTML — это теги</h3>
+<p><b>Тег</b> — команда браузеру, слово в угловых скобках. Большинство тегов <b>парные</b>: открывающий и закрывающий (со слэшем). Между ними — содержимое.</p>
+<pre class="demo">&lt;h1&gt;Большой заголовок&lt;/h1&gt;
+&lt;p&gt;Обычный абзац текста.&lt;/p&gt;</pre>
+<p>Разбор: <code>&lt;h1&gt;</code> открывает заголовок, <code>&lt;/h1&gt;</code> закрывает. Браузер понимает: «всё между ними — крупный заголовок». <code>&lt;p&gt;</code> — абзац (paragraph). Заголовки бывают от <code>&lt;h1&gt;</code> (самый крупный) до <code>&lt;h6&gt;</code> (мелкий).</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">4. Каркас страницы и дерево</h3>
+<p>У страницы есть обязательная обёртка. <code>&lt;head&gt;</code> — служебное (невидимое), <code>&lt;body&gt;</code> — всё, что видно на экране:</p>
 <pre class="demo">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
-    &lt;title&gt;Название вкладки&lt;/title&gt;
+    &lt;title&gt;Вкладка&lt;/title&gt;
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;h1&gt;Привет, мир!&lt;/h1&gt;
-    &lt;p&gt;Моя первая страница.&lt;/p&gt;
+    &lt;h1&gt;Привет!&lt;/h1&gt;
+    &lt;p&gt;Моя страница.&lt;/p&gt;
   &lt;/body&gt;
 &lt;/html&gt;</pre>
-<p>Разбор построчно: <code>&lt;!DOCTYPE html&gt;</code> сообщает браузеру «дальше современный HTML». <code>&lt;html&gt;</code> — корневой тег, внутри него живёт вся страница. <code>&lt;head&gt;</code> — служебная часть, её не видно: здесь <code>&lt;title&gt;</code> задаёт текст на вкладке браузера. <code>&lt;body&gt;</code> — всё, что пользователь видит на экране: наш заголовок и абзац.</p>
-<p>Заголовков шесть уровней: от <code>&lt;h1&gt;</code> (самый крупный, обычно один на страницу — главная мысль) до <code>&lt;h6&gt;</code> (самый мелкий). Теги вкладываются друг в друга, как коробки: <code>&lt;body&gt;</code> лежит внутри <code>&lt;html&gt;</code>, абзац — внутри <code>&lt;body&gt;</code>. Правило вложенности: кто позже открылся, тот раньше закрывается.</p>
-<p>Два момента, которые сбивают новичков. Первый: переносы строк и лишние пробелы в HTML не работают как в текстовом редакторе — браузер «схлопывает» их в один пробел. Новый абзац — это новый тег <code>&lt;p&gt;</code>, а не клавиша Enter. Второй: внутри открывающего тега могут стоять <b>атрибуты</b> — дополнительные настройки тега; вплотную займёмся ими в следующем модуле.</p>
-<p>Ещё пригодится <b>комментарий</b> — заметка для себя, которую браузер не показывает: <code>&lt;!-- напоминание --&gt;</code>. В практике ниже такими комментариями отмечены места, где писать код. Сама страница — обычный текстовый файл с расширением .html: открой его в браузере — и увидишь результат. Весь цикл работы верстальщика: правишь код → обновляешь страницу → смотришь результат — именно так фрилансеры показывают заказчику черновики.</p>
+<p>Разбор: теги вложены друг в друга и образуют <b>дерево</b> — браузер именно так и хранит страницу внутри (это называется DOM, дойдём до него):</p>
+<svg viewBox="0 0 600 160" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="255" y="12" width="90" height="26" rx="6" fill="#141716" stroke="#5D655F"/><text x="300" y="29" text-anchor="middle" fill="#F4F6F2" font-size="12">html</text>
+  <line x1="300" y1="38" x2="180" y2="58" stroke="#5D655F"/><line x1="300" y1="38" x2="420" y2="58" stroke="#5D655F"/>
+  <rect x="135" y="58" width="90" height="26" rx="6" fill="#141716" stroke="#5D655F"/><text x="180" y="75" text-anchor="middle" fill="#9BA39D" font-size="12">head</text>
+  <rect x="375" y="58" width="90" height="26" rx="6" fill="#141716" stroke="#B9FF47"/><text x="420" y="75" text-anchor="middle" fill="#B9FF47" font-size="12">body</text>
+  <line x1="180" y1="84" x2="180" y2="113" stroke="#5D655F"/>
+  <rect x="135" y="113" width="90" height="26" rx="6" fill="#141716" stroke="#5D655F"/><text x="180" y="130" text-anchor="middle" fill="#9BA39D" font-size="11">title</text>
+  <line x1="420" y1="84" x2="360" y2="113" stroke="#5D655F"/><line x1="420" y1="84" x2="480" y2="113" stroke="#5D655F"/>
+  <rect x="315" y="113" width="90" height="26" rx="6" fill="#141716" stroke="#B9FF47"/><text x="360" y="130" text-anchor="middle" fill="#F4F6F2" font-size="12">h1</text>
+  <rect x="435" y="113" width="90" height="26" rx="6" fill="#141716" stroke="#B9FF47"/><text x="480" y="130" text-anchor="middle" fill="#F4F6F2" font-size="12">p</text>
+</svg>
+
 <p>⚠️ <b>Частые ошибки:</b></p>
-<span class="fix"><span class="was">&lt;h1&gt;Привет</span> → <span class="now">&lt;h1&gt;Привет&lt;/h1&gt;</span><br><span class="muted2">без закрывающего тега браузер «затянет» в заголовок всё, что идёт ниже</span></span>
-<span class="fix"><span class="was">&lt;h1&gt;Меню&lt;h1&gt;</span> → <span class="now">&lt;h1&gt;Меню&lt;/h1&gt;</span><br><span class="muted2">закрывающий тег отличается слэшем — без него это просто второй открывающий</span></span>
-<span class="fix"><span class="was">&lt;body&gt;&lt;title&gt;Сайт&lt;/title&gt;&lt;/body&gt;</span> → <span class="now">&lt;head&gt;&lt;title&gt;Сайт&lt;/title&gt;&lt;/head&gt;</span><br><span class="muted2">title — служебная информация: его место в head, а не в body</span></span>`,
+<span class="fix"><span class="was">&lt;h1&gt;Заголовок</span> → <span class="now">&lt;h1&gt;Заголовок&lt;/h1&gt;</span><br><span class="muted2">забыл закрыть тег — браузер «поедет», следующий текст затянет в заголовок</span></span>
+<span class="fix"><span class="was">видимый текст внутри &lt;head&gt;</span> → <span class="now">внутри &lt;body&gt;</span><br><span class="muted2">head — служебный и не показывается; всё, что видно, живёт в body</span></span>
+<span class="fix"><span class="was">&lt;/p&gt;Текст&lt;p&gt;</span> → <span class="now">&lt;p&gt;Текст&lt;/p&gt;</span><br><span class="muted2">слэш — только у закрывающего тега, и он идёт после содержимого</span></span>`,
 quiz:[
- {q:"За что отвечает HTML?",o:["Структура и содержимое страницы","Цвета и шрифты","Логика при кликах","Хранение данных на сервере"],a:0,e:"HTML — скелет: из чего страница состоит. За вид отвечает CSS, за логику — JavaScript."},
- {t:"output",q:"Что покажет браузер?",code:"<h1>Кофейня</h1>\n<p>Лучший кофе в городе</p>",o:["Крупный жирный заголовок «Кофейня», под ним обычный текст про кофе","Весь текст одинакового размера в одну строку","Теги и текст как есть, вместе с угловыми скобками"],a:0,e:"Теги на экране не видны — браузер показывает содержимое: h1 крупно и жирно, p обычным текстом с новой строки."},
- {q:"Где пишут то, что видно на экране?",o:["В <head>","В <body>","В <title>","В <html>"],a:1,e:"body — видимая часть страницы, head — служебная информация для браузера."},
- {t:"order",q:"Собери страницу в правильном порядке",lines:["<!DOCTYPE html>","<html>","<head><title>Мой сайт</title></head>","<body><h1>Привет!</h1></body>","</html>"],e:"Сначала DOCTYPE, потом открывается html; внутри сперва head со служебной частью, затем body с содержимым; в конце html закрывается."},
- {q:"За что отвечает JavaScript?",o:["За красоту","За структуру","За интерактивность и логику","За заголовки"],a:2,e:"JS оживляет страницу: реагирует на клики, меняет содержимое, считает."}],
-practice:{type:"html",
-task:`<p><b>Что делаем:</b> первый «заказ» — страница-визитка: заголовок с твоим именем и два абзаца о себе.</p><p><b>Шаги:</b></p><ol><li>Внутри &lt;body&gt; добавь заголовок &lt;h1&gt; со своим именем.</li><li>Под ним добавь абзац &lt;p&gt; — одно-два предложения о себе.</li><li>Добавь второй абзац &lt;p&gt; — чем хочешь заниматься (например, «учусь делать сайты на заказ»).</li><li>Проверь, что каждый парный тег закрыт: &lt;/h1&gt;, &lt;/p&gt;.</li><li>Нажми «Запустить» — заголовок должен быть заметно крупнее абзацев.</li></ol>`,
-starter:"<!DOCTYPE html>\n<html>\n<head>\n  <title>Моя страница</title>\n</head>\n<body>\n\n  <!-- TODO: заголовок h1 с твоим именем -->\n\n  <!-- TODO: два абзаца p о себе -->\n\n</body>\n</html>",
-checks:[
- {t:"Есть заголовок &lt;h1&gt; с закрывающим &lt;/h1&gt;",fn:c=>/<h1[\s>][\s\S]*?<\/h1>/i.test(c)},
- {t:"Есть минимум два абзаца &lt;p&gt;",fn:c=>(c.match(/<p[\s>]/gi)||[]).length>=2},
- {t:"Каждый абзац закрыт тегом &lt;/p&gt;",fn:c=>(c.match(/<\/p>/gi)||[]).length>=2},
- {t:"Заголовок и абзацы стоят внутри &lt;body&gt;",fn:c=>{const b=(c.match(/<body[\s>]([\s\S]*)<\/body>/i)||[])[1]||"";return /<h1[\s>]/i.test(b)&&/<p[\s>]/i.test(b);}}],
-hint:"Внутри body: <h1>Твоё имя</h1>, затем два <p>текст</p>."}},
+ {t:"pairs",q:"Соедини технологию с её ролью",pairs:[["HTML","структура/скелет"],["CSS","внешний вид"],["JavaScript","поведение/логика"],["сервер","где лежит сайт"]],e:"HTML — скелет, CSS — одежда, JS — мышцы, сервер отдаёт файлы браузеру."},
+ {t:"output",q:"Что покажет браузер?",code:"<h1>Кофе</h1>\n<p>Вкусный</p>",o:["крупный «Кофе», ниже обычный «Вкусный»","всё одним размером","только «Кофе»","ошибку"],a:0,e:"h1 — крупный заголовок, p — обычный абзац под ним."},
+ {q:"Где живёт то, что видно на экране?",o:["В <head>","В <body>","В <title>","В <!DOCTYPE>"],a:1,e:"body — видимая часть; head — служебная (невидимая)."},
+ {t:"bug",q:"В какой строке тег не закрыт?",code:["<body>","  <h1>Привет","  <p>Текст</p>","</body>"],a:1,e:"У <h1> нет закрывающего </h1> — текст «поедет»."},
+ {t:"cloze",q:"Допиши каркас: обёртка видимой части",code:"<{0}>\n  <h1>Привет</h1>\n</{1}>",gaps:["body","body"],e:"Видимое содержимое оборачивают в парный тег body."}],
+lab:[
+ {kind:"fill",type:"html",prompt:`<p><b>Задание 1.</b> Внутри &lt;body&gt; добавь <b>заголовок</b> &lt;h1&gt; с любым текстом и <b>абзац</b> &lt;p&gt; под ним. Жми «Запустить» — увидишь страницу, потом «Проверить».</p>`,
+  starter:"<!DOCTYPE html>\n<html>\n<body>\n\n  <!-- напиши здесь h1 и p -->\n\n</body>\n</html>",
+  tests:[
+   {t:"На странице есть заголовок <h1> с текстом",fn:d=>{const h=d.querySelector("h1");return !!h&&h.textContent.trim().length>0;}},
+   {t:"На странице есть абзац <p> с текстом",fn:d=>{const p=d.querySelector("p");return !!p&&p.textContent.trim().length>0;}}]},
+ {kind:"fix",type:"html",prompt:`<p><b>Задание 2.</b> Страница сломана: заголовок не закрыт и «съел» абзац. <b>Почини</b> — закрой &lt;h1&gt; правильно, чтобы абзац стал отдельным.</p>`,
+  starter:"<!DOCTYPE html>\n<html>\n<body>\n  <h1>Моё кафе\n  <p>Лучший кофе в городе</p>\n</body>\n</html>",
+  tests:[
+   {t:"Заголовок <h1> закрыт и не затянул текст абзаца внутрь",fn:d=>{const h=d.querySelector("h1");return !!h&&h.textContent.trim().length>0&&!/лучший кофе/i.test(h.textContent);}},
+   {t:"Абзац <p> существует отдельным элементом",fn:d=>{const p=d.querySelector("p");return !!p&&/кофе/i.test(p.textContent);}}]},
+ {kind:"build",type:"html",prompt:`<p><b>Задание 3.</b> <b>Собери с нуля</b> мини-страницу о себе: заголовок с именем, один абзац о себе и список &lt;ul&gt; из <b>трёх</b> пунктов &lt;li&gt; (твои увлечения).</p>`,
+  starter:"<!DOCTYPE html>\n<html>\n<body>\n\n  <!-- заголовок с именем -->\n\n  <!-- абзац о себе -->\n\n  <!-- список ul с тремя li -->\n\n</body>\n</html>",
+  tests:[
+   {t:"Есть заголовок <h1> с текстом",fn:d=>{const h=d.querySelector("h1");return !!h&&h.textContent.trim().length>0;}},
+   {t:"Есть абзац <p> с текстом",fn:d=>{const p=d.querySelector("p");return !!p&&p.textContent.trim().length>0;}},
+   {t:"Есть список <ul> минимум с тремя <li>",fn:d=>{const ul=d.querySelector("ul");return !!ul&&ul.querySelectorAll("li").length>=3;}},
+   {t:"Каждый пункт списка не пустой",fn:d=>{const li=d.querySelectorAll("ul li");return li.length>=3&&[...li].every(x=>x.textContent.trim().length>0);}}]}]},
 {id:"m2",title:"HTML глубже: списки, ссылки, картинки",
 theory:`
 <p>🎯 <b>Зачем это тебе:</b> почти каждый заказ — это списки («наши услуги»), ссылки («наши соцсети») и картинки («наши работы»). После этого модуля ты сможешь собрать типовую страницу-визитку целиком.</p>

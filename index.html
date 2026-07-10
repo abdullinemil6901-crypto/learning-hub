@@ -280,6 +280,9 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:98}
 .scenedots{display:flex;gap:6px;justify-content:center}
 .scenedots i{width:7px;height:7px;border-radius:50%;background:var(--hairline-strong)}
 .scenedots i.on{background:var(--acid)}
+.chart{width:100%;height:auto;display:block;margin:2px 0 4px}
+.rings{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-around}
+.ringbox{display:flex;flex-direction:column;align-items:center;gap:4px}
 /* juice animations (off under body.anim-off / reduced-motion) */
 @keyframes xpPulse{0%{filter:none}40%{filter:drop-shadow(0 0 8px var(--acid)) brightness(1.4)}100%{filter:none}}
 #xpFill.pulse{animation:xpPulse .5s var(--ease)}
@@ -514,7 +517,9 @@ function srsIntroduce(){
   if(S.srs[w])continue;
   if((S.introducedToday||0)>=10)break;
   S.srs[w]={due:t,step:-1,reps:0};S.introducedToday=(S.introducedToday||0)+1;added++;}
- if(added)save();}
+ const kt=todayStr(),kn=Object.values(S.srs).filter(c=>c.learned).length;
+ if((S.days[kt]||{}).known!==kn){day(kt).known=kn;save();}
+ else if(added)save();}
 function srsDue(){const t=todayStr();return VOCAB.filter(v=>S.srs[v[0]]&&S.srs[v[0]].due<=t);}
 function srsAnswer(word,ok){
  const c=S.srs[word],t=new Date();
@@ -541,13 +546,49 @@ function drawNav(){nav.innerHTML="";TABS.forEach(([id,l,ic])=>{const b=document.
  b.onclick=()=>{view={tab:id};draw();};nav.appendChild(b);});}
 function draw(){drawNav();drawHeader();window.scrollTo(0,0);
  if(view.tab!=="words")wq=null;
- if(view.tab==="dash")drawDash();
+ if(view.tab==="dash")view.sub==="stats"?drawStats():drawDash();
  else if(view.tab==="map")view.boss?drawBoss(view.boss):drawStory();
  else if(view.tab==="code")view.id?drawProgLesson(view.id):drawCodeList();
  else if(view.tab==="eng")view.id?drawEngLesson(view.id):drawEngList();
  else if(view.tab==="shop")drawShop();
  else drawWords();}
 
+/* ============ STATS (SVG без библиотек) ============ */
+function statSeries(days){const out=[],now=new Date();let carry=0;
+ for(let i=days-1;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=dkey(d);const rec=S.days[k]||{};
+  if(rec.known!=null)carry=rec.known;out.push({k,xp:rec.xp||0,known:carry});}
+ return out;}
+function svgBars(series){const W=600,H=170,pad=22,n=series.length;const max=Math.max(60,...series.map(d=>d.xp));
+ const bw=(W-pad*2)/n;const bars=series.map((d,i)=>{const h=(d.xp/max)*(H-pad*2);const x=pad+i*bw,y=H-pad-h;
+  const today=i===n-1;return `<rect x="${(x+1).toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="2" fill="${today?'var(--gold)':'var(--acid)'}" opacity="${d.xp?1:.15}"></rect>`;}).join("");
+ const gl=[0,Math.round(max/2),max].map(v=>{const y=H-pad-(v/max)*(H-pad*2);return `<text x="4" y="${(y+3).toFixed(1)}" fill="var(--text-3)" font-size="9" font-family="monospace">${v}</text>`;}).join("");
+ return `<svg viewBox="0 0 ${W} ${H}" class="chart">${gl}${bars}<line x1="${pad}" y1="${H-pad}" x2="${W-2}" y2="${H-pad}" stroke="var(--hairline)"></line></svg>`;}
+function svgLine(series,ref){const W=600,H=150,pad=22,n=series.length;const max=Math.max(ref,...series.map(d=>d.known),1);
+ const pts=series.map((d,i)=>{const x=pad+(i/(n-1))*(W-pad*2),y=H-pad-(d.known/max)*(H-pad*2);return `${x.toFixed(1)},${y.toFixed(1)}`;}).join(" ");
+ const refY=H-pad-(ref/max)*(H-pad*2);
+ return `<svg viewBox="0 0 ${W} ${H}" class="chart"><line x1="${pad}" y1="${refY.toFixed(1)}" x2="${W-2}" y2="${refY.toFixed(1)}" stroke="var(--emerald)" stroke-dasharray="4 4" opacity=".6"></line><text x="${W-4}" y="${(refY-4).toFixed(1)}" text-anchor="end" fill="var(--emerald)" font-size="9" font-family="monospace">все ${ref}</text><polyline points="${pts}" fill="none" stroke="var(--acid)" stroke-width="2.5" stroke-linejoin="round"></polyline></svg>`;}
+function svgForecast(){const days=14,now=new Date(),buckets=new Array(days).fill(0);
+ Object.keys(S.srs).forEach(w=>{const due=S.srs[w].due;if(!due)return;const diff=Math.round((new Date(due)-new Date(dkey(now)))/864e5);const idx=Math.min(Math.max(diff,0),days-1);buckets[idx]++;});
+ const W=600,H=140,pad=22,max=Math.max(1,...buckets),bw=(W-pad*2)/days;
+ const bars=buckets.map((v,i)=>{const h=(v/max)*(H-pad*2),x=pad+i*bw,y=H-pad-h;return `<rect x="${(x+1).toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="2" fill="${i===0?'var(--fire)':'var(--emerald)'}"></rect><text x="${(x+bw/2).toFixed(1)}" y="${H-8}" text-anchor="middle" fill="var(--text-3)" font-size="8" font-family="monospace">${i===0?'сег':i}</text>`;}).join("");
+ return `<svg viewBox="0 0 ${W} ${H}" class="chart">${bars}</svg>`;}
+function ring(frac,label,val){const R=34,C=2*Math.PI*R,off=C*(1-frac);
+ return `<div class="ringbox"><svg viewBox="0 0 80 80" width="80" height="80"><circle cx="40" cy="40" r="${R}" fill="none" stroke="var(--surface-3)" stroke-width="8"></circle><circle cx="40" cy="40" r="${R}" fill="none" stroke="var(--acid)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 40 40)"></circle><text x="40" y="45" text-anchor="middle" fill="var(--text-1)" font-size="17" font-weight="700" font-family="monospace">${val}</text></svg><span class="mono" style="text-align:center">${label}</span></div>`;}
+function actRings(){return STORY.filter(a=>!a.locked).map(a=>{const qs=a.quests;let done=0,total=0;
+  qs.forEach(q=>{if(q.boss){total++;if(bossDone(q.id))done++;}else if(q.id){const m=PROG.find(x=>x.id===q.id);if(m){total++;if(progDone(m))done++;}}});
+  return ring(total?done/total:0,"Акт "+a.act,`${done}/${total}`);}).join("");}
+function drawStats(){
+ const s30=statSeries(30),known=Object.values(S.srs).filter(c=>c.learned).length;
+ const learning=Object.values(S.srs).filter(c=>!c.learned&&c.step>=2).length;
+ const fresh=Object.values(S.srs).filter(c=>c.step<2&&!c.learned).length;
+ main.innerHTML=`<button class="backlink" onclick="view={tab:'dash'};draw()"><i class="ph-bold ph-arrow-left"></i>Дашборд</button>
+ <div class="section-head" style="padding-top:0"><span class="mono">Прогресс · факты, а не ощущения</span><h1 class="disp">Статистика</h1></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-chart-bar"></i><span class="mono">XP за 30 дней</span></div>${svgBars(s30)}<span class="muted">Каждый столбик — день. Золотой — сегодня. Ровный ряд важнее высоких пиков.</span></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-chart-line-up"></i><span class="mono">Слов выучено прочно</span></div>${svgLine(s30,VOCAB.length)}<span class="muted">Кривая тянется к пунктиру — это все ${VOCAB.length} слов. Сейчас прочно: ${known}.</span></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-calendar-dots"></i><span class="mono">Повторения на 14 дней вперёд</span></div>${svgForecast()}
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill">Новые: ${fresh}</span><span class="pill acid">Учу: ${learning}</span><span class="pill ok">Прочно: ${known}</span></div></div>
+ <div class="widget"><div class="wlabel"><i class="ph-bold ph-target"></i><span class="mono">Прохождение актов</span></div><div class="rings">${actRings()}</div></div>`;
+}
 /* ============ DASHBOARD ============ */
 function pct(){let done=0,total=PROG.length*2+ENG.length;
  PROG.forEach(m=>{const st=S.prog[m.id]||{};if(st.quiz>=Math.ceil(m.quiz.length*0.8))done++;if(st.practice)done++;});
@@ -623,6 +664,7 @@ function drawDash(){
     <span class="bignum">${p}<small>%</small></span>
     <div class="pbar"><div style="width:${p}%"></div></div>
     <span class="muted">Выучено слов прочно: ${known} из ${VOCAB.length}</span>
+    <button class="btn secondary sm" style="width:fit-content" onclick="view={tab:'dash',sub:'stats'};draw()"><i class="ph-bold ph-chart-bar"></i>Статистика</button>
   </div>
   <div class="widget">
     <div class="wlabel"><i class="ph-bold ph-target"></i><span class="mono">Квест дня ${qd}/3</span></div>

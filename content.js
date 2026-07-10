@@ -688,6 +688,86 @@ checks:[
  {t:"на кнопке висит обработчик клика",fn:c=>/(addEventListener\s*\(\s*["']click["']|onclick)/i.test(c)},
  {t:"по клику меняется текст (textContent или innerHTML)",fn:c=>/(textContent|innerHTML)\s*=/.test(c)}],
 hint:"const btn = document.querySelector(\"#btn\"); btn.addEventListener(\"click\", () => { title.textContent = \"...\"; });"}},
+{id:"m16",title:"События глубже: клики и делегирование",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> любое приложение — это реакция на действия: клик, ввод, отправка. А когда элементов много (список товаров, задач, сообщений), вешать обработчик на каждый — тупик. Делегирование решает это одним слушателем.</p>
+
+<p><b>Событие</b> — то, что происходит на странице: клик, ввод текста, наведение. Ловят его методом <code>addEventListener</code>:</p>
+<pre class="demo">const btn = document.querySelector("#send");
+btn.addEventListener("click", () => {
+  console.log("Нажали!");
+});</pre>
+<p>Разбор: первым аргументом — <b>тип</b> события (<code>"click"</code>, <code>"input"</code>, <code>"submit"</code>), вторым — функция, которая выполнится, когда событие случится. Эта функция называется <b>обработчик</b> (handler).</p>
+
+<p>У обработчика есть объект события <code>e</code>, а в нём <code>e.target</code> — <b>элемент, на котором событие случилось</b>:</p>
+<pre class="demo">list.addEventListener("click", (e) => {
+  console.log(e.target.textContent);  // текст того, куда кликнули
+});</pre>
+<p>Разбор: <code>e.target</code> — не тот, на кого повесили слушатель, а конкретный элемент под пальцем. Это ключ к делегированию.</p>
+
+<p><b>Делегирование</b> — повесить <b>один</b> слушатель на родителя вместо сотни на детей. Событие «всплывает» от ребёнка к родителю, и родитель ловит его за всех:</p>
+<pre class="demo">todoList.addEventListener("click", (e) => {
+  const item = e.target.closest("li");
+  if (item) item.remove();   // удалить задачу по клику
+});</pre>
+<p>Разбор: клик по любому <code>&lt;li&gt;</code> всплывает до <code>todoList</code>. <code>e.target.closest("li")</code> находит ближайший сверху <code>&lt;li&gt;</code> (даже если кликнули по вложенной иконке). Добавили новую задачу — она работает сразу, без нового слушателя. Ещё пригодится <code>e.target.dataset.id</code> — чтение атрибута <code>data-id</code> с элемента.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">addEventListener("click", handler())</span> → <span class="now">addEventListener("click", handler)</span><br><span class="muted2">передавай функцию без скобок — со скобками ты вызовешь её сразу, а не по клику</span></span>
+<span class="fix"><span class="was">слушатель на каждом элементе списка</span> → <span class="now">один слушатель на родителе + e.target.closest</span><br><span class="muted2">делегирование работает и для элементов, добавленных позже</span></span>
+<span class="fix"><span class="was">e.target когда кликнули по вложенной иконке</span> → <span class="now">e.target.closest('li')</span><br><span class="muted2">target — самый глубокий элемент; closest поднимается к нужному контейнеру</span></span>`,
+quiz:[
+ {q:"Что делает второй аргумент addEventListener?",o:["Это функция-обработчик, которая сработает при событии","Это цвет элемента","Это id элемента","Это тип события"],a:0,e:"Второй аргумент — функция, которая выполнится, когда событие случится."},
+ {t:"output",q:"Что не так с этим кодом?",code:'btn.addEventListener("click", greet());',o:["Всё верно","greet вызовется сразу, а не по клику","click написан с ошибкой","btn не существует"],a:1,e:"greet() со скобками выполняется немедленно; нужно передать greet без скобок."},
+ {t:"cloze",q:"Дополни делегирование: найти ближайший li и прочитать target",code:'list.addEventListener("click", (e) => {\n  const li = e.{0}.closest("{1}");\n});',gaps:["target","li"],e:"e.target — элемент под кликом, closest('li') поднимается к ближайшему li."},
+ {t:"pairs",q:"Соедини понятие с ролью",pairs:[["addEventListener","повесить обработчик"],["e.target","элемент под кликом"],["closest('li')","ближайший родитель-li"],["e.target.dataset.id","чтение data-id"]],e:"addEventListener вешает обработчик, target — цель события, closest ищет родителя, dataset читает data-атрибуты."},
+ {q:"Чем делегирование лучше слушателя на каждом элементе?",o:["Один слушатель работает и для новых элементов","Оно делает страницу цветной","Оно не требует HTML","Никакой разницы"],a:0,e:"Один слушатель на родителе ловит клики по всем детям, включая добавленных позже."}],
+practice:{type:"html",
+task:`<p><b>Что делаем:</b> список задач, где клик по любому пункту удаляет его — через один слушатель (делегирование).</p><p><b>Шаги:</b></p><ol><li>Сделай <code>&lt;ul id="list"&gt;</code> с несколькими <code>&lt;li&gt;</code>.</li><li>В &lt;script&gt; найди список через querySelector или getElementById.</li><li>Повесь на список ОДИН addEventListener("click", ...).</li><li>Внутри возьми e.target, найди ближайший li через closest и удали его (remove).</li></ol>`,
+starter:"<!DOCTYPE html>\n<html>\n<body>\n  <ul id=\"list\">\n    <li>Выучить события</li>\n    <li>Сделать проект</li>\n  </ul>\n<script>\n  // TODO: найди список и повесь ОДИН обработчик click\n  // TODO: внутри — e.target.closest('li') и .remove()\n<\/script>\n</body>\n</html>",
+checks:[
+ {t:"Обработчик клика через addEventListener('click', ...)",fn:c=>/addEventListener\s*\(\s*["']click/.test(c)},
+ {t:"Используется e.target",fn:c=>/\.target/.test(c)},
+ {t:"Поиск элемента через closest, matches или dataset",fn:c=>/(closest|matches|dataset)/.test(c)},
+ {t:"Есть список из минимум 2 <li>",fn:c=>(c.match(/<li[\s>]/gi)||[]).length>=2}],
+hint:"const list=document.getElementById('list'); list.addEventListener('click',e=>{const li=e.target.closest('li'); if(li) li.remove();});"}},
+{id:"m17",title:"localStorage: страница помнит",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> обычная страница забывает всё при перезагрузке. Корзина, тема оформления, черновик, прогресс — всё это должно сохраняться. localStorage даёт браузеру маленькую память прямо на устройстве. Кстати, этот тренажёр хранит твой прогресс именно так.</p>
+
+<p><b>localStorage</b> — хранилище «ключ → значение» внутри браузера. Живёт после перезагрузки и закрытия вкладки. Два главных метода:</p>
+<pre class="demo">localStorage.setItem("theme", "dark");   // записать
+const t = localStorage.getItem("theme");  // прочитать → "dark"
+localStorage.removeItem("theme");          // удалить</pre>
+<p>Разбор: <code>setItem(ключ, значение)</code> сохраняет, <code>getItem(ключ)</code> достаёт (вернёт <code>null</code>, если ключа нет), <code>removeItem</code> стирает. Всё привязано к конкретному сайту — чужие сайты твои данные не видят.</p>
+
+<p><b>Важно:</b> localStorage хранит <b>только строки</b>. Объект или массив надо превратить в строку через <code>JSON.stringify</code>, а при чтении — обратно через <code>JSON.parse</code>:</p>
+<pre class="demo">const cart = ["кофе", "чай"];
+localStorage.setItem("cart", JSON.stringify(cart));   // сохранили массив
+
+const saved = JSON.parse(localStorage.getItem("cart")); // достали массив
+console.log(saved[0]);   // кофе</pre>
+<p>Разбор: <code>JSON.stringify</code> превращает массив в строку <code>'["кофе","чай"]'</code> — её можно хранить. <code>JSON.parse</code> делает обратное: строку снова в массив, с которым работает код. Забыл parse — получишь строку вместо массива и <code>saved[0]</code> вернёт один символ.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">localStorage.setItem("cart", cart)</span> → <span class="now">localStorage.setItem("cart", JSON.stringify(cart))</span><br><span class="muted2">объект без stringify сохранится как бесполезное "[object Object]"</span></span>
+<span class="fix"><span class="was">const a = localStorage.getItem("cart"); a.push(...)</span> → <span class="now">const a = JSON.parse(localStorage.getItem("cart"))</span><br><span class="muted2">getItem даёт строку — без parse у неё нет методов массива</span></span>
+<span class="fix"><span class="was">JSON.parse(localStorage.getItem("x")) когда ключа нет</span> → <span class="now">const raw = localStorage.getItem("x"); const v = raw ? JSON.parse(raw) : []</span><br><span class="muted2">parse(null) падает — проверь, что данные есть</span></span>`,
+quiz:[
+ {q:"Что вернёт localStorage.getItem по несуществующему ключу?",o:["Пустую строку","null","Ошибку","undefined"],a:1,e:"getItem возвращает null, если ключа нет."},
+ {t:"output",q:"Что выведет код?",code:'localStorage.setItem("n", 5);\nconst x = localStorage.getItem("n");\nconsole.log(x + 1);',o:["6","51","NaN","ошибка"],a:1,e:"localStorage хранит строки: getItem вернёт \"5\", и \"5\"+1 склеится в \"51\"."},
+ {t:"cloze",q:"Дополни: сохранить массив и прочитать обратно",code:'localStorage.setItem("cart", JSON.{0}(cart));\nconst back = JSON.{1}(localStorage.getItem("cart"));',gaps:["stringify","parse"],e:"stringify превращает массив в строку для хранения, parse — обратно в массив."},
+ {t:"bug",q:"В какой строке ошибка — массив сохранён неправильно?",code:['const cart = ["кофе"];','localStorage.setItem("cart", cart);','const back = JSON.parse(localStorage.getItem("cart"));'],a:1,e:"Массив надо сохранять через JSON.stringify(cart), иначе запишется \"[object Object]\" или строка, и parse потом упадёт."},
+ {q:"Что переживает перезагрузку страницы?",o:["Обычные переменные let/const","Данные в localStorage","Ничего","Только console.log"],a:1,e:"Переменные обнуляются при перезагрузке; localStorage сохраняется на устройстве."}],
+practice:{type:"html",
+task:`<p><b>Что делаем:</b> счётчик, который помнит своё значение после перезагрузки.</p><p><b>Шаги:</b></p><ol><li>При загрузке прочитай число из localStorage через getItem (если ничего нет — начни с 0).</li><li>Сделай кнопку, которая увеличивает счётчик.</li><li>После каждого изменения сохраняй значение через setItem.</li><li>Используй JSON.stringify при записи и JSON.parse при чтении.</li></ol>`,
+starter:"<!DOCTYPE html>\n<html>\n<body>\n  <div id=\"n\">0</div>\n  <button id=\"add\">+1</button>\n<script>\n  // TODO: прочитай сохранённое число (getItem + JSON.parse), иначе 0\n  // TODO: по клику увеличивай и сохраняй (setItem + JSON.stringify)\n<\/script>\n</body>\n</html>",
+checks:[
+ {t:"Запись через localStorage.setItem",fn:c=>/localStorage\.setItem/.test(c)},
+ {t:"Чтение через localStorage.getItem",fn:c=>/localStorage\.getItem/.test(c)},
+ {t:"Используется JSON.stringify",fn:c=>/JSON\.stringify/.test(c)},
+ {t:"Используется JSON.parse",fn:c=>/JSON\.parse/.test(c)}],
+hint:"let n=JSON.parse(localStorage.getItem('n'))||0; document.getElementById('add').addEventListener('click',()=>{n++; localStorage.setItem('n',JSON.stringify(n)); document.getElementById('n').textContent=n;});"}},
 {id:"m9",title:"fetch и async/await: данные из интернета",
 theory:`
 <p>🎯 <b>Зачем это тебе:</b> почти любой реальный заказ — показать данные «из мира»: погоду, курсы валют, товары, профиль пользователя. Эти данные живут на серверах, и <code>fetch</code> с <code>async/await</code> — стандартный способ их достать.</p>
@@ -733,7 +813,96 @@ checks:[
  {t:"есть try/catch на случай ошибки",fn:c=>/try\s*\{[\s\S]*catch/.test(c)},
  {t:"выведены data.name и data.level",fn:c=>/console\.log/.test(c)&&/\.name/.test(c)&&/\.level/.test(c)},
  {t:"функция вызвана в конце",fn:c=>/^\s*load\s*\(/m.test(c)}],
-hint:"async function load() { try { const data = await fakeApi(); console.log(data.name, data.level); } catch (e) { console.log(\"Ошибка\", e); } } load();"}}
+hint:"async function load() { try { const data = await fakeApi(); console.log(data.name, data.level); } catch (e) { console.log(\"Ошибка\", e); } } load();"}},
+{id:"m18",title:"JSON и REST: данные как в реальных приложениях",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> настоящие приложения не хранят данные внутри себя — они запрашивают их у сервера: список товаров, погоду, профиль. Формат этого обмена — JSON, а сам обмен — REST-запросы. Это то, что делает приложение «живым».</p>
+
+<p><b>JSON</b> (JavaScript Object Notation) — текстовый формат данных, похожий на объект JS. На нём разговаривают все API мира:</p>
+<pre class="demo">{ "name": "Эмиль", "level": 5, "skills": ["html", "js"] }</pre>
+<p>Разбор: это <b>строка</b> с данными. Ключи и строковые значения — в двойных кавычках. Приходит такой текст с сервера — превращаем в объект через <code>JSON.parse</code>, отправляем на сервер — превращаем объект в текст через <code>JSON.stringify</code>.</p>
+
+<p><b>REST-запрос</b> через <code>fetch</code> — просишь у сервера данные по адресу. Ответ приходит асинхронно, поэтому <code>async/await</code>:</p>
+<pre class="demo">async function loadUser() {
+  const res = await fetch("/api/user");   // ждём ответ
+  const data = await res.json();           // разбираем JSON в объект
+  console.log(data.name);
+}</pre>
+<p>Разбор: <code>await fetch(url)</code> отправляет запрос и ждёт ответ — объект <code>res</code>. <code>await res.json()</code> читает тело ответа и разбирает JSON в готовый объект. Два await, потому что и запрос, и чтение тела — асинхронные.</p>
+
+<p>Сеть капризна, поэтому боевой код всегда в защите <code>try/catch</code>:</p>
+<pre class="demo">async function load() {
+  try {
+    const res = await fetch("/api/user");
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.log("Не удалось загрузить:", e.message);
+  }
+}</pre>
+<p>Разбор: если сети нет или сервер молчит — <code>fetch</code> падает, и управление уходит в <code>catch</code>, где показываем понятное сообщение вместо белого экрана. Это отличает код джуна от студенческого.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">const data = fetch(url)</span> → <span class="now">const data = await fetch(url)</span><br><span class="muted2">без await получишь Promise, а не ответ — «зависший» объект</span></span>
+<span class="fix"><span class="was">const data = await fetch(url); data.name</span> → <span class="now">const data = await res.json(); data.name</span><br><span class="muted2">fetch возвращает ответ-обёртку; сами данные достаёт res.json()</span></span>
+<span class="fix"><span class="was">запрос без try/catch</span> → <span class="now">try { await fetch(...) } catch (e) { ... }</span><br><span class="muted2">сеть падает регулярно — без защиты приложение умрёт молча</span></span>`,
+quiz:[
+ {q:"Что такое JSON?",o:["Текстовый формат обмена данными","Язык программирования","База данных","Тег HTML"],a:0,e:"JSON — текстовый формат данных, на нём общаются приложение и сервер."},
+ {t:"cloze",q:"Дополни загрузку данных с сервера",code:'const res = {0} fetch(url);\nconst data = await res.{1}();',gaps:["await","json"],e:"await ждёт ответ fetch, res.json() разбирает тело ответа в объект."},
+ {t:"order",q:"Собери правильный порядок загрузки данных",lines:["async function load() {","  const res = await fetch(url);","  const data = await res.json();","  console.log(data.name);","}"],e:"Сначала объявляем async-функцию, ждём fetch, затем разбираем json, потом используем данные."},
+ {t:"output",q:"Что окажется в data без await у fetch?",code:'const data = fetch("/api");\nconsole.log(typeof data);',o:["object (Promise)","string","undefined","массив"],a:0,e:"Без await fetch возвращает Promise — «обещание» ответа, а не сам ответ."},
+ {q:"Куда попадёт управление, если fetch упадёт из-за сети?",o:["В блок catch","Программа падает белым экраном","В console.log","Никуда"],a:0,e:"Ошибку fetch ловит окружающий try/catch — там показывают понятное сообщение."}],
+practice:{type:"js",
+task:`<p><b>Что делаем:</b> безопасную загрузку данных с учебного сервера fakeApi и вывод результата.</p><p><b>Шаги:</b></p><ol><li>Оставь готовую функцию fakeApi (она имитирует сервер).</li><li>Напиши async-функцию load с блоком try.</li><li>Внутри: await fakeApi(), затем выведи поле из данных через console.log.</li><li>Добавь catch (e) с сообщением об ошибке. Вызови load().</li></ol>`,
+starter:"// учебный сервер: отдаёт данные через 300мс\nfunction fakeApi(){return new Promise(res=>setTimeout(()=>res({name:\"Эмиль\",level:5}),300));}\n\n// TODO: напиши асинхронную функцию load, которая дождётся данных от fakeApi\n//       и выведет их; оберни в защиту от ошибок и вызови функцию\n",
+checks:[
+ {t:"Функция помечена async",fn:c=>/async/.test(c)},
+ {t:"Данные ожидаются через await",fn:c=>/await\s+fakeApi\s*\(/.test(c)},
+ {t:"Есть защита try/catch",fn:c=>/try\s*\{/.test(c)&&/catch\s*\(/.test(c)},
+ {t:"Результат выведен через console.log",fn:c=>/console\.log\s*\(/.test(c)}],
+hint:"async function load(){ try{ const d=await fakeApi(); console.log(d.name, d.level);}catch(e){console.log('Ошибка:',e.message);} } load();"}},
+{id:"m19",title:"ES-модули: import и export",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> реальный проект — это не один файл на тысячу строк, а десятки маленьких, каждый за своё. Модули позволяют разбить код на файлы и подключать нужное друг к другу. Без этого не собрать ни один современный проект, и это фундамент под React в следующем акте.</p>
+
+<p><b>export</b> — «отдать наружу» то, чем поделится файл. <b>import</b> — «взять» это в другом файле.</p>
+<pre class="demo">// файл math.js — отдаём функцию
+export function add(a, b) {
+  return a + b;
+}</pre>
+<pre class="demo">// файл app.js — берём и используем
+import { add } from "./math.js";
+console.log(add(2, 3));   // 5</pre>
+<p>Разбор: в <code>math.js</code> перед функцией стоит <code>export</code> — значит, она доступна снаружи. В <code>app.js</code> пишем <code>import { add } from "./math.js"</code> — берём именно <code>add</code> из соседнего файла. Имя в фигурных скобках должно совпадать с тем, что экспортировали.</p>
+
+<p>Бывает <b>export default</b> — «главное, что отдаёт файл», его можно импортировать под любым именем без скобок:</p>
+<pre class="demo">// файл user.js
+export default { name: "Эмиль" };
+
+// файл app.js
+import user from "./user.js";   // без фигурных скобок</pre>
+<p>Разбор: <code>default</code>-экспорт в файле один. При импорте фигурные скобки не нужны, а имя выбираешь сам. Именованных (через <code>{ }</code>) экспортов может быть сколько угодно.</p>
+
+<p>В браузере модули подключают так: <code>&lt;script type="module" src="app.js"&gt;&lt;/script&gt;</code>. Слово <code>module</code> включает поддержку import/export.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">import { add } from "math.js"</span> → <span class="now">import { add } from "./math.js"</span><br><span class="muted2">путь к своему файлу начинается с ./ — иначе браузер ищет не там</span></span>
+<span class="fix"><span class="was">import add from "./math.js" (для именованного экспорта)</span> → <span class="now">import { add } from "./math.js"</span><br><span class="muted2">именованный экспорт импортируют в фигурных скобках, default — без них</span></span>
+<span class="fix"><span class="was">&lt;script src="app.js"&gt;</span> → <span class="now">&lt;script type="module" src="app.js"&gt;</span><br><span class="muted2">без type="module" браузер не понимает import и выдаёт ошибку</span></span>`,
+quiz:[
+ {q:"Что делает export перед функцией?",o:["Делает её доступной для импорта в других файлах","Запускает её сразу","Удаляет её","Делает её приватной"],a:0,e:"export открывает функцию наружу, чтобы её можно было импортировать."},
+ {t:"cloze",q:"Дополни: отдать функцию и взять её в другом файле",code:'// math.js\n{0} function add(a,b){ return a+b; }\n\n// app.js\n{1} { add } from "./math.js";',gaps:["export","import"],e:"export отдаёт наружу, import берёт в другом файле."},
+ {t:"bug",q:"В какой строке ошибка в импорте именованного экспорта?",code:['// math.js: export function add(a,b){return a+b}','import add from "./math.js";','console.log(add(2,3));'],a:1,e:"Именованный экспорт импортируют в фигурных скобках: import { add } from ..."},
+ {t:"pairs",q:"Соедини запись с её смыслом",pairs:[["export","отдать наружу"],["import","взять в другом файле"],["export default","главный экспорт файла"],["type=\"module\"","включить модули в браузере"]],e:"export отдаёт, import берёт, default — главный экспорт, type=module включает поддержку."},
+ {q:"Как импортируют export default?",o:["Без фигурных скобок, под любым именем","Только в фигурных скобках","Через require","Никак"],a:0,e:"default-экспорт берут без { } и называют как хочешь."}],
+practice:{type:"js",
+task:`<p><b>Что делаем:</b> разложить код на два «файла» — один отдаёт функцию, другой её берёт. (Здесь два файла показаны комментариями в одном окне; кнопка «Запустить» для модулей не сработает — проверка идёт по коду.)</p><p><b>Шаги:</b></p><ol><li>В блоке «файл math.js» напиши функцию и поставь перед ней export.</li><li>В блоке «файл app.js» импортируй её: import { имя } from "./math.js".</li><li>Вызови функцию и подготовь вывод результата.</li></ol>`,
+starter:"// ===== файл math.js =====\n// TODO: объяви функцию и отдай её наружу ключевым словом\n\n// ===== файл app.js =====\n// TODO: возьми функцию из соседнего файла ./math.js и вызови её\n",
+checks:[
+ {t:"Есть export (функции, const или default)",fn:c=>/export\s+(default\s+|function\s+|const\s+|let\s+|class\s+)/.test(c)},
+ {t:"Есть import ... from \"./...\"",fn:c=>/import\s+[\s\S]*?from\s+["']\.\//.test(c)},
+ {t:"Импорт именованного экспорта в фигурных скобках или default",fn:c=>/import\s+(\{[^}]+\}|[A-Za-z_$][\w$]*)\s+from/.test(c)}],
+hint:"// math.js\\nexport function add(a,b){return a+b;}\\n// app.js\\nimport { add } from \"./math.js\";\\nconsole.log(add(2,3));"}},
 ];
 
 /* ============ CONTENT: ENGLISH ============ */
@@ -961,10 +1130,22 @@ const STORY=[
    {id:"m8",t:"Управлять страницей из кода",
      intro:[{who:"Ментор",text:"Свяжи JS и страницу — это DOM. Клик — и всё меняется."}],
      outro:[{who:"EMIL",text:"Я управляю страницей прямо из кода. Магия."}]},
+   {id:"m16",t:"Ловить действия пользователя",
+     intro:[{who:"Ментор",text:"Список на сто задач? Не вешай сто слушателей. Один на родителя — и делегирование делает всё."}],
+     outro:[{who:"EMIL",text:"Один обработчик ловит клики по всему списку. Красиво."}]},
+   {id:"m17",t:"Научить страницу помнить",
+     intro:[{who:"Ментор",text:"Перезагрузил — и всё пропало? Нет. localStorage хранит данные прямо в браузере."}],
+     outro:[{who:"EMIL",text:"Прогресс переживает перезагрузку. Как в этом самом тренажёре."}]},
    {id:"m9",t:"Достать данные из сети",
      intro:[{who:"Ментор",text:"Настоящие приложения тянут данные из интернета. fetch и await."}],
      outro:[{who:"EMIL",text:"Данные из сети — прямо в моём приложении. Я почти разраб."}]},
-   {boss:true,id:"b3",t:"Заказ: приложение с API",need:["m8","m9"],type:"html",
+   {id:"m18",t:"Говорить с сервером на JSON",
+     intro:[{who:"Ментор",text:"Все API мира общаются на JSON. Запросил, разобрал, показал — и защитил try/catch, потому что сеть капризна."}],
+     outro:[{who:"EMIL",text:"JSON, запросы, обработка ошибок — это уже боевой код."}]},
+   {id:"m19",t:"Разложить код по файлам",
+     intro:[{who:"Ментор",text:"Проект — это не один файл на тысячу строк. import и export режут код на части. Без этого не будет React."}],
+     outro:[{who:"EMIL",text:"Код разложен по модулям. Готов к большому."},{who:"Ментор",text:"Третий акт собран. Финальный заказ — приложение на реальных данных."}]},
+   {boss:true,id:"b3",t:"Заказ: приложение с API",need:["m8","m16","m17","m9","m18","m19"],type:"html",
      intro:[{who:"Ментор",text:"Финальный заказ акта: приложение, которое тянет данные и показывает их по клику. Это уже уровень портфолио."},{who:"EMIL",text:"DOM, fetch, обработка ошибок — собираю всё вместе."}],
      outro:[{who:"Заказчик",text:"Работает вживую, данные грузятся — отличная работа!"},{who:"Ментор",text:"Это уже проект для резюме. Три акта позади, впереди — Git, React и оффер."},{who:"EMIL",text:"Я делаю приложения, которые живут на реальных данных. Я разраб."}],
      brief:`<p>Заказчику нужно мини-приложение на реальных данных: кнопка «Загрузить» тянет данные и показывает их на странице, а если что-то пошло не так — понятное сообщение вместо белого экрана.</p><p><b>Нужно:</b> кнопка и место для результата; обработчик клика; асинхронная загрузка (<code>async/await</code>, можно через учебный <code>fakeApi</code>); вывод данных в элемент; защита <code>try/catch</code>.</p>`,

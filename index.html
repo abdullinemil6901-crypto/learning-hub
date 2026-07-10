@@ -988,6 +988,7 @@ function drawProgLesson(id){
    <button class="btn secondary" onclick="checkPractice('${id}')">Проверить задание</button>
    <div id="pracRes" class="verdict"></div></div>
   <iframe class="preview" id="preview"></iframe></div>`}
+ ${m.res?`<div class="widget"><div class="wlabel"><i class="ph-bold ph-book-open-text"></i><span class="mono">Материалы по теме · копать глубже</span></div><span class="muted" style="margin-bottom:2px">Разобрать эту тему подробнее — лучшие бесплатные источники:</span><div class="bres">${m.res.map(resChip).join("")}</div></div>`:""}
  ${noteWidget("m:"+id)}`;}
 function finishProgQuiz(id){const m=PROG.find(x=>x.id===id);const s=checkQuiz(m.quiz,"pq","prog",id);
  const st=S.prog[id]||(S.prog[id]={});const first=st.quiz==null;const prevBest=first?null:st.quiz;

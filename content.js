@@ -52,6 +52,11 @@ theory:`
 &lt;p&gt;Обычный абзац текста.&lt;/p&gt;</pre>
 <p>Разбор: <code>&lt;h1&gt;</code> открывает заголовок, <code>&lt;/h1&gt;</code> закрывает. Браузер понимает: «всё между ними — крупный заголовок». <code>&lt;p&gt;</code> — абзац (paragraph). Заголовки бывают от <code>&lt;h1&gt;</code> (самый крупный) до <code>&lt;h6&gt;</code> (мелкий).</p>
 
+<p>Не все теги парные. <b>Одиночные</b> теги не оборачивают текст, а вставляют что-то на месте — например картинку или перенос строки:</p>
+<pre class="demo">&lt;img src="cat.jpg" alt="кот"&gt;   &lt;!-- картинка --&gt;
+&lt;br&gt;                          &lt;!-- перенос строки --&gt;</pre>
+<p>Разбор: у <code>&lt;img&gt;</code> нет закрывающей пары — он самодостаточный. То, что в кавычках (<code>src</code>, <code>alt</code>), называется <b>атрибут</b> — дополнительная настройка тега (<code>src</code> — какой файл показать, <code>alt</code> — текст, если картинка не загрузилась). Атрибуты подробно разберём в следующем уроке. А <code>&lt;!-- ... --&gt;</code> — это <b>комментарий</b>: заметка для себя, браузер её не показывает.</p>
+
 <h3 style="margin:14px 0 4px;font-family:var(--font-display)">4. Каркас страницы и дерево</h3>
 <p>У страницы есть обязательная обёртка. <code>&lt;head&gt;</code> — служебное (невидимое), <code>&lt;body&gt;</code> — всё, что видно на экране:</p>
 <pre class="demo">&lt;!DOCTYPE html&gt;
@@ -76,6 +81,10 @@ theory:`
   <rect x="315" y="113" width="90" height="26" rx="6" fill="#141716" stroke="#B9FF47"/><text x="360" y="130" text-anchor="middle" fill="#F4F6F2" font-size="12">h1</text>
   <rect x="435" y="113" width="90" height="26" rx="6" fill="#141716" stroke="#B9FF47"/><text x="480" y="130" text-anchor="middle" fill="#F4F6F2" font-size="12">p</text>
 </svg>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">5. Подсмотри, как сделан любой сайт</h3>
+<p>Весь HTML любого сайта открыт — можно посмотреть, как он устроен, и учиться на живых примерах. На компьютере нажми <b>F12</b> (или правой кнопкой → «Просмотреть код»). Откроются <b>инструменты разработчика</b>: слева — то самое дерево тегов, наведись на любой — и увидишь, за какой кусок страницы он отвечает.</p>
+<p>Это твой главный инструмент отладки: когда что-то «не так выглядит», открываешь F12 и смотришь, какие теги реально получились. Профи живут в этой панели.</p>
 
 <p>⚠️ <b>Частые ошибки:</b></p>
 <span class="fix"><span class="was">&lt;h1&gt;Заголовок</span> → <span class="now">&lt;h1&gt;Заголовок&lt;/h1&gt;</span><br><span class="muted2">забыл закрыть тег — браузер «поедет», следующий текст затянет в заголовок</span></span>
@@ -104,7 +113,12 @@ lab:[
    {t:"Есть заголовок <h1> с текстом",fn:d=>{const h=d.querySelector("h1");return !!h&&h.textContent.trim().length>0;}},
    {t:"Есть абзац <p> с текстом",fn:d=>{const p=d.querySelector("p");return !!p&&p.textContent.trim().length>0;}},
    {t:"Есть список <ul> минимум с тремя <li>",fn:d=>{const ul=d.querySelector("ul");return !!ul&&ul.querySelectorAll("li").length>=3;}},
-   {t:"Каждый пункт списка не пустой",fn:d=>{const li=d.querySelectorAll("ul li");return li.length>=3&&[...li].every(x=>x.textContent.trim().length>0);}}]}]},
+   {t:"Каждый пункт списка не пустой",fn:d=>{const li=d.querySelectorAll("ul li");return li.length>=3&&[...li].every(x=>x.textContent.trim().length>0);}}]}],
+res:[
+ ["MDN: Введение в HTML (рус.)","url","https://developer.mozilla.org/ru/docs/Learn/HTML/Introduction_to_HTML"],
+ ["METANIT: основы HTML5","url","https://metanit.com/web/html5/"],
+ ["Как работает интернет — простыми словами","yt","как работает интернет и браузер простыми словами"],
+ ["freeCodeCamp: Responsive Web Design","url","https://www.freecodecamp.org/learn/2022/responsive-web-design/"]]},
 {id:"m2",title:"HTML глубже: списки, ссылки, картинки",
 theory:`
 <p>🎯 <b>Зачем это тебе:</b> почти каждый заказ — это списки («наши услуги»), ссылки («наши соцсети») и картинки («наши работы»). После этого модуля ты сможешь собрать типовую страницу-визитку целиком.</p>

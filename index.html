@@ -970,6 +970,22 @@ function labHTML(id){const m=PROG.find(x=>x.id===id);const lp=labProg(id);
    <div id="labRes" class="verdict"></div></div>
   <div class="pclist">${task.tests.map((t,k)=>`<div class="qrow" id="lt${k}"><i class="ph-bold ph-circle"></i><span class="grow">${esc(t.t)}</span></div>`).join("")}</div>
   <iframe class="preview" id="labPrev"></iframe></div>`;}
+/* ПРАКТИКА-ТРЕНИРОВКА: для языков, которые не запускаются в браузере (C++).
+   Задачи решаются на площадке с настоящим автосудьёй (Stepik/acmp/Codeforces),
+   а здесь — чек-лист с ссылками и самоотметкой. */
+function drillProg(id){const st=S.prog[id]||(S.prog[id]={});st.drill=st.drill||{};return st.drill;}
+function drillDone(m,id){const d=drillProg(id);return m.drill.tasks.every((_,i)=>d["t"+i]);}
+function drillToggle(id,i){const d=drillProg(id);d["t"+i]=!d["t"+i];
+ const m=PROG.find(x=>x.id===id);
+ if(drillDone(m,id)){const st=S.prog[id];if(!st.practice){st.practice=true;day(todayStr()).code=1;addXP(30,"тренировка отмечена");addCoins(10,"тренировка");confetti(1.2);}}
+ save();drawProgLesson(id);}
+function drillHTML(id){const m=PROG.find(x=>x.id===id),d=drillProg(id),done=drillDone(m,id);
+ return `<div class="widget"><div class="wlabel"><i class="ph-bold ph-barbell"></i><span class="mono">Тренировка · реши на площадке</span></div>
+  <div class="theory" style="margin:0">${m.drill.intro}</div>
+  <div class="pclist">${m.drill.tasks.map((t,i)=>{const on=!!d["t"+i];
+   const chip=t.link?`<a class="reschip" style="margin:6px 0 0" href="${t.link[1]==="yt"?ytURL(t.link[2]):t.link[2]}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="ph-bold ${t.link[1]==="yt"?"ph-youtube-logo":"ph-globe"}"></i>${t.link[0]}</a>`:"";
+   return `<div class="qrow ${on?"done":""}" style="cursor:pointer;align-items:flex-start" onclick="drillToggle('${id}',${i})"><i class="ph-bold ${on?"ph-check-circle":"ph-circle"}"></i><span class="grow">${t.t}${chip?"<br>"+chip:""}</span></div>`;}).join("")}</div>
+  ${done?`<div class="verdict ok" style="margin-top:10px">Тренировка отмечена выполненной ✓</div>`:`<span class="muted" style="display:block;margin-top:8px">Отмечай задачу, когда решишь её на площадке — там настоящая автопроверка C++. Отметишь все — практика засчитается.</span>`}</div>`;}
 function drawProgLesson(id){
  const m=PROG.find(x=>x.id===id),idx=PROG.indexOf(m);
  main.innerHTML=`
@@ -980,7 +996,7 @@ function drawProgLesson(id){
  <div class="widget"><div class="wlabel"><i class="ph-bold ph-target"></i><span class="mono">Тест · ${m.quiz.length} вопросов</span></div>
   ${quizHTML(m.quiz,"pq")}
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn" onclick="finishProgQuiz('${id}')">Проверить</button><div id="quizRes" class="verdict"></div></div></div>
- ${m.lab?labHTML(id):`<div class="widget"><div class="wlabel"><i class="ph-bold ph-code"></i><span class="mono">Практика</span></div><div class="theory" style="margin:0">${m.practice.task}</div>
+ ${m.lab?labHTML(id):m.drill?drillHTML(id):`<div class="widget"><div class="wlabel"><i class="ph-bold ph-code"></i><span class="mono">Практика</span></div><div class="theory" style="margin:0">${m.practice.task}</div>
   ${pcHTML(m)}
   <textarea class="editor" id="code">${m.practice.starter.replace(/</g,"&lt;")}</textarea>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">

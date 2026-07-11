@@ -1291,7 +1291,142 @@ practice:{type:"js",task:"<p><b>Что делаем:</b> разложить ко
 res:[["learn.javascript.ru: Модули, введение","url","https://learn.javascript.ru/modules-intro"],
  ["learn.javascript.ru: Экспорт и импорт","url","https://learn.javascript.ru/import-export"],
  ["MDN: Модули JavaScript (рус.)","url","https://developer.mozilla.org/ru/docs/Web/JavaScript/Guide/Modules"],
- ["ES-модули import/export просто","yt","javascript модули import export для начинающих"]]}
+ ["ES-модули import/export просто","yt","javascript модули import export для начинающих"]]},
+{id:"c0",title:"C++ · Инструменты и первая программа",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> код сам по себе — просто текст. Чтобы он заработал, нужен <b>компилятор</b> — он переводит твой C++ в настоящую программу. Настроим окружение и запустим первую программу: это Этап 0, без него дальше никак.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Что нужно поставить</h3>
+<ul style="margin:6px 0 6px 18px;padding:0">
+<li><b>Компилятор</b> — превращает <code>.cpp</code> в программу. macOS: в терминале <code>xcode-select --install</code> (даст <code>clang++</code>). Windows: MinGW-w64. Быстрый старт без установки — онлайн-компилятор (ссылка ниже).</li>
+<li><b>Редактор</b> — VS Code + расширение C/C++.</li>
+<li><b>Терминал</b> — где ты запускаешь компиляцию.</li>
+</ul>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Первая программа</h3>
+<pre class="demo">#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; "Hello, world!" &lt;&lt; endl;
+    return 0;
+}</pre>
+<p>Разбор построчно: <code>#include &lt;iostream&gt;</code> подключает ввод-вывод. <code>using namespace std;</code> — чтобы писать <code>cout</code>, а не <code>std::cout</code>. <code>int main()</code> — точка входа, отсюда программа стартует. <code>cout &lt;&lt; ...</code> печатает в консоль, <code>endl</code> — перевод строки. <code>return 0;</code> — «программа завершилась успешно».</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Как скомпилировать и запустить</h3>
+<pre class="demo">clang++ main.cpp -o main
+./main</pre>
+<p>Разбор: первая команда компилирует <code>main.cpp</code> в исполняемый файл <code>main</code>. Вторая — запускает его. Это и есть суть компилируемого языка: сначала перевели весь код в программу, потом запустили.</p>
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="c0a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="18" y="40" width="130" height="46" rx="9" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="83" y="60" text-anchor="middle" fill="#B9FF47" font-size="12" font-weight="700" font-family="monospace">main.cpp</text>
+  <text x="83" y="76" text-anchor="middle" fill="#9BA39D" font-size="9">твой текст</text>
+  <line x1="150" y1="63" x2="216" y2="63" stroke="#B9FF47" stroke-width="2" marker-end="url(#c0a)"/>
+  <text x="183" y="54" text-anchor="middle" fill="#B9FF47" font-size="9">clang++</text>
+  <rect x="220" y="40" width="150" height="46" rx="9" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="295" y="60" text-anchor="middle" fill="#FFD34D" font-size="12" font-weight="700" font-family="monospace">main</text>
+  <text x="295" y="76" text-anchor="middle" fill="#9BA39D" font-size="9">готовая программа</text>
+  <line x1="372" y1="63" x2="438" y2="63" stroke="#B9FF47" stroke-width="2" marker-end="url(#c0a)"/>
+  <text x="405" y="54" text-anchor="middle" fill="#B9FF47" font-size="9">./main</text>
+  <rect x="442" y="40" width="140" height="46" rx="9" fill="#141716" stroke="#37936F"/>
+  <text x="512" y="60" text-anchor="middle" fill="#F4F6F2" font-size="12" font-weight="700">Hello, world!</text>
+  <text x="512" y="76" text-anchor="middle" fill="#9BA39D" font-size="9">вывод в терминал</text>
+</svg>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">забыл ; в конце строки</span> → <span class="now">cout &lt;&lt; "Hi";</span><br><span class="muted2">почти каждая команда в C++ заканчивается точкой с запятой</span></span>
+<span class="fix"><span class="was">нет #include &lt;iostream&gt;</span> → <span class="now">добавь его сверху</span><br><span class="muted2">без него компилятор не знает, что такое cout</span></span>
+<span class="fix"><span class="was">запускаю .cpp напрямую</span> → <span class="now">сначала компилируй, потом ./main</span><br><span class="muted2">C++ — компилируемый язык: файл-исходник сам не запускается</span></span>`,
+quiz:[
+ {q:"Что делает компилятор?",o:["Превращает исходный код в исполняемую программу","Открывает сайты","Рисует интерфейс","Хранит файлы"],a:0,e:"Компилятор переводит твой .cpp в программу, которую можно запустить."},
+ {t:"order",q:"Собери программу «Hello, world»",lines:["#include <iostream>","using namespace std;","int main() {","    cout << \"Hello, world!\" << endl;","    return 0;","}"],e:"Подключаем ввод-вывод, открываем main, печатаем, возвращаем 0, закрываем скобку."},
+ {t:"output",q:"Что выведет программа?",code:"int x = 5;\ncout << x * 2;",o:["10","5","x * 2","52"],a:0,e:"x равен 5, 5 * 2 = 10."},
+ {t:"bug",q:"В какой строке ошибка?",code:["#include <iostream>","using namespace std;","int main() {","    cout << \"Hi\"","    return 0;","}"],a:3,e:"После cout << \"Hi\" пропущена точка с запятой ;"},
+ {t:"cloze",q:"Дострой программу",code:"{0} <iostream>\nusing namespace std;\nint main() {\n    cout << \"Hi\";\n    {1} 0;\n}",gaps:["#include","return"],e:"#include подключает библиотеку, return 0 завершает main."},
+ {q:"Чем компилируемый язык (C++) отличается от интерпретируемого?",o:["Компилятор заранее переводит весь код в программу, а интерпретатор выполняет построчно на лету","Ничем","Компилируемый медленнее","Интерпретируемый не нужен"],a:0,e:"C++ компилируется целиком заранее — потому и быстрый; JS в браузере интерпретируется на лету."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> ставим окружение и запускаем первую программу у себя. Отмечай задачи по мере выполнения — за все получишь XP.</p>`,
+ tasks:[
+  {t:"Установи компилятор и редактор (macOS: <code>xcode-select --install</code>; Windows: MinGW-w64; + VS Code с расширением C/C++).",link:["VS Code: настройка C++","url","https://code.visualstudio.com/docs/languages/cpp"]},
+  {t:"Скомпилируй и запусти «Hello, world» из терминала: <code>clang++ main.cpp -o main && ./main</code>. Пока нет установки — попробуй в онлайн-компиляторе.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]},
+  {t:"Заведи аккаунты на Stepik и Codeforces — там будет практика с автопроверкой.",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]}]},
+res:[
+ ["C++ с нуля — плейлист","yt","c++ для начинающих с нуля первый урок"],
+ ["learncpp.com — эталонный справочник","url","https://www.learncpp.com"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи для начинающих","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"c1",title:"C++ · Переменные, типы и ввод-вывод",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> любая программа работает с данными: числа, текст, флаги. <b>Переменные</b> их хранят, а <code>cin</code>/<code>cout</code> — общаются с пользователем. Это первый настоящий кирпич: дальше на нём стоят условия, циклы и всё остальное.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Типы данных</h3>
+<p>В C++ у каждой переменной есть <b>тип</b> — что именно в ней лежит:</p>
+<table class="simple"><tr><th>Тип</th><th>Что хранит</th><th>Пример</th></tr>
+<tr><td><code>int</code></td><td>целое число</td><td>42, -7</td></tr>
+<tr><td><code>double</code></td><td>дробное число</td><td>3.14</td></tr>
+<tr><td><code>char</code></td><td>один символ</td><td>'A'</td></tr>
+<tr><td><code>bool</code></td><td>да / нет</td><td>true, false</td></tr>
+<tr><td><code>string</code></td><td>текст</td><td>"hello"</td></tr></table>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Объявление и присваивание</h3>
+<pre class="demo">int age = 20;
+double pi = 3.14;
+string name = "Emil";</pre>
+<p>Разбор: сначала тип, потом имя, потом (по желанию) <code>=</code> и значение. Переменная — это «коробка с ярлыком»: у неё есть имя, тип и содержимое, которое можно менять.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Ввод и вывод</h3>
+<pre class="demo">int n;
+cin &gt;&gt; n;              // прочитать число с клавиатуры
+cout &lt;&lt; n * n;         // вывести квадрат</pre>
+<p>Разбор: <code>cout &lt;&lt; ...</code> печатает на экран (стрелки «толкают» данные в вывод). <code>cin &gt;&gt; ...</code> читает то, что ввёл пользователь, в переменную. Можно печатать несколько значений подряд: <code>cout &lt;&lt; "Ответ: " &lt;&lt; n;</code>.</p>
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="c1a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="16" y="40" width="140" height="48" rx="9" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="86" y="60" text-anchor="middle" fill="#B9FF47" font-size="12" font-weight="700">клавиатура</text>
+  <text x="86" y="77" text-anchor="middle" fill="#9BA39D" font-size="9" font-family="monospace">cin (ввод)</text>
+  <line x1="158" y1="64" x2="222" y2="64" stroke="#B9FF47" stroke-width="2" marker-end="url(#c1a)"/>
+  <rect x="226" y="36" width="150" height="56" rx="10" fill="#141716" stroke="#FFD34D"/>
+  <text x="301" y="58" text-anchor="middle" fill="#FFD34D" font-size="13" font-weight="800">n = 5</text>
+  <text x="301" y="76" text-anchor="middle" fill="#9BA39D" font-size="9">переменная (коробка)</text>
+  <line x1="378" y1="64" x2="442" y2="64" stroke="#B9FF47" stroke-width="2" marker-end="url(#c1a)"/>
+  <rect x="446" y="40" width="140" height="48" rx="9" fill="#1C201E" stroke="#37936F"/>
+  <text x="516" y="60" text-anchor="middle" fill="#F4F6F2" font-size="12" font-weight="700">экран</text>
+  <text x="516" y="77" text-anchor="middle" fill="#9BA39D" font-size="9" font-family="monospace">cout (вывод)</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Арифметика и коварное деление</h3>
+<pre class="demo">cout &lt;&lt; 7 / 2;    // 3, а не 3.5 — целочисленное деление!
+cout &lt;&lt; 7 % 2;    // 1 — остаток от деления
+cout &lt;&lt; 7.0 / 2;  // 3.5 — если хоть одно дробное</pre>
+<p>Разбор: если оба числа целые (<code>int</code>), деление <code>/</code> отбрасывает дробную часть. Оператор <code>%</code> даёт остаток. Хочешь дробный результат — сделай одно из чисел <code>double</code> (например <code>7.0</code>). Это ошибка №1 у новичков.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">int x = 3.14;</span> → <span class="now">double x = 3.14;</span><br><span class="muted2">int обрежет дробную часть до 3</span></span>
+<span class="fix"><span class="was">cout &lt;&lt; 7 / 2 (ждёшь 3.5)</span> → <span class="now">cout &lt;&lt; 7.0 / 2;</span><br><span class="muted2">целые дают целое — сделай число дробным</span></span>
+<span class="fix"><span class="was">if (x = 5)</span> → <span class="now">if (x == 5)</span><br><span class="muted2">= это присваивание, == это сравнение</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет код?",code:"int x = 7;\ncout << x / 2;",o:["3","3.5","4","3,5"],a:0,e:"Оба числа целые → целочисленное деление: 7 / 2 = 3 (дробь отбрасывается)."},
+ {q:"Какой тип подходит для числа 3.14?",o:["int","double","char","bool"],a:1,e:"Дробные числа хранит double."},
+ {t:"pairs",q:"Соедини тип с примером значения",pairs:[["int","42"],["double","3.14"],["char","'A'"],["string","\"hello\""]],e:"int — целое, double — дробное, char — один символ, string — текст."},
+ {t:"cloze",q:"Дострой ввод и вывод",code:"int n;\n{0} n;\n{1} n * n;",gaps:[["cin >>","cin>>"],["cout <<","cout<<"]],e:"cin >> читает в переменную, cout << печатает результат."},
+ {t:"output",q:"Что выведет код?",code:"cout << 5 % 2;",o:["1","2","2.5","0"],a:0,e:"% — остаток от деления: 5 = 2*2 + 1, остаток 1."},
+ {t:"bug",q:"В какой строке ошибка?",code:["int x = 5;","double pi = 3.14;","cout << x","cout << pi;"],a:2,e:"После cout << x пропущена точка с запятой ;"},
+ {t:"order",q:"Собери программу: прочитать число и вывести его квадрат",lines:["int n;","cin >> n;","cout << n * n;"],e:"Объявляем переменную, читаем в неё, выводим квадрат."},
+ {q:"Чему равно 10 / 3 в C++ (оба int)?",o:["3","3.33","4","3.3"],a:0,e:"Целочисленное деление: дробная часть отбрасывается, остаётся 3."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> закрепляем переменные и ввод-вывод на реальных задачах с автопроверкой. Отмечай по мере решения.</p>`,
+ tasks:[
+  {t:"Реши 5–7 простых задач на ввод-вывод и арифметику (сумма, произведение, остаток).",link:["acmp.ru — задачи для начинающих","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Пройди тему «Переменные, ввод и вывод» на курсе по C++ (там автопроверка каждой задачи).",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]},
+  {t:"Напиши сам: программа читает два целых числа и выводит их сумму, произведение и остаток от деления.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Переменные и типы в C++","yt","c++ переменные типы данных для начинающих"],
+ ["learncpp.com — переменные","url","https://www.learncpp.com/cpp-tutorial/introduction-to-objects-and-variables/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи для начинающих","url","https://acmp.ru/index.asp?main=tasks"]]}
+
 ];
 
 /* ============ CONTENT: ENGLISH ============ */

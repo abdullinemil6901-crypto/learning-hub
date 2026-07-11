@@ -1507,93 +1507,211 @@ hint:"// math.js\\nexport function add(a,b){return a+b;}\\n// app.js\\nimport { 
 const ENG=[
 {id:"l1",title:"Present Simple vs Present Continuous",
 theory:`
-<span class="fix"><span class="was">I'm learn English</span> → <span class="now">I'm learning English</span><br><span class="muted2">Твоя ошибка из теста</span></span>
-<table class="simple"><tr><th></th><th>Present Simple</th><th>Present Continuous</th></tr>
-<tr><td>Когда</td><td>Регулярно, вообще</td><td>Прямо сейчас</td></tr>
-<tr><td>Форма</td><td>V / V+s (he, she, it)</td><td>am / is / are + V-ing</td></tr>
-<tr><td>Пример</td><td>I learn English every day</td><td>I am learning English now</td></tr></table>
-<p><b>Правило -s:</b> he/she/it: <i>She go<b>es</b>. He play<b>s</b>.</i></p>
-<p><b>Нельзя:</b> «I'm learn» — либо <i>I'm learning</i>, либо <i>I learn</i>.</p>
-<p>Маркеры Simple: every day, usually, often. Маркеры Continuous: now, at the moment.</p>`,
+<p>🎯 <b>Зачем это тебе:</b> это два самых частых времени в английском — и их путают чаще всего. Твоё «I'm learn English» из теста как раз отсюда. Разберёшься — сможешь спокойно сказать и про свой режим («учусь каждый день»), и про то, что происходит прямо сейчас («сейчас пишу код»). Без этого любая фраза о себе звучит криво.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">1. Present Simple — регулярно, вообще, всегда</h3>
+<pre class="demo">I learn English every day.
+She works at a cafe.</pre>
+<p>Разбор: обычное действие, привычка, факт. Глагол в начальной форме, но для <b>he / she / it</b> добавляем <b>-s</b>: <code>She work<b>s</b></code>, <code>He go<b>es</b></code>. Маркеры-подсказки: <code>every day</code>, <code>usually</code>, <code>often</code>, <code>always</code>.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">2. Present Continuous — прямо сейчас</h3>
+<pre class="demo">I am learning English now.
+Look! It is raining.</pre>
+<p>Разбор: действие идёт в момент речи. Формула: <b>am / is / are + глагол-ing</b>. <code>I am</code>, <code>he / she / it is</code>, <code>you / we / they are</code>. Маркеры: <code>now</code>, <code>at the moment</code>, <code>right now</code>, <code>Look!</code>.</p>
+
+<svg viewBox="0 0 600 165" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <text x="30" y="28" fill="#B9FF47" font-size="12" font-weight="700">Present Simple · I learn</text>
+  <line x1="30" y1="48" x2="565" y2="48" stroke="#37936F" stroke-width="2"/>
+  <polygon points="575,48 563,43 563,53" fill="#37936F"/>
+  <circle cx="90" cy="48" r="5" fill="#B9FF47"/>
+  <circle cx="190" cy="48" r="5" fill="#B9FF47"/>
+  <circle cx="290" cy="48" r="5" fill="#B9FF47"/>
+  <circle cx="390" cy="48" r="5" fill="#B9FF47"/>
+  <circle cx="490" cy="48" r="5" fill="#B9FF47"/>
+  <text x="30" y="72" fill="#9BA39D" font-size="10">повторяется снова и снова · every day</text>
+  <text x="30" y="112" fill="#FFD34D" font-size="12" font-weight="700">Present Continuous · I am learning</text>
+  <line x1="30" y1="132" x2="565" y2="132" stroke="#37936F" stroke-width="2"/>
+  <polygon points="575,132 563,127 563,137" fill="#37936F"/>
+  <circle cx="297" cy="132" r="15" fill="none" stroke="#FFD34D" stroke-opacity="0.35" stroke-width="2"/>
+  <circle cx="297" cy="132" r="7" fill="#FFD34D"/>
+  <text x="297" y="158" text-anchor="middle" fill="#FFD34D" font-size="10" font-weight="700">прямо сейчас · now</text>
+</svg>
+<p>Как выбрать за секунду: «каждый день / обычно» → Simple. «Сейчас / в этот момент / Look!» → Continuous.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I'm learn English</span> → <span class="now">I'm learning English</span><br><span class="muted2">после am/is/are глагол всегда с -ing (твоя ошибка из теста)</span></span>
+<span class="fix"><span class="was">She go to work</span> → <span class="now">She goes to work</span><br><span class="muted2">he/she/it в Present Simple требует -s</span></span>
+<span class="fix"><span class="was">I am wanting coffee</span> → <span class="now">I want coffee</span><br><span class="muted2">глаголы состояния (want, like, know) не ставят в -ing</span></span>`,
 ex:[
- {t:"mc",q:"She ___ to work every day.",o:["go","goes","going","is go"],a:1,e:"he/she/it + -s. «Every day» = Simple."},
- {t:"mc",q:"I ___ English now.",o:["learn","am learning","learning","am learn"],a:1,e:"«Now» = Continuous."},
- {t:"fill",q:"He ___ (play) hockey every weekend.",a:["plays"],e:"he → plays."},
- {t:"fill",q:"Look! It ___ (rain).",a:["is raining","'s raining"],e:"Прямо сейчас → is raining."},
- {t:"mc",q:"«Я учу английский, потому что хочу стать разработчиком»:",o:["I'm learn English because I will be a developer","I'm learning English because I want to become a developer","I learning English because I be developer","I am learn English for be developer"],a:1,e:"am + learning; want to become."},
- {t:"mc",q:"They usually ___ dinner at 7.",o:["are having","haves","have","having"],a:2,e:"«Usually» = Simple: have."},
- {t:"fill",q:"My brother ___ (not/like) coffee.",a:["doesn't like","does not like"],e:"doesn't + глагол без -s."},
- {t:"mc",q:"___ you working now?",o:["Do","Is","Are","Does"],a:2,e:"you → Are you working now?"}]},
+ {t:"mc",q:"She ___ to work every day.",o:["go","goes","going","is going"],a:1,e:"he/she/it + -s, а «every day» = Present Simple."},
+ {t:"mc",q:"Quiet, please! I ___ to the news right now.",o:["listen","am listening","listening","am listen"],a:1,e:"«Right now» = Continuous: am + listening."},
+ {t:"cloze",q:"Дострой оба времени в одном предложении",code:"Every day I {0} (drink) coffee, but right now I {1} (drink) tea.",gaps:["drink",["am drinking","'m drinking"]],e:"«Every day» → Simple (drink); «right now» → Continuous (am drinking)."},
+ {t:"order",q:"Собери предложение (что происходит сейчас)",lines:["I","am","writing","code","now"],e:"Present Continuous: подлежащее + am/is/are + V-ing. → I am writing code now."},
+ {t:"pairs",q:"Соедини маркер с его временем",pairs:[["every day","Present Simple"],["now","Present Continuous"],["usually","Present Simple"],["Look!","Present Continuous"]],e:"Регулярность (every day, usually) → Simple. Момент речи (now, Look!) → Continuous."},
+ {t:"fill",q:"My brother ___ (not/like) coffee.",a:["doesn't like","does not like"],e:"Отрицание в Simple для he: doesn't + глагол без -s.",w:200},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["I usually drink tea.","She is working now.","He go to school every day.","They are playing football."],a:2,e:"He go → He goes: для he/she/it в Present Simple нужно -s."},
+ {t:"mc",q:"«Я учу английский, потому что хочу стать разработчиком»:",o:["I'm learn English because I will be a developer","I'm learning English because I want to become a developer","I learning English because I be developer","I am learn English for be developer"],a:1,e:"am + learning (сейчас) + want to become (цель)."}],
+res:[
+ ["Present Simple vs Continuous — разбор","yt","present simple vs present continuous разница для начинающих"],
+ ["engblog.ru: грамматика времён","url","https://engblog.ru/grammar"],
+ ["British Council: грамматика","url","https://learnenglish.britishcouncil.org/grammar"],
+ ["BBC Learning English","url","https://www.bbc.co.uk/learningenglish/english/grammar"]]},
 
 {id:"l2",title:"Past Simple: говорим о прошлом",
 theory:`
-<p><b>Past Simple</b> — законченное действие в прошлом: yesterday, last week, ago.</p>
-<p>Правильные глаголы: + <b>-ed</b>: play → play<b>ed</b>. Неправильные — запоминаем:</p>
+<p>🎯 <b>Зачем это тебе:</b> вся твоя история — «я бросил хоккей», «я начал учить код» — это прошедшее время. Past Simple рассказывает о законченных действиях в прошлом. Без него не расскажешь ни про свой путь, ни про то, что сделал вчера на собеседовании.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">1. Правильные глаголы: просто + -ed</h3>
+<pre class="demo">I play<b>ed</b> hockey for ten years.
+She work<b>ed</b> late yesterday.</pre>
+<p>Разбор: законченное действие в прошлом. К правильным глаголам добавляем <b>-ed</b>. Маркеры времени: <code>yesterday</code>, <code>last week</code>, <code>... ago</code>, <code>in 2019</code>.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">2. Неправильные глаголы — их учат наизусть</h3>
 <table class="simple"><tr><th>Глагол</th><th>Прошедшее</th><th>Перевод</th></tr>
 <tr><td>go</td><td>went</td><td>идти</td></tr><tr><td>see</td><td>saw</td><td>видеть</td></tr>
 <tr><td>have</td><td>had</td><td>иметь</td></tr><tr><td>make</td><td>made</td><td>делать</td></tr>
 <tr><td>begin</td><td>began</td><td>начинать</td></tr><tr><td>write</td><td>wrote</td><td>писать</td></tr></table>
-<p><b>Отрицание и вопрос</b> — через did, глагол в начальной форме:</p>
-<pre class="demo">I didn't see the film.   (НЕ "didn't saw")
-Did you finish the task? (НЕ "Did you finished")</pre>
-<span class="fix"><span class="was">hockey carrera</span> → <span class="now">hockey career</span><br><span class="muted2">carrera — это испанский. Время ты выбрал верно</span></span>`,
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">3. Отрицание и вопрос — через did</h3>
+<pre class="demo">I did<b>n't</b> see the film.   (НЕ "didn't saw")
+<b>Did</b> you finish the task?  (НЕ "Did you finished")</pre>
+<p>Разбор: <code>did</code> уже несёт прошедшее время, поэтому сам глагол возвращается в начальную форму. Это правило спотыкает почти всех — держи его в голове.</p>
+
+<svg viewBox="0 0 600 145" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <line x1="30" y1="80" x2="565" y2="80" stroke="#37936F" stroke-width="2"/>
+  <polygon points="575,80 563,75 563,85" fill="#37936F"/>
+  <line x1="500" y1="52" x2="500" y2="96" stroke="#FFD34D" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="500" y="112" text-anchor="middle" fill="#FFD34D" font-size="11" font-weight="700">СЕЙЧАС</text>
+  <circle cx="150" cy="80" r="12" fill="#1C201E" stroke="#B9FF47" stroke-width="2"/>
+  <text x="150" y="85" text-anchor="middle" fill="#B9FF47" font-size="13" font-weight="800">✓</text>
+  <text x="150" y="52" text-anchor="middle" fill="#B9FF47" font-size="12" font-weight="700">I watched</text>
+  <text x="150" y="112" text-anchor="middle" fill="#9BA39D" font-size="9">yesterday · ago · last week</text>
+  <text x="315" y="76" fill="#9BA39D" font-size="10" font-style="italic">действие закончилось в прошлом</text>
+</svg>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I didn't saw it</span> → <span class="now">I didn't see it</span><br><span class="muted2">после did/didn't глагол в начальной форме</span></span>
+<span class="fix"><span class="was">Did you finished?</span> → <span class="now">Did you finish?</span><br><span class="muted2">did уже показывает прошлое — глагол без -ed</span></span>
+<span class="fix"><span class="was">I goed home</span> → <span class="now">I went home</span><br><span class="muted2">go — неправильный глагол, форму учат наизусть</span></span>`,
 ex:[
- {t:"fill",q:"I ___ (watch) a film yesterday.",a:["watched"],e:"Правильный глагол: + ed."},
- {t:"fill",q:"She ___ (go) to Moscow last week.",a:["went"],e:"go → went."},
- {t:"mc",q:"I ___ my homework an hour ago.",o:["finish","finished","have finished","finishing"],a:1,e:"«ago» → finished."},
- {t:"mc",q:"He didn't ___ the message.",o:["saw","seen","see","sees"],a:2,e:"После didn't — начальная форма."},
- {t:"fill",q:"___ you ___ (play) hockey yesterday? (вопрос)",a:["did play","did you play"],e:"Did you play...?",w:220},
- {t:"mc",q:"They ___ a new project last month.",o:["began","begin","begun","beginned"],a:0,e:"begin → began."},
- {t:"fill",q:"I ___ (not/have) time yesterday.",a:["didn't have","did not have"],e:"didn't + have (не had!)."},
- {t:"mc",q:"«Я закончил хоккейную карьеру»:",o:["I finish my hockey career","I finished my hockey career","I have finish hockey carrera","I was finish my career"],a:1,e:"finished + career."}]},
+ {t:"fill",q:"I ___ (watch) a film yesterday.",a:["watched"],e:"Правильный глагол + -ed: watched."},
+ {t:"pairs",q:"Соедини глагол с его прошедшей формой",pairs:[["go","went"],["see","saw"],["have","had"],["make","made"]],e:"Это неправильные глаголы — их формы просто запоминают."},
+ {t:"mc",q:"I ___ my homework an hour ago.",o:["finish","finished","have finished","finishing"],a:1,e:"«ago» = законченное прошлое → finished."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["I watched a good film.","She went home early.","He didn't saw the message.","They played chess yesterday."],a:2,e:"didn't saw → didn't see: после did глагол в начальной форме."},
+ {t:"cloze",q:"Впиши прошедшие формы (оба глагола неправильные)",code:"Yesterday she {0} (go) to Moscow and {1} (write) a letter.",gaps:["went","wrote"],e:"go → went, write → wrote."},
+ {t:"order",q:"Собери вопрос в прошедшем времени",lines:["Did","you","play","hockey","yesterday"],e:"Вопрос через did + начальная форма: Did you play hockey yesterday?"},
+ {t:"fill",q:"I ___ (not/have) time yesterday.",a:["didn't have","did not have"],e:"didn't + have (начальная форма, не had!).",w:200},
+ {t:"mc",q:"«Я закончил хоккейную карьеру»:",o:["I finish my hockey career","I finished my hockey career","I have finish hockey carrera","I was finish my career"],a:1,e:"finished + career (career, не carrera — это испанский)."}],
+res:[
+ ["Past Simple простыми словами","yt","past simple прошедшее время английский для начинающих"],
+ ["Неправильные глаголы: таблица","url","https://engblog.ru/irregular-verbs"],
+ ["British Council: Past simple","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/past-simple"],
+ ["YouGlish — услышать в речи","url","https://youglish.com"]]},
 
 {id:"l3",title:"Будущее и цели: will, going to, want to become",
 theory:`
+<p>🎯 <b>Зачем это тебе:</b> ты идёшь к цели — стать разработчиком. Чтобы говорить о планах и мечтах («я собираюсь выучить JavaScript», «хочу получить работу»), нужны три формы будущего. Это самые важные фразы для твоего пути, и именно в них у тебя были ошибки.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">1. Три способа сказать о будущем</h3>
 <table class="simple"><tr><th>Форма</th><th>Когда</th><th>Пример</th></tr>
-<tr><td><b>will + V</b></td><td>Решение сейчас, обещание</td><td>I will help you</td></tr>
-<tr><td><b>going to + V</b></td><td>План (уже решил)</td><td>I'm going to learn JavaScript</td></tr>
-<tr><td><b>want to + V</b></td><td>Желание, цель</td><td>I want to become a developer</td></tr></table>
-<p>«Хочу стать разработчиком»: <b>I want to become a developer</b>.</p>
-<pre class="demo">My goal is to become a junior developer.
-I'm learning English to get a better job.
-I need to practise every day.</pre>
-<span class="fix"><span class="was">i need be a greatest version on me</span> → <span class="now">I need to be the greatest version of myself</span><br><span class="muted2">после need нужен to</span></span>`,
+<tr><td><b>will + V</b></td><td>решение в момент речи, обещание</td><td>I will help you</td></tr>
+<tr><td><b>going to + V</b></td><td>план (уже решил заранее)</td><td>I'm going to learn JavaScript</td></tr>
+<tr><td><b>want to + V</b></td><td>желание, цель</td><td>I want to become a developer</td></tr></table>
+<p>Разбор: <code>will</code> — когда решил только что («телефон звонит — I will answer»). <code>going to</code> — когда план был раньше. <code>want to</code> — про мечту и цель.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">2. Волшебное слово «to» после want / need / goal</h3>
+<pre class="demo">I want <b>to</b> become a developer.
+I need <b>to</b> practise every day.
+My goal is <b>to</b> get a junior job.</pre>
+<p>Разбор: после <code>want</code>, <code>need</code>, <code>goal is</code> всегда идёт <b>to + глагол</b>. Пропустить <code>to</code> — самая частая ошибка (у тебя тоже была: «i need be»).</p>
+
+<svg viewBox="0 0 600 170" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="188" y="82" width="387" height="26" fill="#B9FF47" fill-opacity="0.06"/>
+  <line x1="30" y1="95" x2="565" y2="95" stroke="#37936F" stroke-width="2"/>
+  <polygon points="575,95 563,90 563,100" fill="#37936F"/>
+  <line x1="188" y1="72" x2="188" y2="118" stroke="#FFD34D" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="188" y="132" text-anchor="middle" fill="#FFD34D" font-size="10" font-weight="700">СЕЙЧАС</text>
+  <text x="470" y="128" text-anchor="middle" fill="#9BA39D" font-size="10">будущее →</text>
+  <rect x="212" y="20" width="108" height="44" rx="8" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="266" y="39" text-anchor="middle" fill="#B9FF47" font-size="12" font-weight="700">will + V</text>
+  <text x="266" y="55" text-anchor="middle" fill="#9BA39D" font-size="9">решил сейчас</text>
+  <rect x="330" y="20" width="120" height="44" rx="8" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="390" y="39" text-anchor="middle" fill="#FFD34D" font-size="12" font-weight="700">going to + V</text>
+  <text x="390" y="55" text-anchor="middle" fill="#9BA39D" font-size="9">план заранее</text>
+  <rect x="460" y="20" width="108" height="44" rx="8" fill="#1C201E" stroke="#37936F"/>
+  <text x="514" y="39" text-anchor="middle" fill="#5BC79A" font-size="12" font-weight="700">want to + V</text>
+  <text x="514" y="55" text-anchor="middle" fill="#9BA39D" font-size="9">цель, желание</text>
+</svg>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I want become a developer</span> → <span class="now">I want to become a developer</span><br><span class="muted2">после want нужен to</span></span>
+<span class="fix"><span class="was">I need be the greatest version</span> → <span class="now">I need to be the greatest version</span><br><span class="muted2">после need тоже нужен to</span></span>
+<span class="fix"><span class="was">My goal is become junior</span> → <span class="now">My goal is to become a junior</span><br><span class="muted2">goal is → to become</span></span>`,
 ex:[
  {t:"mc",q:"«Я хочу стать разработчиком»:",o:["I will developer","I want to become a developer","I want become developer","I be a developer"],a:1,e:"want + to + become + a developer."},
- {t:"fill",q:"I ___ (go) to learn CSS next week. (собираюсь)",a:["am going","'m going","am going to learn"],e:"План → am going to.",w:240},
- {t:"mc",q:"— The phone is ringing! — OK, I ___ answer it.",o:["going to","will","want","am"],a:1,e:"Решение в момент речи → will."},
- {t:"mc",q:"I need ___ every day.",o:["practise","to practise","practising","for practise"],a:1,e:"need + to + глагол."},
- {t:"mc",q:"My goal is ___ a junior developer.",o:["become","becoming","to become","became"],a:2,e:"My goal is TO become."},
- {t:"fill",q:"She ___ (not/will) come tomorrow.",a:["won't","will not"],e:"will not = won't."},
- {t:"mc",q:"«Пожелай мне удачи»:",o:["Say good luck for me","Wish me luck","Good luck to say me","Luck for me"],a:1,e:"Wish me luck!"}]},
+ {t:"mc",q:"I ___ learn CSS next week. I've already made a plan.",o:["will","am going to","want","going"],a:1,e:"План, решённый заранее → am going to."},
+ {t:"mc",q:"— The phone is ringing! — OK, I ___ answer it.",o:["going to","will","want","am"],a:1,e:"Решение прямо сейчас → will."},
+ {t:"cloze",q:"Впиши пропуски (про цель)",code:"My goal {0} to {1} a junior developer.",gaps:["is","become"],e:"My goal IS TO become a junior developer."},
+ {t:"order",q:"Собери план на будущее",lines:["I","am","going","to","learn","JavaScript"],e:"Going to для плана: I am going to learn JavaScript."},
+ {t:"pairs",q:"Соедини форму с её значением",pairs:[["will + V","решение сейчас"],["going to + V","план заранее"],["want to + V","желание, цель"],["need to + V","необходимость"]],e:"will — спонтанно, going to — план, want to — мечта, need to — надо."},
+ {t:"mc",q:"I need ___ every day.",o:["practise","to practise","practising","for practise"],a:1,e:"После need нужен to + глагол."},
+ {t:"fill",q:"She ___ (not/will) come tomorrow.",a:["won't","will not"],e:"will not = won't."}],
+res:[
+ ["will или going to — разница","yt","will vs going to разница простыми словами"],
+ ["engblog.ru: будущее время","url","https://engblog.ru/grammar"],
+ ["Инфинитив с частицей to","yt","инфинитив с частицей to в английском"],
+ ["British Council: грамматика","url","https://learnenglish.britishcouncil.org/grammar"]]},
 
-{id:"l4",title:"Работа над ошибками: твой тест",
+{id:"l4",title:"Работа над ошибками: твой тест + артикли",
 theory:`
-<p>Разбор твоих фраз — самый полезный урок: ошибки свои, а не из учебника.</p>
+<p>🎯 <b>Зачем это тебе:</b> самый полезный урок — разбор твоих собственных фраз. Ошибки здесь настоящие, твои, а не из учебника. Починим их — и сразу станет видно три направления роста: времена, «to» после want/need, и артикли a / an / the.</p>
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">1. Твои фразы — до и после</h3>
 <span class="fix"><span class="was">i'm learn english because i will be a developer</span><br>
 <span class="now">I'm learning English because I want to become a developer.</span><br>
 <span class="muted2">am + V-ing; want to become; I — всегда с большой буквы.</span></span>
 <span class="fix"><span class="was">i'm 20 yars old and i start lerning new lenguge</span><br>
 <span class="now">I'm 20 years old and I started learning a new language.</span><br>
-<span class="muted2">years, learning, language; started (прошедшее).</span></span>
+<span class="muted2">years, learning, language; started — прошедшее.</span></span>
 <span class="fix"><span class="was">i need be a greatest version on me</span><br>
 <span class="now">I need to be the greatest version of myself.</span><br>
 <span class="muted2">need TO be; the greatest; version OF myself.</span></span>
-<span class="fix"><span class="was">i am very iinteristing guy</span><br>
-<span class="now">I am a very interesting guy.</span><br>
-<span class="muted2">Артикль a: a guy, a developer.</span></span>
-<span class="fix"><span class="was">Just be be say good luck for me</span><br>
-<span class="now">Just wish me luck!</span><br>
-<span class="muted2">Устойчивое выражение.</span></span>
-<p><b>3 направления роста:</b> времена, «to» после need/want/goal, артикли a/the.</p>
-<p>«To look forward to» = <b>ждать с нетерпением</b>: <i>I look forward to my new life.</i></p>`,
+
+<h3 style="margin:14px 0 4px;font-family:var(--font-display)">2. Артикли: a / an / the</h3>
+<p>Артикль — маленькое слово перед существительным. Их у тебя не хватало («very interesting guy» без <code>a</code>).</p>
+<svg viewBox="0 0 600 135" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="24" y="28" width="168" height="82" rx="10" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="108" y="58" text-anchor="middle" fill="#B9FF47" font-size="20" font-weight="800">a</text>
+  <text x="108" y="80" text-anchor="middle" fill="#F4F6F2" font-size="11">любой один</text>
+  <text x="108" y="97" text-anchor="middle" fill="#9BA39D" font-size="9">a developer, a job</text>
+  <rect x="204" y="28" width="168" height="82" rx="10" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="288" y="58" text-anchor="middle" fill="#FFD34D" font-size="20" font-weight="800">an</text>
+  <text x="288" y="80" text-anchor="middle" fill="#F4F6F2" font-size="11">один + гласный звук</text>
+  <text x="288" y="97" text-anchor="middle" fill="#9BA39D" font-size="9">an apple, an hour</text>
+  <rect x="384" y="28" width="192" height="82" rx="10" fill="#1C201E" stroke="#37936F"/>
+  <text x="480" y="58" text-anchor="middle" fill="#5BC79A" font-size="20" font-weight="800">the</text>
+  <text x="480" y="80" text-anchor="middle" fill="#F4F6F2" font-size="11">конкретный, известный</text>
+  <text x="480" y="97" text-anchor="middle" fill="#9BA39D" font-size="9">the greatest version</text>
+</svg>
+<p>«To look forward to» = <b>ждать с нетерпением</b>: <i>I look forward to my new life.</i></p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I am very interesting guy</span> → <span class="now">I am a very interesting guy</span><br><span class="muted2">перед «один любой» ставим a</span></span>
+<span class="fix"><span class="was">good luck for me</span> → <span class="now">wish me luck</span><br><span class="muted2">устойчивое выражение — запомни целиком</span></span>`,
 ex:[
- {t:"mc",q:"I am ___ interesting guy.",o:["very","a very","the very","an very"],a:1,e:"a + very + interesting + guy."},
- {t:"fill",q:"I started ___ (learn) a new language.",a:["learning","to learn"],e:"start + learning / to learn."},
- {t:"mc",q:"I need ___ the greatest version of myself.",o:["be","to be","being","am"],a:1,e:"need TO be."},
+ {t:"mc",q:"I am ___ interesting guy.",o:["very","a very","the very","an very"],a:1,e:"a + very + interesting + guy: перед «один любой» нужен артикль a."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["I am a developer.","I need to practise every day.","I look forward to my job.","I want become a developer."],a:3,e:"want become → want to become: после want нужен to."},
+ {t:"cloze",q:"Впиши пропущенные слова",code:"I need {0} be {1} greatest version of myself.",gaps:["to","the"],e:"need TO be; THE greatest (конкретный, единственный лучший)."},
  {t:"mc",q:"«I look forward to my first job» означает:",o:["Я смотрю вперёд на работу","Я с нетерпением жду первую работу","Я ищу первую работу","Я боюсь первой работы"],a:1,e:"look forward to = ждать с нетерпением."},
- {t:"fill",q:"I'm 20 ___ old.",a:["years"],e:"years (не yars)."},
- {t:"mc",q:"Фраза без ошибок:",o:["I'm learn English every day","I learning English every day","I learn English every day","I am learn English every day"],a:2,e:"I learn (Simple) или I am learning (сейчас)."}]}
+ {t:"fill",q:"I'm 20 ___ old.",a:["years"],e:"years old (не yars)."},
+ {t:"pairs",q:"Соедини ошибку с исправлением",pairs:[["I'm learn","I'm learning"],["want become","want to become"],["need be","need to be"],["iinteristing","interesting"]],e:"Твои реальные фразы из теста и их правильные формы."},
+ {t:"order",q:"Собери свою главную фразу",lines:["I","want","to","become","a","developer"],e:"I want to become a developer — цель через want to + a developer."},
+ {t:"mc",q:"Фраза без ошибок:",o:["I'm learn English every day","I learning English every day","I learn English every day","I am learn English every day"],a:2,e:"I learn (Simple) или I am learning (сейчас) — но не «I'm learn»."}],
+res:[
+ ["Артикли a / an / the простыми словами","yt","артикли a an the английский простыми словами"],
+ ["engblog.ru: артикли","url","https://engblog.ru/articles-in-english"],
+ ["British Council: Articles","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/articles-1"],
+ ["YouGlish — произношение фраз","url","https://youglish.com"]]}
 ];
 
 

@@ -1425,7 +1425,408 @@ res:[
  ["Переменные и типы в C++","yt","c++ переменные типы данных для начинающих"],
  ["learncpp.com — переменные","url","https://www.learncpp.com/cpp-tutorial/introduction-to-objects-and-variables/"],
  ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
- ["acmp.ru — задачи для начинающих","url","https://acmp.ru/index.asp?main=tasks"]]}
+ ["acmp.ru — задачи для начинающих","url","https://acmp.ru/index.asp?main=tasks"]]},
+{id:"c2",title:"C++ · Условия: if / else",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> программа без условий — прямая труба. Условия дают ей выбор: «если число больше 10 — сделай одно, иначе другое». С этого начинается вся логика: проверки, ветвления, реакции.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. if / else</h3>
+<pre class="demo">int age = 20;
+if (age &gt;= 18) {
+    cout &lt;&lt; "Взрослый";
+} else {
+    cout &lt;&lt; "Ребёнок";
+}</pre>
+<p>Разбор: в скобках <code>if (...)</code> — <b>условие</b>, которое либо истинно, либо ложно. Истинно → выполняется блок в <code>{ }</code> после <code>if</code>. Ложно → блок после <code>else</code>. <code>else</code> необязателен.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Сравнения и несколько веток</h3>
+<table class="simple"><tr><th>Оператор</th><th>Смысл</th></tr>
+<tr><td><code>==</code></td><td>равно</td></tr><tr><td><code>!=</code></td><td>не равно</td></tr>
+<tr><td><code>&gt;</code> <code>&lt;</code></td><td>больше / меньше</td></tr><tr><td><code>&gt;=</code> <code>&lt;=</code></td><td>больше-равно / меньше-равно</td></tr></table>
+<pre class="demo">if (score &gt;= 90) cout &lt;&lt; "5";
+else if (score &gt;= 75) cout &lt;&lt; "4";
+else cout &lt;&lt; "3";</pre>
+<p>Разбор: <code>else if</code> проверяет следующее условие, только если предыдущее оказалось ложным. Проверки идут сверху вниз до первого истинного.</p>
+
+<svg viewBox="0 0 600 150" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="c2a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <polygon points="120,30 200,70 120,110 40,70" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="120" y="66" text-anchor="middle" fill="#FFD34D" font-size="12" font-weight="700">age &gt;= 18 ?</text>
+  <text x="120" y="82" text-anchor="middle" fill="#9BA39D" font-size="9">условие</text>
+  <line x1="200" y1="70" x2="300" y2="45" stroke="#B9FF47" stroke-width="2" marker-end="url(#c2a)"/>
+  <text x="245" y="40" fill="#B9FF47" font-size="10" font-weight="700">да</text>
+  <rect x="304" y="26" width="150" height="38" rx="8" fill="#141716" stroke="#37936F"/>
+  <text x="379" y="49" text-anchor="middle" fill="#F4F6F2" font-size="11">cout &lt;&lt; "Взрослый"</text>
+  <line x1="120" y1="110" x2="120" y2="128" stroke="#B9FF47" stroke-width="2"/>
+  <line x1="120" y1="128" x2="300" y2="128" stroke="#B9FF47" stroke-width="2" marker-end="url(#c2a)"/>
+  <text x="135" y="124" fill="#B9FF47" font-size="10" font-weight="700">нет</text>
+  <rect x="304" y="109" width="150" height="38" rx="8" fill="#141716" stroke="#37936F"/>
+  <text x="379" y="132" text-anchor="middle" fill="#F4F6F2" font-size="11">cout &lt;&lt; "Ребёнок"</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Логика: и / или / не</h3>
+<p><code>&amp;&amp;</code> — «и» (оба верны), <code>||</code> — «или» (хотя бы один), <code>!</code> — «не».</p>
+<pre class="demo">if (age &gt;= 18 &amp;&amp; hasPassport) cout &lt;&lt; "Пропустить";
+if (day == 6 || day == 7) cout &lt;&lt; "Выходной";</pre>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">if (x = 5)</span> → <span class="now">if (x == 5)</span><br><span class="muted2">= это присваивание, == это сравнение — ошибка №1</span></span>
+<span class="fix"><span class="was">if (a &gt; 0) &amp; (b &gt; 0)</span> → <span class="now">if (a &gt; 0 &amp;&amp; b &gt; 0)</span><br><span class="muted2">логическое «и» — это два амперсанда</span></span>
+<span class="fix"><span class="was">if (x &gt; 5); { ... }</span> → <span class="now">if (x &gt; 5) { ... }</span><br><span class="muted2">точка с запятой сразу после if обрывает условие</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет код?",code:"int x = 7;\nif (x > 10) cout << \"big\";\nelse cout << \"small\";",o:["small","big","7","ничего"],a:0,e:"7 не больше 10 → выполняется ветка else: small."},
+ {q:"Как проверить равенство двух значений?",o:["=","==","!=",">="],a:1,e:"== сравнивает; один = это присваивание."},
+ {t:"bug",q:"В какой строке ошибка?",code:["int x = 5;","if (x = 10) {","    cout << \"ten\";","}"],a:1,e:"if (x = 10) — присваивание вместо сравнения. Нужно ==."},
+ {t:"cloze",q:"Дострой условие «взрослый и с паспортом»",code:"if (age >= 18 {0} hasPassport) {\n    cout << \"ok\";\n}",gaps:[["&&"]],e:"Логическое «и» — два амперсанда &&."},
+ {t:"mc",q:"Какой оператор означает «хотя бы одно из двух»?",o:["&&","||","!","=="],a:1,e:"|| — логическое «или»: истинно, если хотя бы одно условие верно."},
+ {t:"order",q:"Собери ветвление по оценке",lines:["if (score >= 90) {","    cout << \"5\";","} else {","    cout << \"ниже\";","}"],e:"Сначала if с условием и блоком, затем else с альтернативой."},
+ {t:"output",q:"Что выведет код?",code:"int d = 6;\nif (d == 6 || d == 7) cout << \"weekend\";\nelse cout << \"workday\";",o:["weekend","workday","6","ошибка"],a:0,e:"d == 6 истинно → условие с || истинно → weekend."},
+ {q:"Что делает точка с запятой сразу после if(...) ?",o:["Ничего страшного","Обрывает условие — блок выполнится всегда","Ускоряет код","Это обязательно"],a:1,e:"if (x>5); делает пустое тело; следующий блок { } выполнится независимо от условия."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> тренируем ветвления на задачах с автопроверкой. Отмечай по мере решения.</p>`,
+ tasks:[
+  {t:"Реши 5–6 задач на условия (наибольшее из двух/трёх чисел, чётность, знак числа).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Пройди тему «Условный оператор» на курсе по C++ (автопроверка).",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]},
+  {t:"Напиши сам: программа читает три числа и выводит наибольшее.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Условия в C++ — видео","yt","c++ условный оператор if else для начинающих"],
+ ["learncpp.com — if statements","url","https://www.learncpp.com/cpp-tutorial/if-statements-and-blocks/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"c3",title:"C++ · Циклы: for и while",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> компьютер силён в повторениях. Циклы делают одно действие сто, тысячу, миллион раз — сумма чисел, обход массива, перебор вариантов. Без циклов не написать почти ничего полезного.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Цикл for — когда знаешь, сколько раз</h3>
+<pre class="demo">for (int i = 0; i &lt; 5; i++) {
+    cout &lt;&lt; i &lt;&lt; " ";
+}
+// вывод: 0 1 2 3 4</pre>
+<p>Разбор трёх частей в скобках: <code>int i = 0</code> — <b>старт</b> (счётчик), <code>i &lt; 5</code> — <b>условие</b> продолжения (пока верно — крутимся), <code>i++</code> — <b>шаг</b> (увеличить на 1 после каждого прохода). Тело в <code>{ }</code> выполняется на каждом круге.</p>
+
+<svg viewBox="0 0 600 140" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="c3a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="20" y="54" width="96" height="36" rx="8" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="68" y="76" text-anchor="middle" fill="#FFD34D" font-size="11" font-weight="700">i = 0</text>
+  <line x1="116" y1="72" x2="158" y2="72" stroke="#B9FF47" stroke-width="2" marker-end="url(#c3a)"/>
+  <polygon points="210,45 270,72 210,99 150,72" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="210" y="76" text-anchor="middle" fill="#B9FF47" font-size="10" font-weight="700">i &lt; 5 ?</text>
+  <line x1="270" y1="72" x2="312" y2="72" stroke="#B9FF47" stroke-width="2" marker-end="url(#c3a)"/>
+  <rect x="316" y="54" width="120" height="36" rx="8" fill="#141716" stroke="#37936F"/>
+  <text x="376" y="76" text-anchor="middle" fill="#F4F6F2" font-size="10">тело + i++</text>
+  <path d="M376,90 L376,120 L210,120 L210,99" fill="none" stroke="#37936F" stroke-width="2" marker-end="url(#c3a)"/>
+  <text x="293" y="134" text-anchor="middle" fill="#9BA39D" font-size="9">возвращаемся к проверке</text>
+  <text x="210" y="30" text-anchor="middle" fill="#9BA39D" font-size="9">условие ложно → выход</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Цикл while — пока условие верно</h3>
+<pre class="demo">int n = 10;
+while (n &gt; 0) {
+    cout &lt;&lt; n &lt;&lt; " ";
+    n--;
+}</pre>
+<p>Разбор: <code>while</code> проще <code>for</code> — только условие. Используй, когда не знаешь заранее, сколько будет проходов. Важно: внутри должно что-то менять условие (<code>n--</code>), иначе цикл <b>зациклится навсегда</b>.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. break и continue</h3>
+<p><code>break</code> — выйти из цикла совсем. <code>continue</code> — пропустить остаток тела и перейти к следующему кругу.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">while (n &gt; 0) { cout &lt;&lt; n; }</span> → <span class="now">добавь n--;</span><br><span class="muted2">без изменения n условие всегда истинно — бесконечный цикл</span></span>
+<span class="fix"><span class="was">for (int i = 0; i &lt;= 5; i++) по массиву из 5</span> → <span class="now">i &lt; 5</span><br><span class="muted2">индексы 0..4 — при &lt;= выйдешь за границу (off-by-one)</span></span>
+<span class="fix"><span class="was">for (int i = 0; i &lt; 5; i++);</span> → <span class="now">убери ; после for</span><br><span class="muted2">точка с запятой делает тело цикла пустым</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет цикл?",code:"for (int i = 1; i <= 3; i++) {\n    cout << i << \" \";\n}",o:["1 2 3","0 1 2","1 2 3 4","3 2 1"],a:0,e:"i идёт 1,2,3 (пока i<=3), печатает каждое."},
+ {t:"cloze",q:"Дострой заголовок цикла (0..4)",code:"for (int i = 0; i {0} 5; i{1}) {\n    cout << i;\n}",gaps:[["<"],["++"]],e:"Условие i < 5 даёт 0..4; i++ увеличивает счётчик."},
+ {t:"bug",q:"Почему цикл никогда не закончится?",code:["int n = 5;","while (n > 0) {","    cout << n;","}"],a:1,e:"Внутри while не меняется n — условие всегда истинно. Нужно n-- в теле."},
+ {t:"output",q:"Что выведет код?",code:"int sum = 0;\nfor (int i = 1; i <= 4; i++) sum += i;\ncout << sum;",o:["10","4","6","1234"],a:0,e:"sum = 1+2+3+4 = 10."},
+ {t:"mc",q:"Что делает break внутри цикла?",o:["Пропускает один круг","Полностью выходит из цикла","Перезапускает цикл","Ничего"],a:1,e:"break немедленно завершает весь цикл; continue лишь пропускает остаток текущего круга."},
+ {t:"order",q:"Собери цикл суммирования 1..n",lines:["int sum = 0;","for (int i = 1; i <= n; i++) {","    sum += i;","}","cout << sum;"],e:"Заводим накопитель, крутим i от 1 до n, прибавляем, выводим."},
+ {t:"output",q:"Что выведет код?",code:"for (int i = 0; i < 5; i++) {\n    if (i == 2) continue;\n    cout << i;\n}",o:["0134","01234","012","234"],a:0,e:"continue пропускает печать при i==2 → 0 1 3 4 (слитно 0134)."},
+ {q:"Когда удобнее while, а не for?",o:["Когда заранее не знаешь число повторений","Никогда","Когда есть массив","Всегда"],a:0,e:"while — когда крутим до какого-то события, а число проходов заранее неизвестно."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> закрепляем циклы на задачах с автопроверкой.</p>`,
+ tasks:[
+  {t:"Реши 6–8 задач на циклы (сумма чисел, факториал, количество делителей, вывод последовательности).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Пройди тему «Циклы» на курсе по C++ (автопроверка каждой задачи).",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]},
+  {t:"Напиши сам: программа считает сумму всех чисел от 1 до N (N вводится).",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Циклы в C++ — видео","yt","c++ циклы for while для начинающих"],
+ ["learncpp.com — loops","url","https://www.learncpp.com/cpp-tutorial/intro-to-loops-and-while-statements/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"c4",title:"C++ · Функции",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> когда программа растёт, весь код в одном <code>main</code> превращается в кашу. Функции разбивают её на понятные кусочки: написал один раз «посчитать факториал» — вызывай сколько угодно. Это основа чистого кода.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Функция — машина: вход → работа → выход</h3>
+<pre class="demo">int square(int x) {
+    return x * x;
+}
+
+cout &lt;&lt; square(5);   // 25</pre>
+<p>Разбор: <code>int</code> перед именем — <b>тип результата</b> (что функция вернёт). <code>square</code> — имя. <code>(int x)</code> — <b>параметр</b> (вход). <code>return</code> отдаёт результат и завершает функцию. Вызов — имя со скобками: <code>square(5)</code>.</p>
+
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="c4a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker>
+  <marker id="c4b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#37936F"/></marker></defs>
+  <rect x="24" y="40" width="96" height="42" rx="9" fill="#141716" stroke="#FFD34D"/>
+  <text x="72" y="60" text-anchor="middle" fill="#FFD34D" font-size="12" font-weight="700">5</text>
+  <text x="72" y="75" text-anchor="middle" fill="#9BA39D" font-size="9">вход (x)</text>
+  <line x1="122" y1="61" x2="196" y2="61" stroke="#B9FF47" stroke-width="2" marker-end="url(#c4a)"/>
+  <rect x="200" y="30" width="180" height="62" rx="11" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="290" y="56" text-anchor="middle" fill="#B9FF47" font-size="13" font-weight="700">square(x)</text>
+  <text x="290" y="76" text-anchor="middle" fill="#9BA39D" font-size="10">return x * x</text>
+  <line x1="382" y1="61" x2="456" y2="61" stroke="#37936F" stroke-width="2" marker-end="url(#c4b)"/>
+  <rect x="460" y="40" width="96" height="42" rx="9" fill="#141716" stroke="#37936F"/>
+  <text x="508" y="60" text-anchor="middle" fill="#F4F6F2" font-size="12" font-weight="700">25</text>
+  <text x="508" y="75" text-anchor="middle" fill="#9BA39D" font-size="9">результат</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Параметры и void</h3>
+<pre class="demo">int maxOf(int a, int b) {
+    if (a &gt; b) return a;
+    return b;
+}
+void greet(string name) {
+    cout &lt;&lt; "Привет, " &lt;&lt; name;
+}</pre>
+<p>Разбор: параметров может быть несколько — через запятую. Если функция ничего не возвращает (просто делает что-то), её тип — <code>void</code>, и <code>return</code> не нужен.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">int sum(int a, int b) { a + b; }</span> → <span class="now">return a + b;</span><br><span class="muted2">без return наружу уйдёт мусор — функция посчитала и выбросила результат</span></span>
+<span class="fix"><span class="was">square 5</span> → <span class="now">square(5)</span><br><span class="muted2">вызов функции — всегда со скобками</span></span>
+<span class="fix"><span class="was">int f(int a, b)</span> → <span class="now">int f(int a, int b)</span><br><span class="muted2">тип нужно указать у каждого параметра</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет код?",code:"int twice(int x) {\n    return x + x;\n}\ncout << twice(6);",o:["12","6","36","x+x"],a:0,e:"twice(6) = 6 + 6 = 12."},
+ {q:"Что делает return в функции?",o:["Печатает текст","Отдаёт результат и завершает функцию","Создаёт цикл","Ничего"],a:1,e:"return возвращает значение вызвавшему коду и заканчивает работу функции."},
+ {t:"bug",q:"Почему функция вернёт мусор?",code:["int sum(int a, int b) {","    a + b;","}"],a:1,e:"Строка a + b; посчитала сумму и выбросила её. Нужно return a + b;"},
+ {t:"cloze",q:"Дострой функцию максимума",code:"int maxOf(int a, int b) {\n    if (a > b) {0} a;\n    return b;\n}",gaps:["return"],e:"return a отдаёт a, если оно больше; иначе доходим до return b."},
+ {t:"order",q:"Собери функцию куба числа",lines:["int cube(int x) {","    return x * x * x;","}"],e:"Тип, имя, параметр, тело с return, закрывающая скобка."},
+ {t:"pairs",q:"Соедини понятие с ролью",pairs:[["параметр","вход функции"],["return","выход функции"],["void","функция без результата"],["вызов","имя со скобками"]],e:"Параметр принимает вход, return отдаёт выход, void — ничего не возвращает, вызов запускает функцию."},
+ {t:"output",q:"Что выведет код?",code:"int add(int a, int b) { return a + b; }\ncout << add(2, 3) + add(4, 1);",o:["10","5","23","41"],a:0,e:"add(2,3)=5, add(4,1)=5, 5+5=10."},
+ {q:"Какой тип у функции, которая ничего не возвращает?",o:["int","void","return","empty"],a:1,e:"void — «пусто»: функция что-то делает, но значение не отдаёт."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> учимся раскладывать задачу на функции.</p>`,
+ tasks:[
+  {t:"Реши 5–6 задач, где логику удобно вынести в функцию (простое число, НОД, факториал).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Пройди тему «Функции» на курсе по C++.",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]},
+  {t:"Напиши сам: функция isPrime(n), которая возвращает true, если n простое, и используй её в main.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Функции в C++ — видео","yt","c++ функции для начинающих"],
+ ["learncpp.com — functions","url","https://www.learncpp.com/cpp-tutorial/introduction-to-functions/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"c5",title:"C++ · Массивы и vector",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> одна переменная хранит одно значение. А если нужно 100 чисел — заводить 100 переменных? Массивы и <code>vector</code> хранят множество значений под одним именем и обходятся циклом. Почти каждая алгоритмическая задача — про них.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Массив: пронумерованные ячейки</h3>
+<pre class="demo">int a[5] = {10, 20, 30, 40, 50};
+cout &lt;&lt; a[0];   // 10 — первый элемент
+cout &lt;&lt; a[2];   // 30</pre>
+<p>Разбор: <code>a[5]</code> — пять ячеек. Обращаемся по <b>индексу в квадратных скобках</b>, и нумерация идёт <b>с нуля</b>: первый элемент — <code>a[0]</code>, последний в массиве из 5 — <code>a[4]</code>.</p>
+
+<svg viewBox="0 0 600 96" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <g font-family="monospace">
+  <rect x="60" y="30" width="80" height="40" fill="#1C201E" stroke="#B9FF47"/><text x="100" y="55" text-anchor="middle" fill="#F4F6F2" font-size="14" font-weight="700">10</text><text x="100" y="86" text-anchor="middle" fill="#9BA39D" font-size="11">a[0]</text>
+  <rect x="140" y="30" width="80" height="40" fill="#1C201E" stroke="#37936F"/><text x="180" y="55" text-anchor="middle" fill="#F4F6F2" font-size="14" font-weight="700">20</text><text x="180" y="86" text-anchor="middle" fill="#9BA39D" font-size="11">a[1]</text>
+  <rect x="220" y="30" width="80" height="40" fill="#1C201E" stroke="#FFD34D"/><text x="260" y="55" text-anchor="middle" fill="#FFD34D" font-size="14" font-weight="700">30</text><text x="260" y="86" text-anchor="middle" fill="#9BA39D" font-size="11">a[2]</text>
+  <rect x="300" y="30" width="80" height="40" fill="#1C201E" stroke="#37936F"/><text x="340" y="55" text-anchor="middle" fill="#F4F6F2" font-size="14" font-weight="700">40</text><text x="340" y="86" text-anchor="middle" fill="#9BA39D" font-size="11">a[3]</text>
+  <rect x="380" y="30" width="80" height="40" fill="#1C201E" stroke="#37936F"/><text x="420" y="55" text-anchor="middle" fill="#F4F6F2" font-size="14" font-weight="700">50</text><text x="420" y="86" text-anchor="middle" fill="#9BA39D" font-size="11">a[4]</text>
+  <text x="510" y="55" fill="#9BA39D" font-size="11">индекс с 0</text>
+  </g>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Обход циклом</h3>
+<pre class="demo">int sum = 0;
+for (int i = 0; i &lt; 5; i++) {
+    sum += a[i];
+}</pre>
+<p>Разбор: индекс <code>i</code> бежит от 0 до 4, <code>a[i]</code> — очередной элемент. Так считают сумму, максимум, что угодно.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. vector — умный массив</h3>
+<pre class="demo">vector&lt;int&gt; v;
+v.push_back(7);      // добавить в конец
+v.push_back(3);
+cout &lt;&lt; v.size();    // 2 — сколько элементов</pre>
+<p>Разбор: <code>vector</code> сам растёт: <code>push_back</code> добавляет элемент, <code>size()</code> говорит длину. Не надо знать размер заранее — в отличие от обычного массива. В алгоритмах используют почти всегда именно его.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">a[5] у массива из 5</span> → <span class="now">последний это a[4]</span><br><span class="muted2">индексы 0..4 — выход за границу ломает программу</span></span>
+<span class="fix"><span class="was">for (i = 1; i &lt;= n; i++) a[i]</span> → <span class="now">for (i = 0; i &lt; n; i++)</span><br><span class="muted2">нумерация с нуля, идём i &lt; n</span></span>
+<span class="fix"><span class="was">v[0] в пустом vector</span> → <span class="now">сначала push_back</span><br><span class="muted2">у пустого вектора нет элементов — обращение к ним ломает код</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет код?",code:"int a[4] = {5, 8, 1, 9};\ncout << a[1] + a[3];",o:["17","13","14","89"],a:0,e:"a[1]=8, a[3]=9, 8+9=17 (индексы с нуля)."},
+ {q:"Каков индекс первого элемента массива?",o:["1","0","-1","зависит"],a:1,e:"В C++ нумерация с нуля: первый элемент — a[0]."},
+ {t:"bug",q:"Где выход за границу массива?",code:["int a[3] = {1, 2, 3};","for (int i = 0; i <= 3; i++)","    cout << a[i];"],a:1,e:"i <= 3 доходит до a[3], а в массиве из 3 последний — a[2]. Нужно i < 3."},
+ {t:"cloze",q:"Дострой обход массива по сумме",code:"int sum = 0;\nfor (int i = 0; i {0} n; i++) {\n    sum {1} a[i];\n}",gaps:[["<"],["+="]],e:"i < n проходит все индексы; sum += a[i] накапливает сумму."},
+ {t:"mc",q:"Что делает v.push_back(7) у vector?",o:["Удаляет 7","Добавляет 7 в конец","Ищет 7","Сортирует"],a:1,e:"push_back добавляет элемент в конец вектора."},
+ {t:"order",q:"Собери подсчёт суммы массива",lines:["int sum = 0;","for (int i = 0; i < n; i++) {","    sum += a[i];","}","cout << sum;"],e:"Накопитель, цикл по индексам, прибавление, вывод."},
+ {t:"output",q:"Что выведет код?",code:"vector<int> v;\nv.push_back(4);\nv.push_back(9);\ncout << v.size();",o:["2","9","13","0"],a:0,e:"Добавили два элемента → size() = 2."},
+ {q:"Чем vector удобнее обычного массива?",o:["Он быстрее всегда","Сам растёт, размер знать заранее не нужно","Он не хранит числа","Ничем"],a:1,e:"vector динамический: push_back добавляет элементы, size() даёт длину — размер заранее не нужен."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> тренируем массивы — база всех алгоритмов дальше.</p>`,
+ tasks:[
+  {t:"Реши 6–8 задач на массивы (максимум, сумма, разворот, поиск элемента, второй по величине).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Пройди тему «Массивы / vector» на курсе по C++.",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]},
+  {t:"Напиши сам: прочитать N чисел в массив и вывести второй по величине элемент.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Массивы и vector в C++ — видео","yt","c++ массивы вектор для начинающих"],
+ ["learncpp.com — arrays","url","https://www.learncpp.com/cpp-tutorial/introduction-to-stdvector-and-list-constructors/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+{id:"k1",title:"Компьютер · Двоичная система, биты и байты",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> компьютер внутри знает только два состояния — 0 и 1 (есть ток / нет тока). Всё остальное — числа, текст, картинки — собрано из них. Понял двоичную систему — понял, почему <code>int</code> имеет предел, почему байт хранит 0–255 и откуда берутся «переполнения».</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Бит и байт</h3>
+<p><b>Бит</b> — одна ячейка, 0 или 1. <b>Байт</b> — 8 бит вместе. Восемь битов дают 2⁸ = <b>256</b> комбинаций: числа от 0 до 255.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Как из битов получается число</h3>
+<p>Каждый бит — это «разряд» со своим весом (степень двойки). Складываем веса единичек:</p>
+<svg viewBox="0 0 600 110" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <g font-family="monospace" text-anchor="middle">
+  <text x="300" y="16" fill="#9BA39D" font-size="10">байт 01000001 = 64 + 1 = 65 = символ 'A'</text>
+  <rect x="60" y="26" width="60" height="34" fill="#1C201E" stroke="#37936F"/><text x="90" y="49" fill="#F4F6F2" font-size="15">0</text><text x="90" y="76" fill="#9BA39D" font-size="10">128</text>
+  <rect x="120" y="26" width="60" height="34" fill="#1C201E" stroke="#FFD34D"/><text x="150" y="49" fill="#FFD34D" font-size="15" font-weight="700">1</text><text x="150" y="76" fill="#FFD34D" font-size="10">64</text>
+  <rect x="180" y="26" width="60" height="34" fill="#1C201E" stroke="#37936F"/><text x="210" y="49" fill="#F4F6F2" font-size="15">0</text><text x="210" y="76" fill="#9BA39D" font-size="10">32</text>
+  <rect x="240" y="26" width="60" height="34" fill="#1C201E" stroke="#37936F"/><text x="270" y="49" fill="#F4F6F2" font-size="15">0</text><text x="270" y="76" fill="#9BA39D" font-size="10">16</text>
+  <rect x="300" y="26" width="60" height="34" fill="#1C201E" stroke="#37936F"/><text x="330" y="49" fill="#F4F6F2" font-size="15">0</text><text x="330" y="76" fill="#9BA39D" font-size="10">8</text>
+  <rect x="360" y="26" width="60" height="34" fill="#1C201E" stroke="#37936F"/><text x="390" y="49" fill="#F4F6F2" font-size="15">0</text><text x="390" y="76" fill="#9BA39D" font-size="10">4</text>
+  <rect x="420" y="26" width="60" height="34" fill="#1C201E" stroke="#37936F"/><text x="450" y="49" fill="#F4F6F2" font-size="15">0</text><text x="450" y="76" fill="#9BA39D" font-size="10">2</text>
+  <rect x="480" y="26" width="60" height="34" fill="#1C201E" stroke="#FFD34D"/><text x="510" y="49" fill="#FFD34D" font-size="15" font-weight="700">1</text><text x="510" y="76" fill="#FFD34D" font-size="10">1</text>
+  </g>
+</svg>
+<p>Разбор: справа налево веса 1, 2, 4, 8, 16, 32, 64, 128. В числе <code>01000001</code> единицы стоят на весах 64 и 1 → 64 + 1 = <b>65</b>. Перевести десятичное в двоичное — наоборот: вычитаем самые большие степени двойки.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Текст — это тоже числа</h3>
+<p>Каждой букве сопоставлено число (таблица ASCII): <code>'A'</code> = 65, <code>'B'</code> = 66, <code>'a'</code> = 97. Компьютер хранит текст как последовательность этих чисел, а числа — как биты. Всё в итоге — нули и единицы.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">бит и байт — одно и то же</span> → <span class="now">1 байт = 8 бит</span><br><span class="muted2">скорость часто в битах (Мбит/с), объём — в байтах (МБ)</span></span>
+<span class="fix"><span class="was">в байт влезает любое число</span> → <span class="now">0–255</span><br><span class="muted2">больше — нужно больше байтов; иначе «переполнение»</span></span>
+<span class="fix"><span class="was">двоичное 10 = десять</span> → <span class="now">10₂ = 2</span><br><span class="muted2">в двоичной 10 значит «один разряд двойки» = 2</span></span>`,
+quiz:[
+ {q:"Сколько бит в одном байте?",o:["4","8","16","256"],a:1,e:"1 байт = 8 бит; они дают 256 комбинаций (0–255)."},
+ {t:"mc",q:"Число 5 в двоичной системе — это…",o:["101","110","011","100"],a:0,e:"5 = 4 + 1 = 101₂ (веса 4 и 1)."},
+ {t:"pairs",q:"Соедини десятичное с двоичным",pairs:[["2","10"],["3","11"],["4","100"],["8","1000"]],e:"2=10, 3=11, 4=100, 8=1000 — степени двойки сдвигают единицу влево."},
+ {q:"Сколько разных значений хранит один байт?",o:["8","16","256","1000"],a:2,e:"2⁸ = 256 значений: числа от 0 до 255."},
+ {t:"cloze",q:"Дострой перевод",code:"Байт 00000011 = 2 + 1 = {0} в десятичной.",gaps:["3"],e:"Единицы на весах 2 и 1 → 2 + 1 = 3."},
+ {q:"Как компьютер хранит букву 'A'?",o:["Как рисунок","Как число 65 (по таблице ASCII), а число — битами","Просто как 'A'","Никак"],a:1,e:"Каждой букве соответствует число (ASCII), а число хранится как биты."},
+ {t:"mc",q:"Число 10 записано в двоичной системе. Сколько это в десятичной?",o:["10","2","1","20"],a:1,e:"10₂ = один разряд двойки = 2 в десятичной."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> закрепляем систему счисления руками. Отметь, когда потренируешься.</p>`,
+ tasks:[
+  {t:"Переведи вручную в двоичную числа 5, 10, 13, 20 и проверь себя конвертером.",link:["Конвертер систем счисления","url","https://www.rapidtables.com/convert/number/decimal-to-binary.html"]},
+  {t:"Посмотри выпуск про представление чисел и текста (Crash Course Computer Science).",link:["Crash Course CS — представление данных","yt","crash course computer science representing numbers русские субтитры"]}]},
+res:[
+ ["Двоичная система — просто","yt","двоичная система счисления простыми словами"],
+ ["Книга «Код» Ч. Петцольда","url","https://www.google.com/search?q=Петцольд+Код+тайный+язык+информатики"],
+ ["Crash Course Computer Science","yt","crash course computer science русские субтитры"],
+ ["Конвертер систем счисления","url","https://www.rapidtables.com/convert/number/decimal-to-binary.html"]]},
+
+{id:"k2",title:"Компьютер · Процессор и память",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> когда ты запускаешь программу, она где-то живёт и кто-то её выполняет. Понимать роли процессора и памяти — значит понимать, почему переменные быстрые, а чтение файла медленное, и что вообще делает твой код «под капотом».</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Процессор (CPU) — исполнитель</h3>
+<p>Процессор делает одну простую вещь очень быстро: берёт <b>инструкцию</b>, выполняет, берёт следующую. Миллиарды раз в секунду (это и есть «такты» и гигагерцы). Твой C++ после компиляции превращается в поток таких инструкций. Крошечные сверхбыстрые ячейки внутри CPU — <b>регистры</b>.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Память: оперативная и диск</h3>
+<svg viewBox="0 0 600 130" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="k2a" markerWidth="8" markerHeight="8" refX="4" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="40" y="40" width="130" height="52" rx="10" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="105" y="63" text-anchor="middle" fill="#B9FF47" font-size="13" font-weight="700">CPU</text>
+  <text x="105" y="80" text-anchor="middle" fill="#9BA39D" font-size="9">исполняет инструкции</text>
+  <line x1="170" y1="66" x2="250" y2="66" stroke="#B9FF47" stroke-width="2" marker-end="url(#k2a)"/>
+  <line x1="250" y1="72" x2="170" y2="72" stroke="#B9FF47" stroke-width="2" marker-end="url(#k2a)"/>
+  <rect x="252" y="40" width="140" height="52" rx="10" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="322" y="63" text-anchor="middle" fill="#FFD34D" font-size="13" font-weight="700">RAM</text>
+  <text x="322" y="80" text-anchor="middle" fill="#9BA39D" font-size="9">быстрая, но временная</text>
+  <line x1="322" y1="92" x2="322" y2="104" stroke="#37936F" stroke-width="2" marker-end="url(#k2a)"/>
+  <rect x="422" y="40" width="140" height="52" rx="10" fill="#141716" stroke="#37936F"/>
+  <text x="492" y="63" text-anchor="middle" fill="#5BC79A" font-size="13" font-weight="700">Диск (SSD)</text>
+  <text x="492" y="80" text-anchor="middle" fill="#9BA39D" font-size="9">медленный, но постоянный</text>
+</svg>
+<p>Разбор: <b>оперативная память (RAM)</b> — рабочий стол: сюда программа кладёт переменные, пока работает. Быстрая, но <b>исчезает при выключении</b>. <b>Диск</b> — шкаф: хранит файлы постоянно, но читается медленнее. Поэтому переменные (в RAM) мгновенные, а открыть файл — заметно дольше.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Адрес, стек и куча (обзорно)</h3>
+<p>Каждая ячейка памяти имеет <b>адрес</b> — номер, по которому её находят. Память программы делят на <b>стек</b> (быстрый, для обычных переменных и вызовов функций) и <b>кучу</b> (для больших данных, живущих долго). Пока достаточно знать, что они есть — детали будут на этапе про указатели.</p>
+
+<p>⚠️ <b>Частые ошибки в понимании:</b></p>
+<span class="fix"><span class="was">данные в RAM сохраняются навсегда</span> → <span class="now">RAM очищается при выключении</span><br><span class="muted2">чтобы сохранить — пиши на диск (файл)</span></span>
+<span class="fix"><span class="was">процессор «думает»</span> → <span class="now">процессор выполняет простые инструкции по очереди</span><br><span class="muted2">магии нет — только очень быстрый перебор шагов</span></span>
+<span class="fix"><span class="was">диск и память — одно и то же</span> → <span class="now">RAM ≠ диск</span><br><span class="muted2">RAM быстрая и временная, диск медленный и постоянный</span></span>`,
+quiz:[
+ {q:"Что происходит с данными в оперативной памяти (RAM) при выключении компьютера?",o:["Сохраняются","Стираются","Переносятся на диск сами","Ускоряются"],a:1,e:"RAM временная: без питания данные исчезают. Чтобы сохранить — записывают на диск."},
+ {t:"pairs",q:"Соедини устройство с его ролью",pairs:[["CPU","выполняет инструкции"],["RAM","быстрая временная память"],["Диск","постоянное хранилище"],["регистр","сверхбыстрая ячейка в CPU"]],e:"CPU считает, RAM — рабочий стол, диск — шкаф, регистры — самые быстрые ячейки."},
+ {q:"Почему обращение к переменной быстрее, чем чтение файла?",o:["Переменные в быстрой RAM, файлы — на медленном диске","Файлов не существует","Переменные волшебные","Это не так"],a:0,e:"Переменные живут в RAM (быстро), файлы — на диске (медленнее)."},
+ {t:"mc",q:"Что такое «такт» процессора?",o:["Тип файла","Один шаг работы, их миллиарды в секунду","Ошибка","Единица памяти"],a:1,e:"Такт — один цикл работы CPU; частота в гигагерцах = миллиарды тактов в секунду."},
+ {q:"Что такое адрес в памяти?",o:["Имя программы","Номер ячейки, по которому её находят","Скорость","Размер файла"],a:1,e:"Адрес — номер ячейки памяти; по нему процессор находит нужные данные."},
+ {t:"mc",q:"Куда обычно попадают обычные локальные переменные?",o:["На стек","На диск","В интернет","В регистры навсегда"],a:0,e:"Локальные переменные и вызовы функций живут на стеке — он быстрый."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> закрепляем общую картину. Отметь, когда разберёшься.</p>`,
+ tasks:[
+  {t:"Посмотри выпуски про процессор и память (Crash Course Computer Science, эпизоды про CPU и RAM).",link:["Crash Course CS — CPU","yt","crash course computer science CPU русские субтитры"]},
+  {t:"Своими словами объясни (можно в виджете ниже): чем RAM отличается от диска и почему это важно.",link:["Книга «Код» Ч. Петцольда","url","https://www.google.com/search?q=Петцольд+Код+тайный+язык+информатики"]}]},
+res:[
+ ["Как работает процессор — просто","yt","как работает процессор простыми словами"],
+ ["Crash Course Computer Science","yt","crash course computer science русские субтитры"],
+ ["Книга «Код» Ч. Петцольда","url","https://www.google.com/search?q=Петцольд+Код+тайный+язык+информатики"],
+ ["RAM vs диск — объяснение","yt","чем отличается оперативная память от жёсткого диска"]]},
+
+{id:"k3",title:"Компьютер · Компиляция и операционная система",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> ты уже запускал <code>clang++ main.cpp</code>. Теперь разберём, что реально происходит от нажатия «компилировать» до вывода на экран — это и был чекпоинт Этапа 1 в твоём роадмапе.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Что делает компилятор</h3>
+<p>Процессор не понимает C++ — он понимает только <b>машинный код</b> (те самые инструкции из нулей и единиц). <b>Компилятор</b> — переводчик: он читает весь твой <code>.cpp</code> и превращает его в исполняемый файл на машинном языке.</p>
+<svg viewBox="0 0 600 110" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="k3a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="16" y="40" width="120" height="44" rx="9" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="76" y="60" text-anchor="middle" fill="#B9FF47" font-size="11" font-weight="700" font-family="monospace">main.cpp</text>
+  <text x="76" y="76" text-anchor="middle" fill="#9BA39D" font-size="9">твой код</text>
+  <line x1="138" y1="62" x2="196" y2="62" stroke="#B9FF47" stroke-width="2" marker-end="url(#k3a)"/>
+  <rect x="200" y="40" width="130" height="44" rx="9" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="265" y="60" text-anchor="middle" fill="#FFD34D" font-size="11" font-weight="700">компилятор</text>
+  <text x="265" y="76" text-anchor="middle" fill="#9BA39D" font-size="9">переводчик</text>
+  <line x1="332" y1="62" x2="390" y2="62" stroke="#B9FF47" stroke-width="2" marker-end="url(#k3a)"/>
+  <rect x="394" y="40" width="120" height="44" rx="9" fill="#141716" stroke="#37936F"/>
+  <text x="454" y="60" text-anchor="middle" fill="#5BC79A" font-size="11" font-weight="700">машинный код</text>
+  <text x="454" y="76" text-anchor="middle" fill="#9BA39D" font-size="9">программа</text>
+  <text x="555" y="64" text-anchor="middle" fill="#9BA39D" font-size="9">→ ОС</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Компилируемый vs интерпретируемый</h3>
+<p><b>C++ — компилируемый:</b> весь код переводится заранее, один раз, в быструю программу. <b>JavaScript (в браузере) — интерпретируемый:</b> его читают и выполняют построчно на лету. Поэтому C++ обычно быстрее, а JS гибче и не требует шага компиляции.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Операционная система</h3>
+<p><b>ОС</b> (Windows, macOS, Linux) — начальник над железом. Когда ты запускаешь программу, ОС создаёт <b>процесс</b>, выдаёт ему память и процессорное время, даёт доступ к <b>файловой системе</b> (папки и файлы). <b>Терминал</b> — текстовый пульт, через который ты отдаёшь команды напрямую (как <code>./main</code>).</p>
+
+<p>⚠️ <b>Частые ошибки в понимании:</b></p>
+<span class="fix"><span class="was">процессор понимает C++</span> → <span class="now">только машинный код</span><br><span class="muted2">компилятор переводит C++ в понятные процессору инструкции</span></span>
+<span class="fix"><span class="was">компилируемый = интерпретируемый</span> → <span class="now">C++ переводится заранее, JS — на лету</span><br><span class="muted2">разный момент перевода → разная скорость и гибкость</span></span>
+<span class="fix"><span class="was">программа сама берёт память</span> → <span class="now">память и время выдаёт ОС</span><br><span class="muted2">ОС управляет процессами и ресурсами</span></span>`,
+quiz:[
+ {q:"Что делает компилятор?",o:["Запускает браузер","Переводит исходный код в машинный код","Хранит файлы","Рисует интерфейс"],a:1,e:"Компилятор превращает твой C++ в машинный код, понятный процессору."},
+ {q:"Чем компилируемый язык отличается от интерпретируемого?",o:["Ничем","Компилируемый переводится заранее целиком, интерпретируемый — построчно на лету","Компилируемый нельзя запустить","Интерпретируемый быстрее всегда"],a:1,e:"C++ компилируется заранее (быстро), JS в браузере интерпретируется на лету (гибко)."},
+ {t:"pairs",q:"Соедини понятие с ролью",pairs:[["компилятор","переводит код в машинный"],["процесс","запущенная программа"],["файловая система","папки и файлы"],["терминал","командный пульт"]],e:"Компилятор переводит, ОС запускает процесс, файловая система хранит, терминал командует."},
+ {t:"mc",q:"Что создаёт операционная система, когда ты запускаешь программу?",o:["Процесс","Компилятор","Байт","Регистр"],a:0,e:"ОС создаёт процесс, выделяет ему память и процессорное время."},
+ {q:"Почему C++ обычно быстрее JavaScript в браузере?",o:["C++ компилируется заранее в машинный код","JS не работает","C++ проще","Случайно"],a:0,e:"Заранее скомпилированный машинный код выполняется напрямую; интерпретация на лету добавляет накладные расходы."},
+ {t:"mc",q:"Что такое терминал?",o:["Тип процессора","Текстовый пульт для команд ОС","Файл","Язык программирования"],a:1,e:"Терминал — текстовый интерфейс, где ты отдаёшь команды напрямую (например ./main)."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> связываем всю картину Этапа 1 воедино.</p>`,
+ tasks:[
+  {t:"Своими словами (в виджете ниже) опиши путь: от нажатия «компилировать» до вывода на экран.",link:["Crash Course CS — ПО и ОС","yt","crash course computer science operating systems русские субтитры"]},
+  {t:"Скомпилируй любую свою программу из терминала и проследи два шага: компиляция → запуск.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Как программа превращается в машинный код","yt","как работает компилятор простыми словами"],
+ ["Crash Course Computer Science","yt","crash course computer science operating systems русские субтитры"],
+ ["learncpp.com — компиляция","url","https://www.learncpp.com/cpp-tutorial/introduction-to-the-compiler-linker-and-libraries/"],
+ ["Книга «Код» Ч. Петцольда","url","https://www.google.com/search?q=Петцольд+Код+тайный+язык+информатики"]]}
 
 ];
 

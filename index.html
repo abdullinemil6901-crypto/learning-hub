@@ -1275,8 +1275,9 @@ function openSettings(){
   ${row("sound","Звук","ph-speaker-high")}
   ${row("haptics","Вибрация","ph-device-mobile-speaker")}
   ${row("anim","Анимации","ph-sparkle")}
-  <div class="setrow"><i class="ph-bold ph-alarm"></i><span class="grow">Время занятий</span><input type="time" class="tf" style="width:120px" value="${S.anchor||"19:00"}" oninput="S.anchor=this.value;save()"></div>
-  <span class="muted">Время занятий — чтобы напоминания приходили когда удобно (появятся позже).</span>
+  <div class="setrow"><i class="ph-bold ph-alarm"></i><span class="grow">Время занятий</span><input type="time" class="tf" style="width:120px" value="${S.anchor||"19:00"}" oninput="S.anchor=this.value;save();pushSyncHour()"></div>
+  <div class="setrow"><i class="ph-bold ph-bell"></i><span class="grow">Напоминать заниматься</span><div class="tog ${pushEnabled()?"on":""}" id="tog_push" onclick="togglePush()"></div></div>
+  <span class="muted" id="pushMsg">Уведомление «пора заниматься» приходит в выбранное время — даже когда приложение закрыто. Нужен вход в облако.</span>
   <button class="btn" onclick="document.getElementById('setOv').remove();drawHeader()">Готово</button></div>`;
  document.body.appendChild(ov);}
 
@@ -1380,6 +1381,48 @@ var sbc=null,sbUser=null,sbTimer=null,sbPulling=false;
 function schedulePush(){
  if(!sbc||!sbUser||sbPulling)return;
  clearTimeout(sbTimer);sbTimer=setTimeout(pushCloud,1500);}
+/* ===== Web Push: напоминания «пора заниматься» ===== */
+const VAPID_PUBLIC="BJJG4mDL3sDQxff0Ofc0CJqt-_ntf7ix7kTELYseSQXEyimXzQ905IWH4I5CM3GcI9MSgUc8FMriVcMWIxJnL2w";
+function urlB64ToUint8(base64){
+ const pad="=".repeat((4-base64.length%4)%4);
+ const b64=(base64+pad).replace(/-/g,"+").replace(/_/g,"/");
+ const raw=atob(b64),arr=new Uint8Array(raw.length);
+ for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);return arr;}
+function pushEnabled(){return !!(S.settings&&S.settings.push&&S.settings.push.enabled);}
+async function togglePush(){
+ const msg=document.getElementById("pushMsg");const setMsg=(t,warn)=>{if(msg){msg.style.color=warn?"var(--fire)":"";msg.innerHTML=t;}};
+ S.settings=S.settings||{};S.settings.push=S.settings.push||{enabled:false};
+ if(pushEnabled()){await pushUnsubscribe();S.settings.push.enabled=false;save();
+  const el=document.getElementById("tog_push");if(el)el.classList.remove("on");setMsg("Напоминания выключены.");return;}
+ if(!sbc||!sbUser){setMsg("Сначала войди в облако (иконка ☁ вверху) — напоминания привязаны к аккаунту.",true);return;}
+ if(!("serviceWorker"in navigator)||!("PushManager"in window)){setMsg("Этот браузер не поддерживает уведомления.",true);return;}
+ const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+ const standalone=window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+ if(isIOS&&!standalone){setMsg("На iPhone сначала добавь приложение на экран «Домой» (кнопка Поделиться → «На экран Домой»), открой его оттуда и включи уведомления.",true);return;}
+ setMsg("Спрашиваю разрешение…");
+ try{
+  const perm=await Notification.requestPermission();
+  if(perm!=="granted"){setMsg("Разрешение не выдано. Включи уведомления для сайта в настройках браузера и попробуй снова.",true);return;}
+  const reg=await navigator.serviceWorker.ready;
+  let sub=await reg.pushManager.getSubscription();
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64ToUint8(VAPID_PUBLIC)});
+  const j=sub.toJSON();
+  const hour=parseInt((S.anchor||"19:00").split(":")[0],10)||19;
+  const tz=new Date().getTimezoneOffset();
+  const{error}=await sbc.from("push_subs").upsert({user_id:sbUser.id,endpoint:sub.endpoint,p256dh:j.keys.p256dh,auth:j.keys.auth,hour:hour,tz_offset_min:tz},{onConflict:"endpoint"});
+  if(error)throw error;
+  S.settings.push.enabled=true;S.settings.push.endpoint=sub.endpoint;save();
+  const el=document.getElementById("tog_push");if(el)el.classList.add("on");
+  setMsg("Готово! Напоминание придёт около "+(S.anchor||"19:00")+". Можешь свернуть приложение.");
+ }catch(e){setMsg("Не получилось: "+((e&&e.message)||e),true);}}
+async function pushUnsubscribe(){
+ try{const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();
+  if(sub){if(sbc&&sbUser){try{await sbc.from("push_subs").delete().eq("endpoint",sub.endpoint);}catch(e){}}try{await sub.unsubscribe();}catch(e){}}}catch(e){}}
+async function pushSyncHour(){
+ if(!pushEnabled()||!sbc||!sbUser)return;
+ try{const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();if(!sub)return;
+  const hour=parseInt((S.anchor||"19:00").split(":")[0],10)||19,tz=new Date().getTimezoneOffset();
+  await sbc.from("push_subs").update({hour:hour,tz_offset_min:tz}).eq("endpoint",sub.endpoint);}catch(e){}}
 async function pushCloud(){
  if(!sbc||!sbUser)return;
  try{const{error}=await sbc.from("progress").upsert({user_id:sbUser.id,state:S,updated_at:new Date().toISOString()});

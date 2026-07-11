@@ -1,5 +1,5 @@
 /* EMIL — Тренажёр: service worker v3 (офлайн + CDN-кэш + обновления) */
-const CACHE = "emil-hub-v20";
+const CACHE = "emil-hub-v21";
 const SHELL = [
   "./",
   "index.html",
@@ -94,4 +94,24 @@ self.addEventListener("fetch", e => {
       return hit || net;
     })
   );
+});
+
+// Push-уведомления: показать напоминание, по клику — открыть тренажёр
+self.addEventListener("push", e => {
+  let data = { title: "EMIL — Тренажёр", body: "Пора заниматься 💪", url: "./" };
+  try { if (e.data) data = Object.assign(data, e.data.json()); } catch (_) {}
+  e.waitUntil(self.registration.showNotification(data.title, {
+    body: data.body,
+    icon: "assets/icon-192.png",
+    badge: "assets/icon-192.png",
+    data: { url: data.url }
+  }));
+});
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || "./";
+  e.waitUntil(clients.matchAll({ type: "window", includeUncontrolled: true }).then(list => {
+    for (const c of list) { if ("focus" in c) return c.focus(); }
+    if (clients.openWindow) return clients.openWindow(url);
+  }));
 });

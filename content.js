@@ -1236,288 +1236,91 @@ res:[
  ["MDN: try...catch (рус.)","url","https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Statements/try...catch"],
  ["Видео: обработка ошибок в JavaScript","yt","javascript try catch throw обработка ошибок для начинающих"]]},
 {id:"m8",title:"DOM: JavaScript управляет страницей",
-theory:`
-<p>🎯 <b>Зачем это тебе:</b> DOM — это то, за что платят во фронтенде: живые интерфейсы. «По клику открой меню», «посчитай сумму корзины», «проверь форму перед отправкой» — каждый такой заказ решается через DOM.</p>
-<p><b>DOM</b> (Document Object Model — «документ как модель объектов») — страница глазами JavaScript: браузер превращает каждый HTML-тег в объект, который можно найти и изменить. Именно так работает весь этот тренажёр: очки, кнопки, прогресс — это JS, который дёргает DOM.</p>
-<p><b>Шаг 1 — найти элемент:</b></p>
-<pre class="demo">const title = document.querySelector("h1");      // по тегу
-const btn = document.querySelector("#myBtn");     // по id (#)
-const card = document.querySelector(".card");     // по классу (.)</pre>
-<p>Разбор: <code>document</code> — объект всей страницы; <code>querySelector</code> ищет по тем же селекторам, что и CSS: имя тега без знаков, <code>#</code> — id, точка — класс. Возвращается <b>первый</b> подходящий элемент, а если ничего не нашлось — <code>null</code> («пусто»). Нужны все совпадения сразу — есть <code>querySelectorAll</code>. Совет: находи элемент один раз, сохраняй в <code>const</code> наверху скрипта и дальше работай с переменной — не ищи заново в каждом обработчике.</p>
-<p><b>Шаг 2 — изменить:</b></p>
-<pre class="demo">title.textContent = "Новый текст";   // заменить текст
-title.style.color = "lime";          // поменять CSS-стиль
-card.classList.add("active");        // добавить CSS-класс</pre>
-<p>Разбор: <code>textContent</code> — текст внутри элемента, его можно и читать, и перезаписывать; <code>style</code> — стили прямо из JS; <code>classList.add/remove</code> — включать и выключать готовые классы из твоего CSS (обычно удобнее, чем менять стили поштучно).</p>
-<p>Рядом с <code>textContent</code> есть <code>innerHTML</code> — он вставляет строку как HTML-разметку, вместе с тегами. Удобно для готовых кусков интерфейса, но осторожно: не вставляй через него текст пользователя как есть — вместе с текстом можно занести чужой скрипт (атака XSS). Для обычного текста всегда бери <code>textContent</code>.</p>
-<p><b>Шаг 3 — реагировать на события:</b></p>
-<pre class="demo">btn.addEventListener("click", () => {
-  title.textContent = "Кнопка нажата!";
-});</pre>
-<p>Разбор: <code>addEventListener</code> «вешает» на элемент <b>обработчик</b> — функцию, которую браузер сам вызовет, когда случится событие. Первый аргумент — имя события строкой (<code>"click"</code>, <code>"input"</code>, <code>"submit"</code>), второй — функция. Обрати внимание: функцию передаём, а не вызываем — без скобок вызова.</p>
-<p><b>Формы:</b> текст из поля ввода — <code>input.value</code>:</p>
-<pre class="demo">const input = document.querySelector("#name");
-btn.addEventListener("click", () => {
-  title.textContent = \`Привет, \${input.value}!\`;
-});</pre>
-<p>Разбор: <code>value</code> читаем <b>внутри</b> обработчика — в момент клика, когда пользователь уже что-то ввёл. Прочитаешь заранее, при загрузке страницы, — получишь пустую строку.</p>
-<p>Другие события подключаются так же, меняется только имя-строка: <code>"input"</code> — каждое изменение поля, <code>"submit"</code> — отправка формы, <code>"keydown"</code> — нажатие клавиши:</p>
-<pre class="demo">input.addEventListener("input", () => {
-  title.textContent = input.value;   // обновляется на лету
-});</pre>
-<p>Разбор: обработчик срабатывает на каждый введённый символ — так делают живой предпросмотр и поиск-фильтр.</p>
-<p>Запомни схему любого интерактива: <b>найти → повесить обработчик → изменить</b>. Выучишь её — соберёшь что угодно: табы, модалки, валидацию, счётчики.</p>
-<p>⚠️ <b>Частые ошибки:</b></p>
-<span class="fix"><span class="was">querySelector("btn")</span> → <span class="now">querySelector("#btn")</span><br><span class="muted2">Без # ищется тег &lt;btn&gt;, которого нет — вернётся null, а дальше «Cannot read properties of null»</span></span>
-<span class="fix"><span class="was">btn.addEventListener("click", show())</span> → <span class="now">btn.addEventListener("click", show)</span><br><span class="muted2">Со скобками функция вызовется сразу при загрузке, а не по клику — передавай саму функцию</span></span>
-<span class="fix"><span class="was">&lt;script&gt; в &lt;head&gt; без defer</span> → <span class="now">&lt;script&gt; в конце &lt;body&gt;</span><br><span class="muted2">Скрипт выше разметки запускается, когда элементов ещё нет, — querySelector вернёт null</span></span>`,
-quiz:[
- {q:"Что делает document.querySelector(\"#btn\")?",o:["Создаёт кнопку","Находит первый элемент с id=\"btn\"","Удаляет элемент","Меняет стиль кнопки"],a:1,e:"querySelector ищет элемент по CSS-селектору; # — поиск по id."},
- {t:"output",q:"На странице есть <div class=\"card\">. Что выведет код?",code:"const el = document.querySelector(\"card\");\nconsole.log(el);",o:["<div class=\"card\">","null","ошибка"],a:1,e:"\"card\" без точки — поиск тега <card>, а такого на странице нет: querySelector вернёт null. Класс ищут через \".card\"."},
- {q:"Как поменять текст элемента el?",o:["el.text = \"...\"","el.textContent = \"...\"","el.write(\"...\")","text(el)"],a:1,e:"textContent — свойство с текстом внутри элемента: его можно читать и перезаписывать."},
- {t:"pairs",q:"Соедини инструмент с задачей",pairs:[["querySelector","найти элемент на странице"],["addEventListener","повесить обработчик события"],["textContent","заменить текст элемента"],["classList.add","добавить элементу CSS-класс"]],e:"Это и есть схема интерактива: найти → повесить обработчик → изменить (текст, классы, стили)."},
- {q:"Как прочитать, что пользователь ввёл в поле input?",o:["input.text","input.value","input.data","read(input)"],a:1,e:"input.value — текущее содержимое поля; читай его внутри обработчика, в момент события."}],
-practice:{type:"html",
-task:"<p><b>Что делаем:</b> первый живой интерфейс — кнопку, которая по клику меняет заголовок. Это схема «найти → повесить обработчик → изменить», из неё состоит любой интерактив.</p><p><b>Шаги:</b></p><ol><li>В <code>&lt;script&gt;</code> найди заголовок и кнопку: <code>document.querySelector(\"#title\")</code> и <code>document.querySelector(\"#btn\")</code>.</li><li>Повесь на кнопку обработчик: <code>addEventListener(\"click\", ...)</code>.</li><li>Внутри обработчика замени <code>textContent</code> заголовка на новый текст.</li><li>Нажми «Запустить» и проверь клик в превью.</li></ol>",
-starter:"<!DOCTYPE html>\n<html>\n<body>\n  <h1 id=\"title\">Привет</h1>\n  <button id=\"btn\">Нажми меня</button>\n  <script>\n    // TODO найди заголовок и кнопку по id\n    // TODO повесь обработчик клика на кнопку\n    // TODO внутри обработчика поменяй текст заголовка\n  <\/script>\n</body>\n</html>",
-checks:[
- {t:"на странице есть заголовок h1 и кнопка button",fn:c=>/<h1[\s>]/i.test(c)&&/<button[\s>]/i.test(c)},
- {t:"элементы найдены (querySelector или getElementById)",fn:c=>/(querySelector|getElementById)/.test(c)},
- {t:"на кнопке висит обработчик клика",fn:c=>/(addEventListener\s*\(\s*["']click["']|onclick)/i.test(c)},
- {t:"по клику меняется текст (textContent или innerHTML)",fn:c=>/(textContent|innerHTML)\s*=/.test(c)}],
-hint:"const btn = document.querySelector(\"#btn\"); btn.addEventListener(\"click\", () => { title.textContent = \"...\"; });"}},
+theory:"\n<p>🎯 <b>Зачем это тебе:</b> DOM — это то, за что платят во фронтенде: живые интерфейсы. «По клику открой меню», «посчитай сумму корзины», «проверь форму перед отправкой» — каждый такой заказ решается через DOM.</p>\n<p><b>DOM</b> (Document Object Model — «документ как модель объектов») — страница глазами JavaScript: браузер превращает каждый HTML-тег в объект, который можно найти и изменить. Именно так работает весь этот тренажёр: очки, кнопки, прогресс — это JS, который дёргает DOM.</p>\n<p><b>Шаг 1 — найти элемент:</b></p>\n<pre class=\"demo\">const title = document.querySelector(\"h1\");      // по тегу\nconst btn = document.querySelector(\"#myBtn\");     // по id (#)\nconst card = document.querySelector(\".card\");     // по классу (.)</pre>\n<p>Разбор: <code>document</code> — объект всей страницы; <code>querySelector</code> ищет по тем же селекторам, что и CSS: имя тега без знаков, <code>#</code> — id, точка — класс. Возвращается <b>первый</b> подходящий элемент, а если ничего не нашлось — <code>null</code> («пусто»). Нужны все совпадения сразу — есть <code>querySelectorAll</code>. Совет: находи элемент один раз, сохраняй в <code>const</code> наверху скрипта и дальше работай с переменной — не ищи заново в каждом обработчике.</p>\n<p><b>Шаг 2 — изменить:</b></p>\n<pre class=\"demo\">title.textContent = \"Новый текст\";   // заменить текст\ntitle.style.color = \"lime\";          // поменять CSS-стиль\ncard.classList.add(\"active\");        // добавить CSS-класс</pre>\n<p>Разбор: <code>textContent</code> — текст внутри элемента, его можно и читать, и перезаписывать; <code>style</code> — стили прямо из JS; <code>classList.add/remove</code> — включать и выключать готовые классы из твоего CSS (обычно удобнее, чем менять стили поштучно).</p>\n<p>Рядом с <code>textContent</code> есть <code>innerHTML</code> — он вставляет строку как HTML-разметку, вместе с тегами. Удобно для готовых кусков интерфейса, но осторожно: не вставляй через него текст пользователя как есть — вместе с текстом можно занести чужой скрипт (атака XSS). Для обычного текста всегда бери <code>textContent</code>.</p>\n<p><b>Шаг 3 — реагировать на события:</b></p>\n<pre class=\"demo\">btn.addEventListener(\"click\", () => {\n  title.textContent = \"Кнопка нажата!\";\n});</pre>\n<p>Разбор: <code>addEventListener</code> «вешает» на элемент <b>обработчик</b> — функцию, которую браузер сам вызовет, когда случится событие. Первый аргумент — имя события строкой (<code>\"click\"</code>, <code>\"input\"</code>, <code>\"submit\"</code>), второй — функция. Обрати внимание: функцию передаём, а не вызываем — без скобок вызова.</p>\n<p><b>Формы:</b> текст из поля ввода — <code>input.value</code>:</p>\n<pre class=\"demo\">const input = document.querySelector(\"#name\");\nbtn.addEventListener(\"click\", () => {\n  title.textContent = `Привет, ${input.value}!`;\n});</pre>\n<p>Разбор: <code>value</code> читаем <b>внутри</b> обработчика — в момент клика, когда пользователь уже что-то ввёл. Прочитаешь заранее, при загрузке страницы, — получишь пустую строку.</p>\n<p>Другие события подключаются так же, меняется только имя-строка: <code>\"input\"</code> — каждое изменение поля, <code>\"submit\"</code> — отправка формы, <code>\"keydown\"</code> — нажатие клавиши:</p>\n<pre class=\"demo\">input.addEventListener(\"input\", () => {\n  title.textContent = input.value;   // обновляется на лету\n});</pre>\n<p>Разбор: обработчик срабатывает на каждый введённый символ — так делают живой предпросмотр и поиск-фильтр.</p>\n<p>Запомни схему любого интерактива: <b>найти → повесить обработчик → изменить</b>. Выучишь её — соберёшь что угодно: табы, модалки, валидацию, счётчики.</p>\n<svg viewBox=\"0 0 600 150\" class=\"diagram\" xmlns=\"http://www.w3.org/2000/svg\">\n  <defs>\n   <marker id=\"m8a\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L6,3 L0,6\" fill=\"#B9FF47\"/></marker>\n   <marker id=\"m8b\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L6,3 L0,6\" fill=\"#37936F\"/></marker></defs>\n  <rect x=\"20\" y=\"52\" width=\"118\" height=\"46\" rx=\"10\" fill=\"#141716\" stroke=\"#FFD34D\"/>\n  <text x=\"79\" y=\"72\" text-anchor=\"middle\" fill=\"#FFD34D\" font-size=\"12\" font-weight=\"700\">document</text>\n  <text x=\"79\" y=\"88\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">вся страница</text>\n  <line x1=\"140\" y1=\"75\" x2=\"206\" y2=\"75\" stroke=\"#B9FF47\" stroke-width=\"2\" marker-end=\"url(#m8a)\"/>\n  <text x=\"173\" y=\"66\" text-anchor=\"middle\" fill=\"#B9FF47\" font-size=\"9\">querySelector</text>\n  <rect x=\"210\" y=\"52\" width=\"128\" height=\"46\" rx=\"10\" fill=\"#1C201E\" stroke=\"#B9FF47\"/>\n  <text x=\"274\" y=\"72\" text-anchor=\"middle\" fill=\"#B9FF47\" font-size=\"12\" font-weight=\"700\">element</text>\n  <text x=\"274\" y=\"88\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">найденный тег</text>\n  <line x1=\"340\" y1=\"75\" x2=\"404\" y2=\"75\" stroke=\"#37936F\" stroke-width=\"2\" marker-end=\"url(#m8b)\"/>\n  <rect x=\"410\" y=\"28\" width=\"168\" height=\"40\" rx=\"10\" fill=\"#141716\" stroke=\"#37936F\"/>\n  <text x=\"494\" y=\"45\" text-anchor=\"middle\" fill=\"#F4F6F2\" font-size=\"11\" font-weight=\"700\">изменить</text>\n  <text x=\"494\" y=\"60\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">textContent · style · class</text>\n  <rect x=\"410\" y=\"82\" width=\"168\" height=\"40\" rx=\"10\" fill=\"#141716\" stroke=\"#37936F\"/>\n  <text x=\"494\" y=\"99\" text-anchor=\"middle\" fill=\"#F4F6F2\" font-size=\"11\" font-weight=\"700\">реагировать</text>\n  <text x=\"494\" y=\"114\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">addEventListener</text>\n</svg>\n<p>⚠️ <b>Частые ошибки:</b></p>\n<span class=\"fix\"><span class=\"was\">querySelector(\"btn\")</span> → <span class=\"now\">querySelector(\"#btn\")</span><br><span class=\"muted2\">Без # ищется тег &lt;btn&gt;, которого нет — вернётся null, а дальше «Cannot read properties of null»</span></span>\n<span class=\"fix\"><span class=\"was\">btn.addEventListener(\"click\", show())</span> → <span class=\"now\">btn.addEventListener(\"click\", show)</span><br><span class=\"muted2\">Со скобками функция вызовется сразу при загрузке, а не по клику — передавай саму функцию</span></span>\n<span class=\"fix\"><span class=\"was\">&lt;script&gt; в &lt;head&gt; без defer</span> → <span class=\"now\">&lt;script&gt; в конце &lt;body&gt;</span><br><span class=\"muted2\">Скрипт выше разметки запускается, когда элементов ещё нет, — querySelector вернёт null</span></span>",
+quiz:[{"q":"Что делает document.querySelector(\"#btn\")?","o":["Создаёт кнопку","Находит первый элемент с id=\"btn\"","Удаляет элемент","Меняет стиль кнопки"],"a":1,"e":"querySelector ищет элемент по CSS-селектору; # — поиск по id."},{"t":"output","q":"На странице есть <div class=\"card\">. Что выведет код?","code":"const el = document.querySelector(\"card\");\nconsole.log(el);","o":["<div class=\"card\">","null","ошибка"],"a":1,"e":"\"card\" без точки — поиск тега <card>, а такого на странице нет: querySelector вернёт null. Класс ищут через \".card\"."},{"q":"Как поменять текст элемента el?","o":["el.text = \"...\"","el.textContent = \"...\"","el.write(\"...\")","text(el)"],"a":1,"e":"textContent — свойство с текстом внутри элемента: его можно читать и перезаписывать."},{"t":"pairs","q":"Соедини инструмент с задачей","pairs":[["querySelector","найти элемент на странице"],["addEventListener","повесить обработчик события"],["textContent","заменить текст элемента"],["classList.add","добавить элементу CSS-класс"]],"e":"Это и есть схема интерактива: найти → повесить обработчик → изменить (текст, классы, стили)."},{"q":"Как прочитать, что пользователь ввёл в поле input?","o":["input.text","input.value","input.data","read(input)"],"a":1,"e":"input.value — текущее содержимое поля; читай его внутри обработчика, в момент события."}],
+lab:[
+{kind:"fill",type:"html",prompt:"<p><b>Задание 1.</b> Оживи кнопку: найди заголовок и кнопку, повесь на кнопку обработчик клика и по клику <b>поменяй текст заголовка</b>. Схема: найти → повесить обработчик → изменить.</p>",starter:"<!DOCTYPE html>\n<html>\n<body>\n  <h1 id=\"title\">Привет</h1>\n  <button id=\"btn\">Нажми меня</button>\n  <script>\n    // TODO: найди #title и #btn через document.querySelector\n    // TODO: btn.addEventListener(\"click\", () => { ... })\n    // TODO: внутри поменяй title.textContent\n  </script>\n</body>\n</html>",tests:[{t:"На странице есть <h1> и <button>",fn:(d)=>!!d.querySelector('h1') && !!d.querySelector('button')},{t:"Клик по кнопке меняет текст заголовка",fn:(d,w)=>{ const h=d.querySelector('h1'), b=d.querySelector('button'); if(!h||!b) return false; const before=h.textContent; b.click(); return h.textContent!==before && h.textContent.trim().length>0; }}]},
+{kind:"fix",type:"html",prompt:"<p><b>Задание 2.</b> Живой предпросмотр сломан: текст должен обновляться на <b>каждый ввод</b> в поле, но сейчас ничего не происходит. Причина — код читает значение один раз при загрузке и не слушает событие <code>\"input\"</code>. <b>Почини</b>.</p>",starter:"<!DOCTYPE html>\n<html>\n<body>\n  <input id=\"name\" placeholder=\"введи имя\">\n  <p id=\"out\"></p>\n  <script>\n    const name = document.querySelector(\"#name\");\n    const out = document.querySelector(\"#out\");\n    // сломано: значение читается один раз при загрузке, поле пустое\n    out.textContent = name.value;\n    // TODO: сделай так, чтобы out обновлялся на КАЖДЫЙ ввод (событие \"input\")\n  </script>\n</body>\n</html>",tests:[{t:"Есть поле ввода и элемент #out",fn:(d)=>!!d.querySelector('input') && !!d.querySelector('#out')},{t:"Ввод текста сразу обновляет #out",fn:(d,w)=>{ const inp=d.querySelector('input'), out=d.querySelector('#out'); if(!inp||!out) return false; inp.value='Эмиль'; inp.dispatchEvent(new w.Event('input')); return /Эмиль/.test(out.textContent); }}]},
+{kind:"build",type:"html",prompt:"<p><b>Задание 3.</b> <b>Собери счётчик кликов с нуля.</b> На странице <code>&lt;span id=\"count\"&gt;0&lt;/span&gt;</code> и кнопка. Каждый клик увеличивает число на 1 и показывает его. Храни счёт в переменной, обновляй <code>textContent</code>.</p>",starter:"<!DOCTYPE html>\n<html>\n<body>\n  <p>Кликов: <span id=\"count\">0</span></p>\n  <button id=\"add\">+1</button>\n  <script>\n    // TODO: заведи переменную счёта = 0\n    // TODO: по клику по #add увеличивай её и показывай в #count\n  </script>\n</body>\n</html>",tests:[{t:"Есть #count и кнопка",fn:(d)=>!!d.querySelector('#count') && !!d.querySelector('button')},{t:"Два клика подряд → счёт становится 2",fn:(d,w)=>{ const b=d.querySelector('button'), c=d.querySelector('#count'); if(!b||!c) return false; b.click(); b.click(); return c.textContent.trim()==='2'; }}]}],
+res:[["learn.javascript.ru: Поиск в DOM","url","https://learn.javascript.ru/searching-elements-dom"],
+ ["learn.javascript.ru: Изменение документа","url","https://learn.javascript.ru/modifying-document"],
+ ["MDN: Введение в DOM (рус.)","url","https://developer.mozilla.org/ru/docs/Web/API/Document_Object_Model/Introduction"],
+ ["DOM для начинающих","yt","javascript dom для начинающих querySelector"]]},
 {id:"m16",title:"События глубже: клики и делегирование",
-theory:`
-<p>🎯 <b>Зачем это тебе:</b> любое приложение — это реакция на действия: клик, ввод, отправка. А когда элементов много (список товаров, задач, сообщений), вешать обработчик на каждый — тупик. Делегирование решает это одним слушателем.</p>
-
-<p><b>Событие</b> — то, что происходит на странице: клик, ввод текста, наведение. Ловят его методом <code>addEventListener</code>:</p>
-<pre class="demo">const btn = document.querySelector("#send");
-btn.addEventListener("click", () => {
-  console.log("Нажали!");
-});</pre>
-<p>Разбор: первым аргументом — <b>тип</b> события (<code>"click"</code>, <code>"input"</code>, <code>"submit"</code>), вторым — функция, которая выполнится, когда событие случится. Эта функция называется <b>обработчик</b> (handler).</p>
-
-<p>У обработчика есть объект события <code>e</code>, а в нём <code>e.target</code> — <b>элемент, на котором событие случилось</b>:</p>
-<pre class="demo">list.addEventListener("click", (e) => {
-  console.log(e.target.textContent);  // текст того, куда кликнули
-});</pre>
-<p>Разбор: <code>e.target</code> — не тот, на кого повесили слушатель, а конкретный элемент под пальцем. Это ключ к делегированию.</p>
-
-<p><b>Делегирование</b> — повесить <b>один</b> слушатель на родителя вместо сотни на детей. Событие «всплывает» от ребёнка к родителю, и родитель ловит его за всех:</p>
-<pre class="demo">todoList.addEventListener("click", (e) => {
-  const item = e.target.closest("li");
-  if (item) item.remove();   // удалить задачу по клику
-});</pre>
-<p>Разбор: клик по любому <code>&lt;li&gt;</code> всплывает до <code>todoList</code>. <code>e.target.closest("li")</code> находит ближайший сверху <code>&lt;li&gt;</code> (даже если кликнули по вложенной иконке). Добавили новую задачу — она работает сразу, без нового слушателя. Ещё пригодится <code>e.target.dataset.id</code> — чтение атрибута <code>data-id</code> с элемента.</p>
-
-<p>⚠️ <b>Частые ошибки:</b></p>
-<span class="fix"><span class="was">addEventListener("click", handler())</span> → <span class="now">addEventListener("click", handler)</span><br><span class="muted2">передавай функцию без скобок — со скобками ты вызовешь её сразу, а не по клику</span></span>
-<span class="fix"><span class="was">слушатель на каждом элементе списка</span> → <span class="now">один слушатель на родителе + e.target.closest</span><br><span class="muted2">делегирование работает и для элементов, добавленных позже</span></span>
-<span class="fix"><span class="was">e.target когда кликнули по вложенной иконке</span> → <span class="now">e.target.closest('li')</span><br><span class="muted2">target — самый глубокий элемент; closest поднимается к нужному контейнеру</span></span>`,
-quiz:[
- {q:"Что делает второй аргумент addEventListener?",o:["Это функция-обработчик, которая сработает при событии","Это цвет элемента","Это id элемента","Это тип события"],a:0,e:"Второй аргумент — функция, которая выполнится, когда событие случится."},
- {t:"output",q:"Что не так с этим кодом?",code:'btn.addEventListener("click", greet());',o:["Всё верно","greet вызовется сразу, а не по клику","click написан с ошибкой","btn не существует"],a:1,e:"greet() со скобками выполняется немедленно; нужно передать greet без скобок."},
- {t:"cloze",q:"Дополни делегирование: найти ближайший li и прочитать target",code:'list.addEventListener("click", (e) => {\n  const li = e.{0}.closest("{1}");\n});',gaps:["target","li"],e:"e.target — элемент под кликом, closest('li') поднимается к ближайшему li."},
- {t:"pairs",q:"Соедини понятие с ролью",pairs:[["addEventListener","повесить обработчик"],["e.target","элемент под кликом"],["closest('li')","ближайший родитель-li"],["e.target.dataset.id","чтение data-id"]],e:"addEventListener вешает обработчик, target — цель события, closest ищет родителя, dataset читает data-атрибуты."},
- {q:"Чем делегирование лучше слушателя на каждом элементе?",o:["Один слушатель работает и для новых элементов","Оно делает страницу цветной","Оно не требует HTML","Никакой разницы"],a:0,e:"Один слушатель на родителе ловит клики по всем детям, включая добавленных позже."}],
-practice:{type:"html",
-task:`<p><b>Что делаем:</b> список задач, где клик по любому пункту удаляет его — через один слушатель (делегирование).</p><p><b>Шаги:</b></p><ol><li>Сделай <code>&lt;ul id="list"&gt;</code> с несколькими <code>&lt;li&gt;</code>.</li><li>В &lt;script&gt; найди список через querySelector или getElementById.</li><li>Повесь на список ОДИН addEventListener("click", ...).</li><li>Внутри возьми e.target, найди ближайший li через closest и удали его (remove).</li></ol>`,
-starter:"<!DOCTYPE html>\n<html>\n<body>\n  <ul id=\"list\">\n    <li>Выучить события</li>\n    <li>Сделать проект</li>\n  </ul>\n<script>\n  // TODO: найди список и повесь ОДИН обработчик click\n  // TODO: внутри — e.target.closest('li') и .remove()\n<\/script>\n</body>\n</html>",
-checks:[
- {t:"Обработчик клика через addEventListener('click', ...)",fn:c=>/addEventListener\s*\(\s*["']click/.test(c)},
- {t:"Используется e.target",fn:c=>/\.target/.test(c)},
- {t:"Поиск элемента через closest, matches или dataset",fn:c=>/(closest|matches|dataset)/.test(c)},
- {t:"Есть список из минимум 2 <li>",fn:c=>(c.match(/<li[\s>]/gi)||[]).length>=2}],
-hint:"const list=document.getElementById('list'); list.addEventListener('click',e=>{const li=e.target.closest('li'); if(li) li.remove();});"}},
+theory:"\n<p>🎯 <b>Зачем это тебе:</b> любое приложение — это реакция на действия: клик, ввод, отправка. А когда элементов много (список товаров, задач, сообщений), вешать обработчик на каждый — тупик. Делегирование решает это одним слушателем.</p>\n\n<p><b>Событие</b> — то, что происходит на странице: клик, ввод текста, наведение. Ловят его методом <code>addEventListener</code>:</p>\n<pre class=\"demo\">const btn = document.querySelector(\"#send\");\nbtn.addEventListener(\"click\", () => {\n  console.log(\"Нажали!\");\n});</pre>\n<p>Разбор: первым аргументом — <b>тип</b> события (<code>\"click\"</code>, <code>\"input\"</code>, <code>\"submit\"</code>), вторым — функция, которая выполнится, когда событие случится. Эта функция называется <b>обработчик</b> (handler).</p>\n\n<p>У обработчика есть объект события <code>e</code>, а в нём <code>e.target</code> — <b>элемент, на котором событие случилось</b>:</p>\n<pre class=\"demo\">list.addEventListener(\"click\", (e) => {\n  console.log(e.target.textContent);  // текст того, куда кликнули\n});</pre>\n<p>Разбор: <code>e.target</code> — не тот, на кого повесили слушатель, а конкретный элемент под пальцем. Это ключ к делегированию.</p>\n\n<p><b>Делегирование</b> — повесить <b>один</b> слушатель на родителя вместо сотни на детей. Событие «всплывает» от ребёнка к родителю, и родитель ловит его за всех:</p>\n<pre class=\"demo\">todoList.addEventListener(\"click\", (e) => {\n  const item = e.target.closest(\"li\");\n  if (item) item.remove();   // удалить задачу по клику\n});</pre>\n<p>Разбор: клик по любому <code>&lt;li&gt;</code> всплывает до <code>todoList</code>. <code>e.target.closest(\"li\")</code> находит ближайший сверху <code>&lt;li&gt;</code> (даже если кликнули по вложенной иконке). Добавили новую задачу — она работает сразу, без нового слушателя. Ещё пригодится <code>e.target.dataset.id</code> — чтение атрибута <code>data-id</code> с элемента.</p>\n\n<svg viewBox=\"0 0 600 160\" class=\"diagram\" xmlns=\"http://www.w3.org/2000/svg\">\n  <defs><marker id=\"m16up\" markerWidth=\"9\" markerHeight=\"9\" refX=\"4\" refY=\"7\" orient=\"auto\"><path d=\"M4,0 L8,7 L0,7 Z\" fill=\"#FFD34D\"/></marker></defs>\n  <rect x=\"150\" y=\"20\" width=\"300\" height=\"126\" rx=\"12\" fill=\"#141716\" stroke=\"#B9FF47\"/>\n  <text x=\"164\" y=\"40\" fill=\"#B9FF47\" font-size=\"12\" font-weight=\"700\">&lt;ul&gt; — ОДИН слушатель на всех</text>\n  <rect x=\"176\" y=\"52\" width=\"248\" height=\"26\" rx=\"6\" fill=\"#1C201E\" stroke=\"#37936F\"/>\n  <text x=\"188\" y=\"69\" fill=\"#9BA39D\" font-size=\"11\">&lt;li&gt; задача 1</text>\n  <rect x=\"176\" y=\"84\" width=\"248\" height=\"26\" rx=\"6\" fill=\"#1C201E\" stroke=\"#FFD34D\"/>\n  <text x=\"188\" y=\"101\" fill=\"#FFD34D\" font-size=\"11\">&lt;li&gt; сюда кликнули 👆</text>\n  <rect x=\"176\" y=\"116\" width=\"248\" height=\"22\" rx=\"6\" fill=\"#1C201E\" stroke=\"#37936F\"/>\n  <text x=\"188\" y=\"131\" fill=\"#9BA39D\" font-size=\"10\">&lt;li&gt; задача 3</text>\n  <line x1=\"300\" y1=\"84\" x2=\"300\" y2=\"60\" stroke=\"#FFD34D\" stroke-width=\"2\" marker-end=\"url(#m16up)\"/>\n  <text x=\"470\" y=\"86\" fill=\"#9BA39D\" font-size=\"10\">клик всплывает</text>\n  <text x=\"470\" y=\"102\" fill=\"#9BA39D\" font-size=\"10\">от li вверх к ul</text>\n</svg>\n<p>⚠️ <b>Частые ошибки:</b></p>\n<span class=\"fix\"><span class=\"was\">addEventListener(\"click\", handler())</span> → <span class=\"now\">addEventListener(\"click\", handler)</span><br><span class=\"muted2\">передавай функцию без скобок — со скобками ты вызовешь её сразу, а не по клику</span></span>\n<span class=\"fix\"><span class=\"was\">слушатель на каждом элементе списка</span> → <span class=\"now\">один слушатель на родителе + e.target.closest</span><br><span class=\"muted2\">делегирование работает и для элементов, добавленных позже</span></span>\n<span class=\"fix\"><span class=\"was\">e.target когда кликнули по вложенной иконке</span> → <span class=\"now\">e.target.closest('li')</span><br><span class=\"muted2\">target — самый глубокий элемент; closest поднимается к нужному контейнеру</span></span>",
+quiz:[{"q":"Что делает второй аргумент addEventListener?","o":["Это функция-обработчик, которая сработает при событии","Это цвет элемента","Это id элемента","Это тип события"],"a":0,"e":"Второй аргумент — функция, которая выполнится, когда событие случится."},{"t":"output","q":"Что не так с этим кодом?","code":"btn.addEventListener(\"click\", greet());","o":["Всё верно","greet вызовется сразу, а не по клику","click написан с ошибкой","btn не существует"],"a":1,"e":"greet() со скобками выполняется немедленно; нужно передать greet без скобок."},{"t":"cloze","q":"Дополни делегирование: найти ближайший li и прочитать target","code":"list.addEventListener(\"click\", (e) => {\n  const li = e.{0}.closest(\"{1}\");\n});","gaps":["target","li"],"e":"e.target — элемент под кликом, closest('li') поднимается к ближайшему li."},{"t":"pairs","q":"Соедини понятие с ролью","pairs":[["addEventListener","повесить обработчик"],["e.target","элемент под кликом"],["closest('li')","ближайший родитель-li"],["e.target.dataset.id","чтение data-id"]],"e":"addEventListener вешает обработчик, target — цель события, closest ищет родителя, dataset читает data-атрибуты."},{"q":"Чем делегирование лучше слушателя на каждом элементе?","o":["Один слушатель работает и для новых элементов","Оно делает страницу цветной","Оно не требует HTML","Никакой разницы"],"a":0,"e":"Один слушатель на родителе ловит клики по всем детям, включая добавленных позже."}],
+lab:[
+{kind:"fill",type:"html",prompt:"<p><b>Задание 1.</b> Список задач: клик по любому пункту удаляет его. Повесь <b>ОДИН</b> обработчик на список (делегирование), внутри найди ближайший <code>&lt;li&gt;</code> через <code>e.target.closest(\"li\")</code> и удали его.</p>",starter:"<!DOCTYPE html>\n<html>\n<body>\n  <ul id=\"list\">\n    <li>Выучить события</li>\n    <li>Сделать проект</li>\n    <li>Найти работу</li>\n  </ul>\n  <script>\n    const list = document.querySelector(\"#list\");\n    // TODO: повесь ОДИН обработчик \"click\" на list\n    // TODO: внутри — const li = e.target.closest(\"li\"); if (li) li.remove();\n  </script>\n</body>\n</html>",tests:[{t:"В списке минимум 3 пункта <li>",fn:(d)=>d.querySelectorAll('#list li').length>=3},{t:"Клик по пункту удаляет именно его",fn:(d,w)=>{ const list=d.querySelector('#list'); const li=list&&list.querySelector('li'); if(!li) return false; const n0=list.querySelectorAll('li').length; li.click(); return list.querySelectorAll('li').length===n0-1; }},{t:"Работает делегирование: удаляется и пункт, добавленный позже",fn:(d,w)=>{ const list=d.querySelector('#list'); if(!list) return false; const li=d.createElement('li'); li.textContent='Новый пункт'; list.appendChild(li); const n0=list.querySelectorAll('li').length; li.click(); return list.querySelectorAll('li').length===n0-1; }}]},
+{kind:"fix",type:"html",prompt:"<p><b>Задание 2.</b> Клик по пункту должен его удалять, но ничего не работает. Причина классическая: обработчик передан <b>с вызовом</b> — <code>del()</code> вместо <code>del</code>, поэтому функция сработала один раз при загрузке, а не по клику. <b>Почини.</b></p>",starter:"<!DOCTYPE html>\n<html>\n<body>\n  <ul id=\"list\">\n    <li>Первая</li>\n    <li>Вторая</li>\n  </ul>\n  <script>\n    const list = document.querySelector(\"#list\");\n    function del(e) {\n      if (!e) return;\n      const li = e.target.closest(\"li\");\n      if (li) li.remove();\n    }\n    // сломано: del() вызывается сразу, обработчик не назначен\n    list.addEventListener(\"click\", del());\n    // TODO: передай функцию БЕЗ скобок вызова\n  </script>\n</body>\n</html>",tests:[{t:"Есть список с пунктами",fn:(d)=>d.querySelectorAll('#list li').length>=2},{t:"Клик по пункту удаляет его",fn:(d,w)=>{ const list=d.querySelector('#list'); const li=list&&list.querySelector('li'); if(!li) return false; const n0=list.querySelectorAll('li').length; li.click(); return list.querySelectorAll('li').length===n0-1; }}]},
+{kind:"build",type:"html",prompt:"<p><b>Задание 3.</b> <b>Собери переключатель «сделано».</b> Клик по пункту списка добавляет ему класс <code>done</code>, повторный клик — снимает (используй <code>classList.toggle</code>). Через <b>один</b> обработчик на списке.</p>",starter:"<!DOCTYPE html>\n<html>\n<body>\n  <style>.done { text-decoration: line-through; opacity: .5; }</style>\n  <ul id=\"list\">\n    <li>Задача A</li>\n    <li>Задача B</li>\n  </ul>\n  <script>\n    const list = document.querySelector(\"#list\");\n    // TODO: один обработчик \"click\" на list\n    // TODO: e.target.closest(\"li\") -> classList.toggle(\"done\")\n  </script>\n</body>\n</html>",tests:[{t:"Клик по пункту добавляет класс done",fn:(d,w)=>{ const li=d.querySelector('#list li'); if(!li) return false; li.click(); return li.classList.contains('done'); }},{t:"Повторный клик снимает класс (toggle, а не add)",fn:(d,w)=>{ const li=d.querySelector('#list li'); if(!li) return false; li.click(); return !li.classList.contains('done'); }}]}],
+res:[["learn.javascript.ru: Делегирование событий","url","https://learn.javascript.ru/event-delegation"],
+ ["learn.javascript.ru: Всплытие и погружение","url","https://learn.javascript.ru/bubbling-and-capturing"],
+ ["MDN: Введение в события (рус.)","url","https://developer.mozilla.org/ru/docs/Learn/JavaScript/Building_blocks/Events"],
+ ["Делегирование событий за 10 минут","yt","javascript делегирование событий делегирование"]]},
 {id:"m17",title:"localStorage: страница помнит",
-theory:`
-<p>🎯 <b>Зачем это тебе:</b> обычная страница забывает всё при перезагрузке. Корзина, тема оформления, черновик, прогресс — всё это должно сохраняться. localStorage даёт браузеру маленькую память прямо на устройстве. Кстати, этот тренажёр хранит твой прогресс именно так.</p>
-
-<p><b>localStorage</b> — хранилище «ключ → значение» внутри браузера. Живёт после перезагрузки и закрытия вкладки. Два главных метода:</p>
-<pre class="demo">localStorage.setItem("theme", "dark");   // записать
-const t = localStorage.getItem("theme");  // прочитать → "dark"
-localStorage.removeItem("theme");          // удалить</pre>
-<p>Разбор: <code>setItem(ключ, значение)</code> сохраняет, <code>getItem(ключ)</code> достаёт (вернёт <code>null</code>, если ключа нет), <code>removeItem</code> стирает. Всё привязано к конкретному сайту — чужие сайты твои данные не видят.</p>
-
-<p><b>Важно:</b> localStorage хранит <b>только строки</b>. Объект или массив надо превратить в строку через <code>JSON.stringify</code>, а при чтении — обратно через <code>JSON.parse</code>:</p>
-<pre class="demo">const cart = ["кофе", "чай"];
-localStorage.setItem("cart", JSON.stringify(cart));   // сохранили массив
-
-const saved = JSON.parse(localStorage.getItem("cart")); // достали массив
-console.log(saved[0]);   // кофе</pre>
-<p>Разбор: <code>JSON.stringify</code> превращает массив в строку <code>'["кофе","чай"]'</code> — её можно хранить. <code>JSON.parse</code> делает обратное: строку снова в массив, с которым работает код. Забыл parse — получишь строку вместо массива и <code>saved[0]</code> вернёт один символ.</p>
-
-<p>⚠️ <b>Частые ошибки:</b></p>
-<span class="fix"><span class="was">localStorage.setItem("cart", cart)</span> → <span class="now">localStorage.setItem("cart", JSON.stringify(cart))</span><br><span class="muted2">объект без stringify сохранится как бесполезное "[object Object]"</span></span>
-<span class="fix"><span class="was">const a = localStorage.getItem("cart"); a.push(...)</span> → <span class="now">const a = JSON.parse(localStorage.getItem("cart"))</span><br><span class="muted2">getItem даёт строку — без parse у неё нет методов массива</span></span>
-<span class="fix"><span class="was">JSON.parse(localStorage.getItem("x")) когда ключа нет</span> → <span class="now">const raw = localStorage.getItem("x"); const v = raw ? JSON.parse(raw) : []</span><br><span class="muted2">parse(null) падает — проверь, что данные есть</span></span>`,
-quiz:[
- {q:"Что вернёт localStorage.getItem по несуществующему ключу?",o:["Пустую строку","null","Ошибку","undefined"],a:1,e:"getItem возвращает null, если ключа нет."},
- {t:"output",q:"Что выведет код?",code:'localStorage.setItem("n", 5);\nconst x = localStorage.getItem("n");\nconsole.log(x + 1);',o:["6","51","NaN","ошибка"],a:1,e:"localStorage хранит строки: getItem вернёт \"5\", и \"5\"+1 склеится в \"51\"."},
- {t:"cloze",q:"Дополни: сохранить массив и прочитать обратно",code:'localStorage.setItem("cart", JSON.{0}(cart));\nconst back = JSON.{1}(localStorage.getItem("cart"));',gaps:["stringify","parse"],e:"stringify превращает массив в строку для хранения, parse — обратно в массив."},
- {t:"bug",q:"В какой строке ошибка — массив сохранён неправильно?",code:['const cart = ["кофе"];','localStorage.setItem("cart", cart);','const back = JSON.parse(localStorage.getItem("cart"));'],a:1,e:"Массив надо сохранять через JSON.stringify(cart), иначе запишется \"[object Object]\" или строка, и parse потом упадёт."},
- {q:"Что переживает перезагрузку страницы?",o:["Обычные переменные let/const","Данные в localStorage","Ничего","Только console.log"],a:1,e:"Переменные обнуляются при перезагрузке; localStorage сохраняется на устройстве."}],
-practice:{type:"html",
-task:`<p><b>Что делаем:</b> счётчик, который помнит своё значение после перезагрузки.</p><p><b>Шаги:</b></p><ol><li>При загрузке прочитай число из localStorage через getItem (если ничего нет — начни с 0).</li><li>Сделай кнопку, которая увеличивает счётчик.</li><li>После каждого изменения сохраняй значение через setItem.</li><li>Используй JSON.stringify при записи и JSON.parse при чтении.</li></ol>`,
-starter:"<!DOCTYPE html>\n<html>\n<body>\n  <div id=\"n\">0</div>\n  <button id=\"add\">+1</button>\n<script>\n  // TODO: прочитай сохранённое число (getItem + JSON.parse), иначе 0\n  // TODO: по клику увеличивай и сохраняй (setItem + JSON.stringify)\n<\/script>\n</body>\n</html>",
-checks:[
- {t:"Запись через localStorage.setItem",fn:c=>/localStorage\.setItem/.test(c)},
- {t:"Чтение через localStorage.getItem",fn:c=>/localStorage\.getItem/.test(c)},
- {t:"Используется JSON.stringify",fn:c=>/JSON\.stringify/.test(c)},
- {t:"Используется JSON.parse",fn:c=>/JSON\.parse/.test(c)}],
-hint:"let n=JSON.parse(localStorage.getItem('n'))||0; document.getElementById('add').addEventListener('click',()=>{n++; localStorage.setItem('n',JSON.stringify(n)); document.getElementById('n').textContent=n;});"}},
+theory:"\n<p>🎯 <b>Зачем это тебе:</b> обычная страница забывает всё при перезагрузке. Корзина, тема оформления, черновик, прогресс — всё это должно сохраняться. localStorage даёт браузеру маленькую память прямо на устройстве. Кстати, этот тренажёр хранит твой прогресс именно так.</p>\n\n<p><b>localStorage</b> — хранилище «ключ → значение» внутри браузера. Живёт после перезагрузки и закрытия вкладки. Два главных метода:</p>\n<pre class=\"demo\">localStorage.setItem(\"theme\", \"dark\");   // записать\nconst t = localStorage.getItem(\"theme\");  // прочитать → \"dark\"\nlocalStorage.removeItem(\"theme\");          // удалить</pre>\n<p>Разбор: <code>setItem(ключ, значение)</code> сохраняет, <code>getItem(ключ)</code> достаёт (вернёт <code>null</code>, если ключа нет), <code>removeItem</code> стирает. Всё привязано к конкретному сайту — чужие сайты твои данные не видят.</p>\n\n<p><b>Важно:</b> localStorage хранит <b>только строки</b>. Объект или массив надо превратить в строку через <code>JSON.stringify</code>, а при чтении — обратно через <code>JSON.parse</code>:</p>\n<pre class=\"demo\">const cart = [\"кофе\", \"чай\"];\nlocalStorage.setItem(\"cart\", JSON.stringify(cart));   // сохранили массив\n\nconst saved = JSON.parse(localStorage.getItem(\"cart\")); // достали массив\nconsole.log(saved[0]);   // кофе</pre>\n<p>Разбор: <code>JSON.stringify</code> превращает массив в строку <code>'[\"кофе\",\"чай\"]'</code> — её можно хранить. <code>JSON.parse</code> делает обратное: строку снова в массив, с которым работает код. Забыл parse — получишь строку вместо массива и <code>saved[0]</code> вернёт один символ.</p>\n\n<svg viewBox=\"0 0 600 165\" class=\"diagram\" xmlns=\"http://www.w3.org/2000/svg\">\n  <defs>\n   <marker id=\"m17a\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L6,3 L0,6\" fill=\"#B9FF47\"/></marker>\n   <marker id=\"m17b\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L6,3 L0,6\" fill=\"#37936F\"/></marker></defs>\n  <rect x=\"20\" y=\"30\" width=\"150\" height=\"44\" rx=\"10\" fill=\"#1C201E\" stroke=\"#B9FF47\"/>\n  <text x=\"95\" y=\"49\" text-anchor=\"middle\" fill=\"#B9FF47\" font-size=\"12\" font-weight=\"700\">объект / массив</text>\n  <text x=\"95\" y=\"65\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">[\"кофе\",\"чай\"]</text>\n  <line x1=\"172\" y1=\"52\" x2=\"252\" y2=\"52\" stroke=\"#B9FF47\" stroke-width=\"2\" marker-end=\"url(#m17a)\"/>\n  <text x=\"212\" y=\"44\" text-anchor=\"middle\" fill=\"#B9FF47\" font-size=\"9\">JSON.stringify</text>\n  <rect x=\"256\" y=\"30\" width=\"130\" height=\"44\" rx=\"10\" fill=\"#141716\" stroke=\"#FFD34D\"/>\n  <text x=\"321\" y=\"49\" text-anchor=\"middle\" fill=\"#FFD34D\" font-size=\"12\" font-weight=\"700\">\"строка\"</text>\n  <text x=\"321\" y=\"65\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">только текст</text>\n  <line x1=\"388\" y1=\"52\" x2=\"452\" y2=\"52\" stroke=\"#FFD34D\" stroke-width=\"2\" marker-end=\"url(#m17a)\"/>\n  <text x=\"420\" y=\"44\" text-anchor=\"middle\" fill=\"#FFD34D\" font-size=\"9\">setItem</text>\n  <rect x=\"456\" y=\"24\" width=\"122\" height=\"56\" rx=\"10\" fill=\"#141716\" stroke=\"#37936F\"/>\n  <text x=\"517\" y=\"46\" text-anchor=\"middle\" fill=\"#5BC79A\" font-size=\"12\" font-weight=\"700\">💾 браузер</text>\n  <text x=\"517\" y=\"62\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"8\">переживёт</text>\n  <text x=\"517\" y=\"72\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"8\">перезагрузку</text>\n  <line x1=\"452\" y1=\"112\" x2=\"172\" y2=\"112\" stroke=\"#37936F\" stroke-width=\"2\" marker-end=\"url(#m17b)\"/>\n  <text x=\"312\" y=\"104\" text-anchor=\"middle\" fill=\"#37936F\" font-size=\"9\">обратно: getItem → JSON.parse → снова объект</text>\n  <text x=\"312\" y=\"132\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">так этот тренажёр помнит твой прогресс</text>\n</svg>\n<p>⚠️ <b>Частые ошибки:</b></p>\n<span class=\"fix\"><span class=\"was\">localStorage.setItem(\"cart\", cart)</span> → <span class=\"now\">localStorage.setItem(\"cart\", JSON.stringify(cart))</span><br><span class=\"muted2\">объект без stringify сохранится как бесполезное \"[object Object]\"</span></span>\n<span class=\"fix\"><span class=\"was\">const a = localStorage.getItem(\"cart\"); a.push(...)</span> → <span class=\"now\">const a = JSON.parse(localStorage.getItem(\"cart\"))</span><br><span class=\"muted2\">getItem даёт строку — без parse у неё нет методов массива</span></span>\n<span class=\"fix\"><span class=\"was\">JSON.parse(localStorage.getItem(\"x\")) когда ключа нет</span> → <span class=\"now\">const raw = localStorage.getItem(\"x\"); const v = raw ? JSON.parse(raw) : []</span><br><span class=\"muted2\">parse(null) падает — проверь, что данные есть</span></span>",
+quiz:[{"q":"Что вернёт localStorage.getItem по несуществующему ключу?","o":["Пустую строку","null","Ошибку","undefined"],"a":1,"e":"getItem возвращает null, если ключа нет."},{"t":"output","q":"Что выведет код?","code":"localStorage.setItem(\"n\", 5);\nconst x = localStorage.getItem(\"n\");\nconsole.log(x + 1);","o":["6","51","NaN","ошибка"],"a":1,"e":"localStorage хранит строки: getItem вернёт \"5\", и \"5\"+1 склеится в \"51\"."},{"t":"cloze","q":"Дополни: сохранить массив и прочитать обратно","code":"localStorage.setItem(\"cart\", JSON.{0}(cart));\nconst back = JSON.{1}(localStorage.getItem(\"cart\"));","gaps":["stringify","parse"],"e":"stringify превращает массив в строку для хранения, parse — обратно в массив."},{"t":"bug","q":"В какой строке ошибка — массив сохранён неправильно?","code":["const cart = [\"кофе\"];","localStorage.setItem(\"cart\", cart);","const back = JSON.parse(localStorage.getItem(\"cart\"));"],"a":1,"e":"Массив надо сохранять через JSON.stringify(cart), иначе запишется \"[object Object]\" или строка, и parse потом упадёт."},{"q":"Что переживает перезагрузку страницы?","o":["Обычные переменные let/const","Данные в localStorage","Ничего","Только console.log"],"a":1,"e":"Переменные обнуляются при перезагрузке; localStorage сохраняется на устройстве."}],
+lab:[
+{kind:"fill",type:"html",prompt:"<p><b>Задание 1.</b> Счётчик с памятью: при загрузке читает число из <code>localStorage</code> (ключ <code>\"count\"</code>, через <code>JSON.parse</code>, иначе 0), а по клику увеличивает и <b>сохраняет</b> его через <code>setItem</code> + <code>JSON.stringify</code>.</p>",starter:"<!DOCTYPE html>\n<html>\n<body>\n  <p>Счёт: <span id=\"n\">0</span></p>\n  <button id=\"add\">+1</button>\n  <script>\n    // TODO: прочитай сохранённое число: JSON.parse(localStorage.getItem(\"count\")) || 0\n    // TODO: покажи его в #n\n    // TODO: по клику увеличивай, показывай и сохраняй (setItem + JSON.stringify)\n  </script>\n</body>\n</html>",tests:[{t:"Есть #n и кнопка",fn:(d)=>!!d.querySelector('#n') && !!d.querySelector('button')},{t:"Клик увеличивает счёт и пишет его в localStorage как JSON",fn:(d,w)=>{ const c=d.querySelector('#n'), b=d.querySelector('button'); if(!c||!b) return false; const base=parseInt(c.textContent,10)||0; b.click(); let v; try{ v=JSON.parse(w.localStorage.getItem('count')); }catch(e){ return false; } return v===base+1 && parseInt(c.textContent,10)===base+1; }}]},
+{kind:"fix",type:"html",prompt:"<p><b>Задание 2.</b> Корзина сохраняется неправильно: массив кладут в <code>localStorage</code> <b>без</b> <code>JSON.stringify</code>, поэтому обратно читается мусор. <b>Почини</b> запись и чтение (<code>JSON.stringify</code> при сохранении, <code>JSON.parse</code> при чтении).</p>",starter:"<!DOCTYPE html>\n<html>\n<body>\n  <input id=\"item\" placeholder=\"товар\">\n  <button id=\"add\">В корзину</button>\n  <p>Товаров: <span id=\"c\">0</span></p>\n  <script>\n    let cart = [];\n    const raw = localStorage.getItem(\"cart\");\n    if (raw) cart = raw;              // сломано: строка вместо массива\n    document.querySelector(\"#add\").addEventListener(\"click\", () => {\n      cart.push(document.querySelector(\"#item\").value);\n      localStorage.setItem(\"cart\", cart);   // сломано: без JSON.stringify\n      document.querySelector(\"#c\").textContent = cart.length;\n    });\n    // TODO: почини чтение (JSON.parse) и запись (JSON.stringify)\n  </script>\n</body>\n</html>",tests:[{t:"После добавления двух товаров в localStorage лежит корректный JSON-массив",fn:(d,w)=>{ const inp=d.querySelector('#item'), b=d.querySelector('#add'); if(!inp||!b) return false; w.localStorage.removeItem('cart'); inp.value='кофе'; b.click(); inp.value='чай'; b.click(); let a; try{ a=JSON.parse(w.localStorage.getItem('cart')); }catch(e){ return false; } return Array.isArray(a) && a.indexOf('кофе')>-1 && a.indexOf('чай')>-1; }}]},
+{kind:"build",type:"html",prompt:"<p><b>Задание 3.</b> <b>Список дел с памятью.</b> Поле + кнопка «Добавить»: новая задача попадает в массив, массив сохраняется в <code>localStorage</code> как JSON (ключ <code>\"todos\"</code>) и показывается на странице. Так список переживёт перезагрузку.</p>",starter:"<!DOCTYPE html>\n<html>\n<body>\n  <input id=\"task\" placeholder=\"новая задача\">\n  <button id=\"add\">Добавить</button>\n  <ul id=\"list\"></ul>\n  <script>\n    // TODO: при загрузке восстанови массив из localStorage (JSON.parse) или []\n    // TODO: покажи задачи в #list\n    // TODO: по клику добавляй задачу в массив, сохраняй (JSON.stringify) и дорисовывай список\n  </script>\n</body>\n</html>",tests:[{t:"Добавленная задача сохраняется в localStorage массивом (JSON)",fn:(d,w)=>{ const inp=d.querySelector('#task'), b=d.querySelector('#add'); if(!inp||!b) return false; w.localStorage.removeItem('todos'); inp.value='Выучить JS'; b.click(); let a; try{ a=JSON.parse(w.localStorage.getItem('todos')); }catch(e){ return false; } return Array.isArray(a) && a.indexOf('Выучить JS')>-1; }},{t:"Добавленная задача появляется на странице",fn:(d,w)=>{ const inp=d.querySelector('#task'), b=d.querySelector('#add'); if(!inp||!b) return false; inp.value='Сделать проект'; b.click(); return /Сделать проект/.test(d.body.textContent); }}]}],
+res:[["learn.javascript.ru: LocalStorage","url","https://learn.javascript.ru/localstorage"],
+ ["learn.javascript.ru: JSON.stringify / parse","url","https://learn.javascript.ru/json"],
+ ["MDN: Window.localStorage (рус.)","url","https://developer.mozilla.org/ru/docs/Web/API/Window/localStorage"],
+ ["localStorage простыми словами","yt","javascript localstorage для начинающих"]]},
 {id:"m9",title:"fetch и async/await: данные из интернета",
-theory:`
-<p>🎯 <b>Зачем это тебе:</b> почти любой реальный заказ — показать данные «из мира»: погоду, курсы валют, товары, профиль пользователя. Эти данные живут на серверах, и <code>fetch</code> с <code>async/await</code> — стандартный способ их достать.</p>
-<p>Данные отдаёт <b>API</b> (Application Programming Interface — «интерфейс для программ»): сервер, который на запрос отвечает не страницей, а данными в формате <b>JSON</b> (JavaScript Object Notation) — текстом, похожим на объект JS: <code>{"name": "Emil", "level": 3}</code>.</p>
-<p><b>fetch</b> отправляет запрос и возвращает <b>промис</b> (Promise — «обещание»): не сами данные, а обещание отдать их, когда сервер ответит. Ответ идёт по сети десятки и сотни миллисекунд, и JS это время не стоит на месте, а продолжает работать.</p>
-<pre class="demo">async function getUser() {
-  const res = await fetch("https://api.github.com/users/octocat");
-  const data = await res.json();   // JSON → объект JS
-  console.log(data.name);
-}
-getUser();</pre>
-<p>Разбор построчно: <code>async</code> перед function помечает функцию как асинхронную — только внутри такой работает <code>await</code>. <code>await fetch(...)</code> — «дождись ответа сервера»: в <code>res</code> попадает ответ (статус, заголовки), но ещё не данные. <code>await res.json()</code> — второй await: разбор JSON-текста в объект — тоже асинхронная операция, она тоже возвращает промис. После этого <code>data</code> — обычный объект: берём <code>data.name</code> через точку, как в модуле про объекты.</p>
-<p>Порядок всегда один: <b>fetch → json → использовать</b>. Два await, а не один — самое частое место, где путаются.</p>
-<p>Ответы бывают вложенными — тогда точки складываются в цепочку: <code>data.company.name</code>. Списки приходят массивами: <code>data.users[0].name</code> — имя первого пользователя. Правило простое: сначала выведи <code>console.log(data)</code> целиком, посмотри структуру ответа — и только потом доставай нужные поля.</p>
-<p>Что будет без await? <code>console.log(fetch(url))</code> напечатает <code>Promise { &lt;pending&gt; }</code> — «обещание в ожидании». Это главный симптом: видишь pending — значит где-то потерял await.</p>
-<p><b>Ошибки.</b> Сеть ненадёжна: интернет пропал, сервер упал. Такие сбои ловят через <code>try/catch</code>:</p>
-<pre class="demo">try {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Сервер ответил " + res.status);
-  const data = await res.json();
-} catch (err) {
-  console.log("Ошибка: " + err.message);
-}</pre>
-<p>Разбор: <code>try</code> — «пробуем выполнить», <code>catch</code> — «если внутри что-то упало, выполни это»: программа не падает, а показывает сообщение. Тонкость: fetch НЕ считает ответы 404 или 500 ошибкой (запрос-то дошёл), поэтому проверяем <code>res.ok</code> — он равен false, когда статус не 2xx, — и бросаем ошибку сами через <code>throw</code>.</p>
-<p>Кстати, любая async-функция и сама возвращает промис — поэтому её результат снаружи тоже получают через await. Но на верхнем уровне достаточно просто вызвать <code>getUser();</code> — вывод случится, когда данные придут.</p>
-<p>Тренажёр офлайн, поэтому в практике «сервер» имитирует функция <code>fakeApi()</code> — промис с данными и задержкой. Механика с твоей стороны та же: async-функция, await, объект с данными.</p>
-<p>⚠️ <b>Частые ошибки:</b></p>
-<span class="fix"><span class="was">const res = fetch(url)</span> → <span class="now">const res = await fetch(url)</span><br><span class="muted2">Без await в res лежит промис, а не ответ — увидишь Promise { &lt;pending&gt; } вместо данных</span></span>
-<span class="fix"><span class="was">const data = res.json()</span> → <span class="now">const data = await res.json()</span><br><span class="muted2">json() тоже возвращает промис — нужен второй await</span></span>
-<span class="fix"><span class="was">function load() { await fetch(url) }</span> → <span class="now">async function load() { await fetch(url) }</span><br><span class="muted2">await работает только внутри функции со словом async — иначе SyntaxError</span></span>`,
-quiz:[
- {q:"Что возвращает fetch()?",o:["Сразу данные","Промис — обещание результата","Строку HTML","Ошибку"],a:1,e:"Ответ идёт по сети не мгновенно, поэтому fetch сразу возвращает промис, а данные приходят потом."},
- {t:"cloze",q:"Дополни запрос к API",code:"async function load() {\n  const res = {0} fetch(url);\n  const data = await res.{1}();\n  console.log(data.name);\n}",gaps:["await","json"],e:"await — «дождись ответа», res.json() превращает JSON-текст в объект. Оба шага асинхронные — оба ждём."},
- {t:"order",q:"Собери запрос: fetch → json → использовать",lines:["async function getUser() {","  const res = await fetch(\"https://api.example.com/user\");","  const data = await res.json();","  console.log(data.name);","}"],e:"Порядок всегда один: сначала await fetch (ответ сервера), потом await res.json() (данные), потом используем data."},
- {q:"JSON — это…",o:["Язык программирования","Текстовый формат данных «ключ: значение»","База данных","Фреймворк"],a:1,e:"Формат обмена данными: выглядит как объект JS, но это текст — res.json() превращает его в настоящий объект."},
- {q:"Зачем нужен try/catch при запросах?",o:["Ускорить запрос","Поймать ошибку, если запрос не удался","Красиво оформить код","Он обязателен в любом коде"],a:1,e:"Сеть ненадёжна: если интернет пропал или сервер упал, catch перехватит ошибку и программа не рухнет."}],
-practice:{type:"js",
-task:"<p><b>Что делаем:</b> тренажёр офлайн, поэтому сервер имитирует <code>fakeApi()</code> — промис с данными через секунду, как настоящий API. Получи данные и покажи их, не уронив программу при ошибке.</p><p><b>Шаги:</b></p><ol><li>Напиши <code>async</code>-функцию <code>load()</code>.</li><li>Внутри, в блоке <code>try</code>, дождись данных: <code>const data = await fakeApi();</code></li><li>Выведи <code>data.name</code> и <code>data.level</code> через <code>console.log</code>.</li><li>В <code>catch</code> выведи сообщение об ошибке.</li><li>В конце вызови <code>load()</code>.</li></ol>",
-starter:"function fakeApi() {\n  return new Promise(resolve => {\n    setTimeout(() => resolve({ name: \"Emil\", level: \"junior soon\" }), 1000);\n  });\n}\n\n// TODO асинхронная функция load, внутри — try и catch\n// TODO дождись результата fakeApi и выведи имя и уровень\n// TODO в конце вызови функцию\n",
-checks:[
- {t:"объявлена async-функция",fn:c=>/async\s+function|async\s*\(|async\s+\w+\s*=>/.test(c)},
- {t:"данные получены через await fakeApi()",fn:c=>/await\s+fakeApi\s*\(/.test(c)},
- {t:"есть try/catch на случай ошибки",fn:c=>/try\s*\{[\s\S]*catch/.test(c)},
- {t:"выведены data.name и data.level",fn:c=>/console\.log/.test(c)&&/\.name/.test(c)&&/\.level/.test(c)},
- {t:"функция вызвана в конце",fn:c=>/^\s*load\s*\(/m.test(c)}],
-hint:"async function load() { try { const data = await fakeApi(); console.log(data.name, data.level); } catch (e) { console.log(\"Ошибка\", e); } } load();"}},
+theory:"\n<p>🎯 <b>Зачем это тебе:</b> почти любой реальный заказ — показать данные «из мира»: погоду, курсы валют, товары, профиль пользователя. Эти данные живут на серверах, и <code>fetch</code> с <code>async/await</code> — стандартный способ их достать.</p>\n<p>Данные отдаёт <b>API</b> (Application Programming Interface — «интерфейс для программ»): сервер, который на запрос отвечает не страницей, а данными в формате <b>JSON</b> (JavaScript Object Notation) — текстом, похожим на объект JS: <code>{\"name\": \"Emil\", \"level\": 3}</code>.</p>\n<p><b>fetch</b> отправляет запрос и возвращает <b>промис</b> (Promise — «обещание»): не сами данные, а обещание отдать их, когда сервер ответит. Ответ идёт по сети десятки и сотни миллисекунд, и JS это время не стоит на месте, а продолжает работать.</p>\n<pre class=\"demo\">async function getUser() {\n  const res = await fetch(\"https://api.github.com/users/octocat\");\n  const data = await res.json();   // JSON → объект JS\n  console.log(data.name);\n}\ngetUser();</pre>\n<p>Разбор построчно: <code>async</code> перед function помечает функцию как асинхронную — только внутри такой работает <code>await</code>. <code>await fetch(...)</code> — «дождись ответа сервера»: в <code>res</code> попадает ответ (статус, заголовки), но ещё не данные. <code>await res.json()</code> — второй await: разбор JSON-текста в объект — тоже асинхронная операция, она тоже возвращает промис. После этого <code>data</code> — обычный объект: берём <code>data.name</code> через точку, как в модуле про объекты.</p>\n<p>Порядок всегда один: <b>fetch → json → использовать</b>. Два await, а не один — самое частое место, где путаются.</p>\n<p>Ответы бывают вложенными — тогда точки складываются в цепочку: <code>data.company.name</code>. Списки приходят массивами: <code>data.users[0].name</code> — имя первого пользователя. Правило простое: сначала выведи <code>console.log(data)</code> целиком, посмотри структуру ответа — и только потом доставай нужные поля.</p>\n<p>Что будет без await? <code>console.log(fetch(url))</code> напечатает <code>Promise { &lt;pending&gt; }</code> — «обещание в ожидании». Это главный симптом: видишь pending — значит где-то потерял await.</p>\n<p><b>Ошибки.</b> Сеть ненадёжна: интернет пропал, сервер упал. Такие сбои ловят через <code>try/catch</code>:</p>\n<pre class=\"demo\">try {\n  const res = await fetch(url);\n  if (!res.ok) throw new Error(\"Сервер ответил \" + res.status);\n  const data = await res.json();\n} catch (err) {\n  console.log(\"Ошибка: \" + err.message);\n}</pre>\n<p>Разбор: <code>try</code> — «пробуем выполнить», <code>catch</code> — «если внутри что-то упало, выполни это»: программа не падает, а показывает сообщение. Тонкость: fetch НЕ считает ответы 404 или 500 ошибкой (запрос-то дошёл), поэтому проверяем <code>res.ok</code> — он равен false, когда статус не 2xx, — и бросаем ошибку сами через <code>throw</code>.</p>\n<p>Кстати, любая async-функция и сама возвращает промис — поэтому её результат снаружи тоже получают через await. Но на верхнем уровне достаточно просто вызвать <code>getUser();</code> — вывод случится, когда данные придут.</p>\n<p>Тренажёр офлайн, поэтому в практике «сервер» имитирует функция <code>fakeApi()</code> — промис с данными и задержкой. Механика с твоей стороны та же: async-функция, await, объект с данными.</p>\n<svg viewBox=\"0 0 600 150\" class=\"diagram\" xmlns=\"http://www.w3.org/2000/svg\">\n  <defs>\n   <marker id=\"m9a\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L6,3 L0,6\" fill=\"#B9FF47\"/></marker>\n   <marker id=\"m9b\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L6,3 L0,6\" fill=\"#37936F\"/></marker></defs>\n  <rect x=\"20\" y=\"46\" width=\"120\" height=\"48\" rx=\"10\" fill=\"#141716\" stroke=\"#B9FF47\"/>\n  <text x=\"80\" y=\"66\" text-anchor=\"middle\" fill=\"#B9FF47\" font-size=\"12\" font-weight=\"700\">ваш код</text>\n  <text x=\"80\" y=\"82\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">async / await</text>\n  <line x1=\"142\" y1=\"70\" x2=\"236\" y2=\"70\" stroke=\"#B9FF47\" stroke-width=\"2\" marker-end=\"url(#m9a)\"/>\n  <text x=\"189\" y=\"60\" text-anchor=\"middle\" fill=\"#B9FF47\" font-size=\"9\">await fetch(url)</text>\n  <text x=\"189\" y=\"86\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"8\">1-й await</text>\n  <rect x=\"240\" y=\"46\" width=\"120\" height=\"48\" rx=\"10\" fill=\"#1C201E\" stroke=\"#FFD34D\"/>\n  <text x=\"300\" y=\"66\" text-anchor=\"middle\" fill=\"#FFD34D\" font-size=\"12\" font-weight=\"700\">🌐 сервер</text>\n  <text x=\"300\" y=\"82\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">отдаёт JSON</text>\n  <line x1=\"362\" y1=\"70\" x2=\"456\" y2=\"70\" stroke=\"#37936F\" stroke-width=\"2\" marker-end=\"url(#m9b)\"/>\n  <text x=\"409\" y=\"60\" text-anchor=\"middle\" fill=\"#37936F\" font-size=\"9\">await res.json()</text>\n  <text x=\"409\" y=\"86\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"8\">2-й await</text>\n  <rect x=\"460\" y=\"46\" width=\"118\" height=\"48\" rx=\"10\" fill=\"#141716\" stroke=\"#37936F\"/>\n  <text x=\"519\" y=\"66\" text-anchor=\"middle\" fill=\"#F4F6F2\" font-size=\"12\" font-weight=\"700\">объект data</text>\n  <text x=\"519\" y=\"82\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">data.name</text>\n  <text x=\"300\" y=\"126\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"10\" font-style=\"italic\">два await, а не один — самое частое место ошибок</text>\n</svg>\n<p>⚠️ <b>Частые ошибки:</b></p>\n<span class=\"fix\"><span class=\"was\">const res = fetch(url)</span> → <span class=\"now\">const res = await fetch(url)</span><br><span class=\"muted2\">Без await в res лежит промис, а не ответ — увидишь Promise { &lt;pending&gt; } вместо данных</span></span>\n<span class=\"fix\"><span class=\"was\">const data = res.json()</span> → <span class=\"now\">const data = await res.json()</span><br><span class=\"muted2\">json() тоже возвращает промис — нужен второй await</span></span>\n<span class=\"fix\"><span class=\"was\">function load() { await fetch(url) }</span> → <span class=\"now\">async function load() { await fetch(url) }</span><br><span class=\"muted2\">await работает только внутри функции со словом async — иначе SyntaxError</span></span>",
+quiz:[{"q":"Что возвращает fetch()?","o":["Сразу данные","Промис — обещание результата","Строку HTML","Ошибку"],"a":1,"e":"Ответ идёт по сети не мгновенно, поэтому fetch сразу возвращает промис, а данные приходят потом."},{"t":"cloze","q":"Дополни запрос к API","code":"async function load() {\n  const res = {0} fetch(url);\n  const data = await res.{1}();\n  console.log(data.name);\n}","gaps":["await","json"],"e":"await — «дождись ответа», res.json() превращает JSON-текст в объект. Оба шага асинхронные — оба ждём."},{"t":"order","q":"Собери запрос: fetch → json → использовать","lines":["async function getUser() {","  const res = await fetch(\"https://api.example.com/user\");","  const data = await res.json();","  console.log(data.name);","}"],"e":"Порядок всегда один: сначала await fetch (ответ сервера), потом await res.json() (данные), потом используем data."},{"q":"JSON — это…","o":["Язык программирования","Текстовый формат данных «ключ: значение»","База данных","Фреймворк"],"a":1,"e":"Формат обмена данными: выглядит как объект JS, но это текст — res.json() превращает его в настоящий объект."},{"q":"Зачем нужен try/catch при запросах?","o":["Ускорить запрос","Поймать ошибку, если запрос не удался","Красиво оформить код","Он обязателен в любом коде"],"a":1,"e":"Сеть ненадёжна: если интернет пропал или сервер упал, catch перехватит ошибку и программа не рухнет."}],
+practice:{type:"js",task:"<p><b>Что делаем:</b> тренажёр офлайн, поэтому сервер имитирует <code>fakeApi()</code> — промис с данными через секунду, как настоящий API. Получи данные и покажи их, не уронив программу при ошибке.</p><p><b>Шаги:</b></p><ol><li>Напиши <code>async</code>-функцию <code>load()</code>.</li><li>Внутри, в блоке <code>try</code>, дождись данных: <code>const data = await fakeApi();</code></li><li>Выведи <code>data.name</code> и <code>data.level</code> через <code>console.log</code>.</li><li>В <code>catch</code> выведи сообщение об ошибке.</li><li>В конце вызови <code>load()</code>.</li></ol>",starter:"function fakeApi() {\n  return new Promise(resolve => {\n    setTimeout(() => resolve({ name: \"Emil\", level: \"junior soon\" }), 1000);\n  });\n}\n\n// TODO асинхронная функция load, внутри — try и catch\n// TODO дождись результата fakeApi и выведи имя и уровень\n// TODO в конце вызови функцию\n",checks:[{t:"объявлена async-функция",fn:c=>/async\s+function|async\s*\(|async\s+\w+\s*=>/.test(c)},{t:"данные получены через await fakeApi()",fn:c=>/await\s+fakeApi\s*\(/.test(c)},{t:"есть try/catch на случай ошибки",fn:c=>/try\s*\{[\s\S]*catch/.test(c)},{t:"выведены data.name и data.level",fn:c=>/console\.log/.test(c)&&/\.name/.test(c)&&/\.level/.test(c)},{t:"функция вызвана в конце",fn:c=>/^\s*load\s*\(/m.test(c)}],hint:"async function load() { try { const data = await fakeApi(); console.log(data.name, data.level); } catch (e) { console.log(\"Ошибка\", e); } } load();"},
+res:[["learn.javascript.ru: Fetch","url","https://learn.javascript.ru/fetch"],
+ ["learn.javascript.ru: async/await","url","https://learn.javascript.ru/async-await"],
+ ["MDN: Использование Fetch (рус.)","url","https://developer.mozilla.org/ru/docs/Web/API/Fetch_API/Using_Fetch"],
+ ["async/await и fetch для новичков","yt","javascript async await fetch для начинающих"]]},
 {id:"m18",title:"JSON и REST: данные как в реальных приложениях",
-theory:`
-<p>🎯 <b>Зачем это тебе:</b> настоящие приложения не хранят данные внутри себя — они запрашивают их у сервера: список товаров, погоду, профиль. Формат этого обмена — JSON, а сам обмен — REST-запросы. Это то, что делает приложение «живым».</p>
-
-<p><b>JSON</b> (JavaScript Object Notation) — текстовый формат данных, похожий на объект JS. На нём разговаривают все API мира:</p>
-<pre class="demo">{ "name": "Эмиль", "level": 5, "skills": ["html", "js"] }</pre>
-<p>Разбор: это <b>строка</b> с данными. Ключи и строковые значения — в двойных кавычках. Приходит такой текст с сервера — превращаем в объект через <code>JSON.parse</code>, отправляем на сервер — превращаем объект в текст через <code>JSON.stringify</code>.</p>
-
-<p><b>REST-запрос</b> через <code>fetch</code> — просишь у сервера данные по адресу. Ответ приходит асинхронно, поэтому <code>async/await</code>:</p>
-<pre class="demo">async function loadUser() {
-  const res = await fetch("/api/user");   // ждём ответ
-  const data = await res.json();           // разбираем JSON в объект
-  console.log(data.name);
-}</pre>
-<p>Разбор: <code>await fetch(url)</code> отправляет запрос и ждёт ответ — объект <code>res</code>. <code>await res.json()</code> читает тело ответа и разбирает JSON в готовый объект. Два await, потому что и запрос, и чтение тела — асинхронные.</p>
-
-<p>Сеть капризна, поэтому боевой код всегда в защите <code>try/catch</code>:</p>
-<pre class="demo">async function load() {
-  try {
-    const res = await fetch("/api/user");
-    const data = await res.json();
-    return data;
-  } catch (e) {
-    console.log("Не удалось загрузить:", e.message);
-  }
-}</pre>
-<p>Разбор: если сети нет или сервер молчит — <code>fetch</code> падает, и управление уходит в <code>catch</code>, где показываем понятное сообщение вместо белого экрана. Это отличает код джуна от студенческого.</p>
-
-<p>⚠️ <b>Частые ошибки:</b></p>
-<span class="fix"><span class="was">const data = fetch(url)</span> → <span class="now">const data = await fetch(url)</span><br><span class="muted2">без await получишь Promise, а не ответ — «зависший» объект</span></span>
-<span class="fix"><span class="was">const data = await fetch(url); data.name</span> → <span class="now">const data = await res.json(); data.name</span><br><span class="muted2">fetch возвращает ответ-обёртку; сами данные достаёт res.json()</span></span>
-<span class="fix"><span class="was">запрос без try/catch</span> → <span class="now">try { await fetch(...) } catch (e) { ... }</span><br><span class="muted2">сеть падает регулярно — без защиты приложение умрёт молча</span></span>`,
-quiz:[
- {q:"Что такое JSON?",o:["Текстовый формат обмена данными","Язык программирования","База данных","Тег HTML"],a:0,e:"JSON — текстовый формат данных, на нём общаются приложение и сервер."},
- {t:"cloze",q:"Дополни загрузку данных с сервера",code:'const res = {0} fetch(url);\nconst data = await res.{1}();',gaps:["await","json"],e:"await ждёт ответ fetch, res.json() разбирает тело ответа в объект."},
- {t:"order",q:"Собери правильный порядок загрузки данных",lines:["async function load() {","  const res = await fetch(url);","  const data = await res.json();","  console.log(data.name);","}"],e:"Сначала объявляем async-функцию, ждём fetch, затем разбираем json, потом используем данные."},
- {t:"output",q:"Что окажется в data без await у fetch?",code:'const data = fetch("/api");\nconsole.log(typeof data);',o:["object (Promise)","string","undefined","массив"],a:0,e:"Без await fetch возвращает Promise — «обещание» ответа, а не сам ответ."},
- {q:"Куда попадёт управление, если fetch упадёт из-за сети?",o:["В блок catch","Программа падает белым экраном","В console.log","Никуда"],a:0,e:"Ошибку fetch ловит окружающий try/catch — там показывают понятное сообщение."}],
-practice:{type:"js",
-task:`<p><b>Что делаем:</b> безопасную загрузку данных с учебного сервера fakeApi и вывод результата.</p><p><b>Шаги:</b></p><ol><li>Оставь готовую функцию fakeApi (она имитирует сервер).</li><li>Напиши async-функцию load с блоком try.</li><li>Внутри: await fakeApi(), затем выведи поле из данных через console.log.</li><li>Добавь catch (e) с сообщением об ошибке. Вызови load().</li></ol>`,
-starter:"// учебный сервер: отдаёт данные через 300мс\nfunction fakeApi(){return new Promise(res=>setTimeout(()=>res({name:\"Эмиль\",level:5}),300));}\n\n// TODO: напиши асинхронную функцию load, которая дождётся данных от fakeApi\n//       и выведет их; оберни в защиту от ошибок и вызови функцию\n",
-checks:[
- {t:"Функция помечена async",fn:c=>/async/.test(c)},
- {t:"Данные ожидаются через await",fn:c=>/await\s+fakeApi\s*\(/.test(c)},
- {t:"Есть защита try/catch",fn:c=>/try\s*\{/.test(c)&&/catch\s*\(/.test(c)},
- {t:"Результат выведен через console.log",fn:c=>/console\.log\s*\(/.test(c)}],
-hint:"async function load(){ try{ const d=await fakeApi(); console.log(d.name, d.level);}catch(e){console.log('Ошибка:',e.message);} } load();"}},
+theory:"\n<p>🎯 <b>Зачем это тебе:</b> настоящие приложения не хранят данные внутри себя — они запрашивают их у сервера: список товаров, погоду, профиль. Формат этого обмена — JSON, а сам обмен — REST-запросы. Это то, что делает приложение «живым».</p>\n\n<p><b>JSON</b> (JavaScript Object Notation) — текстовый формат данных, похожий на объект JS. На нём разговаривают все API мира:</p>\n<pre class=\"demo\">{ \"name\": \"Эмиль\", \"level\": 5, \"skills\": [\"html\", \"js\"] }</pre>\n<p>Разбор: это <b>строка</b> с данными. Ключи и строковые значения — в двойных кавычках. Приходит такой текст с сервера — превращаем в объект через <code>JSON.parse</code>, отправляем на сервер — превращаем объект в текст через <code>JSON.stringify</code>.</p>\n\n<p><b>REST-запрос</b> через <code>fetch</code> — просишь у сервера данные по адресу. Ответ приходит асинхронно, поэтому <code>async/await</code>:</p>\n<pre class=\"demo\">async function loadUser() {\n  const res = await fetch(\"/api/user\");   // ждём ответ\n  const data = await res.json();           // разбираем JSON в объект\n  console.log(data.name);\n}</pre>\n<p>Разбор: <code>await fetch(url)</code> отправляет запрос и ждёт ответ — объект <code>res</code>. <code>await res.json()</code> читает тело ответа и разбирает JSON в готовый объект. Два await, потому что и запрос, и чтение тела — асинхронные.</p>\n\n<p>Сеть капризна, поэтому боевой код всегда в защите <code>try/catch</code>:</p>\n<pre class=\"demo\">async function load() {\n  try {\n    const res = await fetch(\"/api/user\");\n    const data = await res.json();\n    return data;\n  } catch (e) {\n    console.log(\"Не удалось загрузить:\", e.message);\n  }\n}</pre>\n<p>Разбор: если сети нет или сервер молчит — <code>fetch</code> падает, и управление уходит в <code>catch</code>, где показываем понятное сообщение вместо белого экрана. Это отличает код джуна от студенческого.</p>\n\n<svg viewBox=\"0 0 600 155\" class=\"diagram\" xmlns=\"http://www.w3.org/2000/svg\">\n  <defs>\n   <marker id=\"m18a\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L6,3 L0,6\" fill=\"#B9FF47\"/></marker>\n   <marker id=\"m18b\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L6,3 L0,6\" fill=\"#37936F\"/></marker></defs>\n  <rect x=\"22\" y=\"50\" width=\"118\" height=\"46\" rx=\"10\" fill=\"#141716\" stroke=\"#B9FF47\"/>\n  <text x=\"81\" y=\"70\" text-anchor=\"middle\" fill=\"#B9FF47\" font-size=\"12\" font-weight=\"700\">приложение</text>\n  <text x=\"81\" y=\"86\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">fetch(url)</text>\n  <line x1=\"142\" y1=\"73\" x2=\"228\" y2=\"73\" stroke=\"#B9FF47\" stroke-width=\"2\" marker-end=\"url(#m18a)\"/>\n  <text x=\"185\" y=\"64\" text-anchor=\"middle\" fill=\"#B9FF47\" font-size=\"9\">запрос</text>\n  <rect x=\"232\" y=\"50\" width=\"130\" height=\"46\" rx=\"10\" fill=\"#1C201E\" stroke=\"#FFD34D\"/>\n  <text x=\"297\" y=\"70\" text-anchor=\"middle\" fill=\"#FFD34D\" font-size=\"12\" font-weight=\"700\">сервер (REST)</text>\n  <text x=\"297\" y=\"86\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">{\"name\":\"Эмиль\"}</text>\n  <line x1=\"364\" y1=\"73\" x2=\"450\" y2=\"73\" stroke=\"#37936F\" stroke-width=\"2\" marker-end=\"url(#m18b)\"/>\n  <text x=\"407\" y=\"64\" text-anchor=\"middle\" fill=\"#37936F\" font-size=\"9\">res.json()</text>\n  <rect x=\"454\" y=\"50\" width=\"124\" height=\"46\" rx=\"10\" fill=\"#141716\" stroke=\"#37936F\"/>\n  <text x=\"516\" y=\"70\" text-anchor=\"middle\" fill=\"#F4F6F2\" font-size=\"12\" font-weight=\"700\">объект JS</text>\n  <text x=\"516\" y=\"86\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">data.name</text>\n  <text x=\"300\" y=\"128\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"10\" font-style=\"italic\">JSON — текст в пути; parse превращает его в рабочий объект</text>\n</svg>\n<p>⚠️ <b>Частые ошибки:</b></p>\n<span class=\"fix\"><span class=\"was\">const data = fetch(url)</span> → <span class=\"now\">const data = await fetch(url)</span><br><span class=\"muted2\">без await получишь Promise, а не ответ — «зависший» объект</span></span>\n<span class=\"fix\"><span class=\"was\">const data = await fetch(url); data.name</span> → <span class=\"now\">const data = await res.json(); data.name</span><br><span class=\"muted2\">fetch возвращает ответ-обёртку; сами данные достаёт res.json()</span></span>\n<span class=\"fix\"><span class=\"was\">запрос без try/catch</span> → <span class=\"now\">try { await fetch(...) } catch (e) { ... }</span><br><span class=\"muted2\">сеть падает регулярно — без защиты приложение умрёт молча</span></span>",
+quiz:[{"q":"Что такое JSON?","o":["Текстовый формат обмена данными","Язык программирования","База данных","Тег HTML"],"a":0,"e":"JSON — текстовый формат данных, на нём общаются приложение и сервер."},{"t":"cloze","q":"Дополни загрузку данных с сервера","code":"const res = {0} fetch(url);\nconst data = await res.{1}();","gaps":["await","json"],"e":"await ждёт ответ fetch, res.json() разбирает тело ответа в объект."},{"t":"order","q":"Собери правильный порядок загрузки данных","lines":["async function load() {","  const res = await fetch(url);","  const data = await res.json();","  console.log(data.name);","}"],"e":"Сначала объявляем async-функцию, ждём fetch, затем разбираем json, потом используем данные."},{"t":"output","q":"Что окажется в data без await у fetch?","code":"const data = fetch(\"/api\");\nconsole.log(typeof data);","o":["object (Promise)","string","undefined","массив"],"a":0,"e":"Без await fetch возвращает Promise — «обещание» ответа, а не сам ответ."},{"q":"Куда попадёт управление, если fetch упадёт из-за сети?","o":["В блок catch","Программа падает белым экраном","В console.log","Никуда"],"a":0,"e":"Ошибку fetch ловит окружающий try/catch — там показывают понятное сообщение."}],
+practice:{type:"js",task:"<p><b>Что делаем:</b> безопасную загрузку данных с учебного сервера fakeApi и вывод результата.</p><p><b>Шаги:</b></p><ol><li>Оставь готовую функцию fakeApi (она имитирует сервер).</li><li>Напиши async-функцию load с блоком try.</li><li>Внутри: await fakeApi(), затем выведи поле из данных через console.log.</li><li>Добавь catch (e) с сообщением об ошибке. Вызови load().</li></ol>",starter:"// учебный сервер: отдаёт данные через 300мс\nfunction fakeApi(){return new Promise(res=>setTimeout(()=>res({name:\"Эмиль\",level:5}),300));}\n\n// TODO: напиши асинхронную функцию load, которая дождётся данных от fakeApi\n//       и выведет их; оберни в защиту от ошибок и вызови функцию\n",checks:[{t:"Функция помечена async",fn:c=>/async/.test(c)},{t:"Данные ожидаются через await",fn:c=>/await\s+fakeApi\s*\(/.test(c)},{t:"Есть защита try/catch",fn:c=>/try\s*\{/.test(c)&&/catch\s*\(/.test(c)},{t:"Результат выведен через console.log",fn:c=>/console\.log\s*\(/.test(c)}],hint:"async function load(){ try{ const d=await fakeApi(); console.log(d.name, d.level);}catch(e){console.log('Ошибка:',e.message);} } load();"},
+res:[["learn.javascript.ru: JSON","url","https://learn.javascript.ru/json"],
+ ["learn.javascript.ru: Fetch","url","https://learn.javascript.ru/fetch"],
+ ["MDN: Работа с JSON (рус.)","url","https://developer.mozilla.org/ru/docs/Learn/JavaScript/Objects/JSON"],
+ ["Что такое REST API простыми словами","yt","rest api простыми словами для начинающих"]]},
 {id:"m19",title:"ES-модули: import и export",
-theory:`
-<p>🎯 <b>Зачем это тебе:</b> реальный проект — это не один файл на тысячу строк, а десятки маленьких, каждый за своё. Модули позволяют разбить код на файлы и подключать нужное друг к другу. Без этого не собрать ни один современный проект, и это фундамент под React в следующем акте.</p>
-
-<p><b>export</b> — «отдать наружу» то, чем поделится файл. <b>import</b> — «взять» это в другом файле.</p>
-<pre class="demo">// файл math.js — отдаём функцию
-export function add(a, b) {
-  return a + b;
-}</pre>
-<pre class="demo">// файл app.js — берём и используем
-import { add } from "./math.js";
-console.log(add(2, 3));   // 5</pre>
-<p>Разбор: в <code>math.js</code> перед функцией стоит <code>export</code> — значит, она доступна снаружи. В <code>app.js</code> пишем <code>import { add } from "./math.js"</code> — берём именно <code>add</code> из соседнего файла. Имя в фигурных скобках должно совпадать с тем, что экспортировали.</p>
-
-<p>Бывает <b>export default</b> — «главное, что отдаёт файл», его можно импортировать под любым именем без скобок:</p>
-<pre class="demo">// файл user.js
-export default { name: "Эмиль" };
-
-// файл app.js
-import user from "./user.js";   // без фигурных скобок</pre>
-<p>Разбор: <code>default</code>-экспорт в файле один. При импорте фигурные скобки не нужны, а имя выбираешь сам. Именованных (через <code>{ }</code>) экспортов может быть сколько угодно.</p>
-
-<p>В браузере модули подключают так: <code>&lt;script type="module" src="app.js"&gt;&lt;/script&gt;</code>. Слово <code>module</code> включает поддержку import/export.</p>
-
-<p>⚠️ <b>Частые ошибки:</b></p>
-<span class="fix"><span class="was">import { add } from "math.js"</span> → <span class="now">import { add } from "./math.js"</span><br><span class="muted2">путь к своему файлу начинается с ./ — иначе браузер ищет не там</span></span>
-<span class="fix"><span class="was">import add from "./math.js" (для именованного экспорта)</span> → <span class="now">import { add } from "./math.js"</span><br><span class="muted2">именованный экспорт импортируют в фигурных скобках, default — без них</span></span>
-<span class="fix"><span class="was">&lt;script src="app.js"&gt;</span> → <span class="now">&lt;script type="module" src="app.js"&gt;</span><br><span class="muted2">без type="module" браузер не понимает import и выдаёт ошибку</span></span>`,
-quiz:[
- {q:"Что делает export перед функцией?",o:["Делает её доступной для импорта в других файлах","Запускает её сразу","Удаляет её","Делает её приватной"],a:0,e:"export открывает функцию наружу, чтобы её можно было импортировать."},
- {t:"cloze",q:"Дополни: отдать функцию и взять её в другом файле",code:'// math.js\n{0} function add(a,b){ return a+b; }\n\n// app.js\n{1} { add } from "./math.js";',gaps:["export","import"],e:"export отдаёт наружу, import берёт в другом файле."},
- {t:"bug",q:"В какой строке ошибка в импорте именованного экспорта?",code:['// math.js: export function add(a,b){return a+b}','import add from "./math.js";','console.log(add(2,3));'],a:1,e:"Именованный экспорт импортируют в фигурных скобках: import { add } from ..."},
- {t:"pairs",q:"Соедини запись с её смыслом",pairs:[["export","отдать наружу"],["import","взять в другом файле"],["export default","главный экспорт файла"],["type=\"module\"","включить модули в браузере"]],e:"export отдаёт, import берёт, default — главный экспорт, type=module включает поддержку."},
- {q:"Как импортируют export default?",o:["Без фигурных скобок, под любым именем","Только в фигурных скобках","Через require","Никак"],a:0,e:"default-экспорт берут без { } и называют как хочешь."}],
-practice:{type:"js",
-task:`<p><b>Что делаем:</b> разложить код на два «файла» — один отдаёт функцию, другой её берёт. (Здесь два файла показаны комментариями в одном окне; кнопка «Запустить» для модулей не сработает — проверка идёт по коду.)</p><p><b>Шаги:</b></p><ol><li>В блоке «файл math.js» напиши функцию и поставь перед ней export.</li><li>В блоке «файл app.js» импортируй её: import { имя } from "./math.js".</li><li>Вызови функцию и подготовь вывод результата.</li></ol>`,
-starter:"// ===== файл math.js =====\n// TODO: объяви функцию и отдай её наружу ключевым словом\n\n// ===== файл app.js =====\n// TODO: возьми функцию из соседнего файла ./math.js и вызови её\n",
-checks:[
- {t:"Есть export (функции, const или default)",fn:c=>/export\s+(default\s+|function\s+|const\s+|let\s+|class\s+)/.test(c)},
- {t:"Есть import ... from \"./...\"",fn:c=>/import\s+[\s\S]*?from\s+["']\.\//.test(c)},
- {t:"Импорт именованного экспорта в фигурных скобках или default",fn:c=>/import\s+(\{[^}]+\}|[A-Za-z_$][\w$]*)\s+from/.test(c)}],
-hint:"// math.js\\nexport function add(a,b){return a+b;}\\n// app.js\\nimport { add } from \"./math.js\";\\nconsole.log(add(2,3));"}},
+theory:"\n<p>🎯 <b>Зачем это тебе:</b> реальный проект — это не один файл на тысячу строк, а десятки маленьких, каждый за своё. Модули позволяют разбить код на файлы и подключать нужное друг к другу. Без этого не собрать ни один современный проект, и это фундамент под React в следующем акте.</p>\n\n<p><b>export</b> — «отдать наружу» то, чем поделится файл. <b>import</b> — «взять» это в другом файле.</p>\n<pre class=\"demo\">// файл math.js — отдаём функцию\nexport function add(a, b) {\n  return a + b;\n}</pre>\n<pre class=\"demo\">// файл app.js — берём и используем\nimport { add } from \"./math.js\";\nconsole.log(add(2, 3));   // 5</pre>\n<p>Разбор: в <code>math.js</code> перед функцией стоит <code>export</code> — значит, она доступна снаружи. В <code>app.js</code> пишем <code>import { add } from \"./math.js\"</code> — берём именно <code>add</code> из соседнего файла. Имя в фигурных скобках должно совпадать с тем, что экспортировали.</p>\n\n<p>Бывает <b>export default</b> — «главное, что отдаёт файл», его можно импортировать под любым именем без скобок:</p>\n<pre class=\"demo\">// файл user.js\nexport default { name: \"Эмиль\" };\n\n// файл app.js\nimport user from \"./user.js\";   // без фигурных скобок</pre>\n<p>Разбор: <code>default</code>-экспорт в файле один. При импорте фигурные скобки не нужны, а имя выбираешь сам. Именованных (через <code>{ }</code>) экспортов может быть сколько угодно.</p>\n\n<p>В браузере модули подключают так: <code>&lt;script type=\"module\" src=\"app.js\"&gt;&lt;/script&gt;</code>. Слово <code>module</code> включает поддержку import/export.</p>\n\n<svg viewBox=\"0 0 600 150\" class=\"diagram\" xmlns=\"http://www.w3.org/2000/svg\">\n  <defs><marker id=\"m19a\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L6,3 L0,6\" fill=\"#B9FF47\"/></marker></defs>\n  <rect x=\"30\" y=\"34\" width=\"210\" height=\"80\" rx=\"12\" fill=\"#141716\" stroke=\"#FFD34D\"/>\n  <text x=\"46\" y=\"56\" fill=\"#FFD34D\" font-size=\"12\" font-weight=\"700\">math.js</text>\n  <text x=\"46\" y=\"80\" fill=\"#B9FF47\" font-size=\"12\" font-family=\"monospace\">export</text>\n  <text x=\"120\" y=\"80\" fill=\"#F4F6F2\" font-size=\"12\" font-family=\"monospace\">function add()</text>\n  <text x=\"46\" y=\"100\" fill=\"#9BA39D\" font-size=\"9\">отдаёт наружу</text>\n  <line x1=\"242\" y1=\"74\" x2=\"356\" y2=\"74\" stroke=\"#B9FF47\" stroke-width=\"2\" marker-end=\"url(#m19a)\"/>\n  <text x=\"299\" y=\"64\" text-anchor=\"middle\" fill=\"#B9FF47\" font-size=\"11\" font-family=\"monospace\">import { add }</text>\n  <text x=\"299\" y=\"90\" text-anchor=\"middle\" fill=\"#9BA39D\" font-size=\"9\">from \"./math.js\"</text>\n  <rect x=\"360\" y=\"34\" width=\"210\" height=\"80\" rx=\"12\" fill=\"#141716\" stroke=\"#37936F\"/>\n  <text x=\"376\" y=\"56\" fill=\"#5BC79A\" font-size=\"12\" font-weight=\"700\">app.js</text>\n  <text x=\"376\" y=\"80\" fill=\"#F4F6F2\" font-size=\"12\" font-family=\"monospace\">add(2, 3)</text>\n  <text x=\"376\" y=\"100\" fill=\"#9BA39D\" font-size=\"9\">берёт и использует</text>\n</svg>\n<p>⚠️ <b>Частые ошибки:</b></p>\n<span class=\"fix\"><span class=\"was\">import { add } from \"math.js\"</span> → <span class=\"now\">import { add } from \"./math.js\"</span><br><span class=\"muted2\">путь к своему файлу начинается с ./ — иначе браузер ищет не там</span></span>\n<span class=\"fix\"><span class=\"was\">import add from \"./math.js\" (для именованного экспорта)</span> → <span class=\"now\">import { add } from \"./math.js\"</span><br><span class=\"muted2\">именованный экспорт импортируют в фигурных скобках, default — без них</span></span>\n<span class=\"fix\"><span class=\"was\">&lt;script src=\"app.js\"&gt;</span> → <span class=\"now\">&lt;script type=\"module\" src=\"app.js\"&gt;</span><br><span class=\"muted2\">без type=\"module\" браузер не понимает import и выдаёт ошибку</span></span>",
+quiz:[{"q":"Что делает export перед функцией?","o":["Делает её доступной для импорта в других файлах","Запускает её сразу","Удаляет её","Делает её приватной"],"a":0,"e":"export открывает функцию наружу, чтобы её можно было импортировать."},{"t":"cloze","q":"Дополни: отдать функцию и взять её в другом файле","code":"// math.js\n{0} function add(a,b){ return a+b; }\n\n// app.js\n{1} { add } from \"./math.js\";","gaps":["export","import"],"e":"export отдаёт наружу, import берёт в другом файле."},{"t":"bug","q":"В какой строке ошибка в импорте именованного экспорта?","code":["// math.js: export function add(a,b){return a+b}","import add from \"./math.js\";","console.log(add(2,3));"],"a":1,"e":"Именованный экспорт импортируют в фигурных скобках: import { add } from ..."},{"t":"pairs","q":"Соедини запись с её смыслом","pairs":[["export","отдать наружу"],["import","взять в другом файле"],["export default","главный экспорт файла"],["type=\"module\"","включить модули в браузере"]],"e":"export отдаёт, import берёт, default — главный экспорт, type=module включает поддержку."},{"q":"Как импортируют export default?","o":["Без фигурных скобок, под любым именем","Только в фигурных скобках","Через require","Никак"],"a":0,"e":"default-экспорт берут без { } и называют как хочешь."}],
+practice:{type:"js",task:"<p><b>Что делаем:</b> разложить код на два «файла» — один отдаёт функцию, другой её берёт. (Здесь два файла показаны комментариями в одном окне; кнопка «Запустить» для модулей не сработает — проверка идёт по коду.)</p><p><b>Шаги:</b></p><ol><li>В блоке «файл math.js» напиши функцию и поставь перед ней export.</li><li>В блоке «файл app.js» импортируй её: import { имя } from \"./math.js\".</li><li>Вызови функцию и подготовь вывод результата.</li></ol>",starter:"// ===== файл math.js =====\n// TODO: объяви функцию и отдай её наружу ключевым словом\n\n// ===== файл app.js =====\n// TODO: возьми функцию из соседнего файла ./math.js и вызови её\n",checks:[{t:"Есть export (функции, const или default)",fn:c=>/export\s+(default\s+|function\s+|const\s+|let\s+|class\s+)/.test(c)},{t:"Есть import ... from \"./...\"",fn:c=>/import\s+[\s\S]*?from\s+["']\.\//.test(c)},{t:"Импорт именованного экспорта в фигурных скобках или default",fn:c=>/import\s+(\{[^}]+\}|[A-Za-z_$][\w$]*)\s+from/.test(c)}],hint:"// math.js\\nexport function add(a,b){return a+b;}\\n// app.js\\nimport { add } from \"./math.js\";\\nconsole.log(add(2,3));"},
+res:[["learn.javascript.ru: Модули, введение","url","https://learn.javascript.ru/modules-intro"],
+ ["learn.javascript.ru: Экспорт и импорт","url","https://learn.javascript.ru/import-export"],
+ ["MDN: Модули JavaScript (рус.)","url","https://developer.mozilla.org/ru/docs/Web/JavaScript/Guide/Modules"],
+ ["ES-модули import/export просто","yt","javascript модули import export для начинающих"]]}
 ];
 
 /* ============ CONTENT: ENGLISH ============ */
 const ENG=[
 {id:"l1",title:"Present Simple vs Present Continuous",
 theory:`
-<p>🎯 <b>Зачем это тебе:</b> это два самых частых времени в английском — и их путают чаще всего. Твоё «I'm learn English» из теста как раз отсюда. Разберёшься — сможешь спокойно сказать и про свой режим («учусь каждый день»), и про то, что происходит прямо сейчас («сейчас пишу код»). Без этого любая фраза о себе звучит криво.</p>
+<p>🎯 <b>Зачем это тебе:</b> это два самых частых времени в английском — и их путают чаще всего. Твоё «I'm learn English» из теста как раз отсюда. Разберёшься — сможешь спокойно рассказать и про свой режим («учусь каждый день»), и про то, что происходит прямо сейчас («сейчас пишу код»). Без этого любая фраза о себе звучит криво.</p>
 
-<h3 style="margin:14px 0 4px;font-family:var(--font-display)">1. Present Simple — регулярно, вообще, всегда</h3>
-<pre class="demo">I learn English every day.
-She works at a cafe.</pre>
-<p>Разбор: обычное действие, привычка, факт. Глагол в начальной форме, но для <b>he / she / it</b> добавляем <b>-s</b>: <code>She work<b>s</b></code>, <code>He go<b>es</b></code>. Маркеры-подсказки: <code>every day</code>, <code>usually</code>, <code>often</code>, <code>always</code>.</p>
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Present Simple — регулярно, вообще, всегда</h3>
+<p>Используем для привычек, фактов, расписания — того, что происходит <b>обычно</b>, а не в конкретный момент.</p>
+<pre class="demo">I learn English every day.       (+)
+I don't learn Spanish.           (−)
+Do you learn English?  — Yes, I do. (?)</pre>
+<p>Разбор: в утверждении глагол в начальной форме. Отрицание — через <code>don't</code>, вопрос — через <code>do</code> в начале. Но для <b>he / she / it</b> всё меняется — появляется <b>-s</b>, а помощник становится <code>does / doesn't</code>:</p>
+<table class="simple"><tr><th></th><th>I / you / we / they</th><th>he / she / it</th></tr>
+<tr><td>+</td><td>I work</td><td>She work<b>s</b></td></tr>
+<tr><td>−</td><td>I <b>don't</b> work</td><td>She <b>doesn't</b> work</td></tr>
+<tr><td>?</td><td><b>Do</b> you work?</td><td><b>Does</b> she work?</td></tr></table>
+<p><b>Правило -s</b> для he/she/it: обычно просто <code>+s</code> (work→works). После <code>o, s, sh, ch, x</code> добавляем <code>-es</code>: <code>go→goes</code>, <code>watch→watches</code>. Если слово кончается на согласную + <code>y</code>, меняем на <code>-ies</code>: <code>study→studies</code>, <code>try→tries</code>.</p>
+<p><b>Маркеры Simple</b> (слова-подсказки): <code>every day</code>, <code>usually</code>, <code>often</code>, <code>always</code>, <code>sometimes</code>, <code>never</code>, <code>on Mondays</code>.</p>
 
-<h3 style="margin:14px 0 4px;font-family:var(--font-display)">2. Present Continuous — прямо сейчас</h3>
-<pre class="demo">I am learning English now.
-Look! It is raining.</pre>
-<p>Разбор: действие идёт в момент речи. Формула: <b>am / is / are + глагол-ing</b>. <code>I am</code>, <code>he / she / it is</code>, <code>you / we / they are</code>. Маркеры: <code>now</code>, <code>at the moment</code>, <code>right now</code>, <code>Look!</code>.</p>
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Present Continuous — прямо сейчас</h3>
+<p>Действие идёт <b>в момент речи</b> или в текущий период («в эти дни»). Формула: <b>am / is / are + глагол-ing</b>.</p>
+<pre class="demo">I am learning English now.        (+)
+He is not (isn't) sleeping.       (−)
+Are you working at the moment?    (?)</pre>
+<p>Разбор: <code>I am</code>, <code>he / she / it is</code>, <code>you / we / they are</code>. Отрицание — просто <code>not</code> после am/is/are. Вопрос — am/is/are в начало.</p>
+<p><b>Правило -ing:</b> обычно <code>+ing</code> (go→going). Немую <code>-e</code> на конце убираем: <code>make→making</code>, <code>write→writing</code>. Короткое слово «гласная+согласная» — согласную удваиваем: <code>run→running</code>, <code>sit→sitting</code>.</p>
+<p><b>Маркеры Continuous:</b> <code>now</code>, <code>right now</code>, <code>at the moment</code>, <code>Look!</code>, <code>Listen!</code>, <code>today</code>, <code>these days</code>.</p>
 
 <svg viewBox="0 0 600 165" class="diagram" xmlns="http://www.w3.org/2000/svg">
   <text x="30" y="28" fill="#B9FF47" font-size="12" font-weight="700">Present Simple · I learn</text>
@@ -1536,20 +1339,40 @@ Look! It is raining.</pre>
   <circle cx="297" cy="132" r="7" fill="#FFD34D"/>
   <text x="297" y="158" text-anchor="middle" fill="#FFD34D" font-size="10" font-weight="700">прямо сейчас · now</text>
 </svg>
-<p>Как выбрать за секунду: «каждый день / обычно» → Simple. «Сейчас / в этот момент / Look!» → Continuous.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Как выбрать за секунду</h3>
+<p>Спроси себя: «это вообще / всегда» или «именно сейчас»? «Каждый день, обычно» → Simple. «Сейчас, в этот момент, смотри!» → Continuous. Сравни: <i>I <b>read</b> books</i> (я вообще читаю книги) vs <i>I <b>am reading</b> a book</i> (сейчас читаю конкретную).</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Глаголы состояния — не бывают в -ing</h3>
+<p>Есть глаголы про чувства и мысли, а не про действие: <code>want, like, love, need, know, understand, believe</code>. Их <b>не ставят</b> в Continuous, даже если «прямо сейчас»:</p>
+<pre class="demo">I want coffee now.      (НЕ "I am wanting")
+I understand you.       (НЕ "I am understanding")</pre>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">5. Полезные фразы о себе</h3>
+<p>Их можно выучить целиком и говорить о себе уже сегодня:</p>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>I live in Russia.</td><td>Я живу в России.</td></tr>
+<tr><td>I'm learning to code.</td><td>Я учусь программировать.</td></tr>
+<tr><td>I usually study in the evening.</td><td>Обычно я занимаюсь вечером.</td></tr>
+<tr><td>Right now I'm working on a project.</td><td>Прямо сейчас я работаю над проектом.</td></tr>
+<tr><td>I don't speak English well yet.</td><td>Я пока не очень хорошо говорю по-английски.</td></tr></table>
 
 <p>⚠️ <b>Частые ошибки:</b></p>
 <span class="fix"><span class="was">I'm learn English</span> → <span class="now">I'm learning English</span><br><span class="muted2">после am/is/are глагол всегда с -ing (твоя ошибка из теста)</span></span>
 <span class="fix"><span class="was">She go to work</span> → <span class="now">She goes to work</span><br><span class="muted2">he/she/it в Present Simple требует -s</span></span>
+<span class="fix"><span class="was">Does she works?</span> → <span class="now">Does she work?</span><br><span class="muted2">-s уже есть в does — сам глагол без -s</span></span>
 <span class="fix"><span class="was">I am wanting coffee</span> → <span class="now">I want coffee</span><br><span class="muted2">глаголы состояния (want, like, know) не ставят в -ing</span></span>`,
 ex:[
  {t:"mc",q:"She ___ to work every day.",o:["go","goes","going","is going"],a:1,e:"he/she/it + -s, а «every day» = Present Simple."},
  {t:"mc",q:"Quiet, please! I ___ to the news right now.",o:["listen","am listening","listening","am listen"],a:1,e:"«Right now» = Continuous: am + listening."},
+ {t:"fill",q:"He ___ (study) English on Mondays.",a:["studies"],e:"study → studies (согласная + y → -ies)."},
+ {t:"mc",q:"___ she work at a bank?",o:["Do","Does","Is","Are"],a:1,e:"he/she/it в вопросе Present Simple → Does."},
  {t:"cloze",q:"Дострой оба времени в одном предложении",code:"Every day I {0} (drink) coffee, but right now I {1} (drink) tea.",gaps:["drink",["am drinking","'m drinking"]],e:"«Every day» → Simple (drink); «right now» → Continuous (am drinking)."},
  {t:"order",q:"Собери предложение (что происходит сейчас)",lines:["I","am","writing","code","now"],e:"Present Continuous: подлежащее + am/is/are + V-ing. → I am writing code now."},
  {t:"pairs",q:"Соедини маркер с его временем",pairs:[["every day","Present Simple"],["now","Present Continuous"],["usually","Present Simple"],["Look!","Present Continuous"]],e:"Регулярность (every day, usually) → Simple. Момент речи (now, Look!) → Continuous."},
  {t:"fill",q:"My brother ___ (not/like) coffee.",a:["doesn't like","does not like"],e:"Отрицание в Simple для he: doesn't + глагол без -s.",w:200},
  {t:"bug",q:"Найди предложение с ошибкой",code:["I usually drink tea.","She is working now.","He go to school every day.","They are playing football."],a:2,e:"He go → He goes: для he/she/it в Present Simple нужно -s."},
+ {t:"mc",q:"Выбери верное. «Я хочу кофе прямо сейчас»:",o:["I am wanting coffee now","I want coffee now","I wanting coffee now","I am want coffee now"],a:1,e:"want — глагол состояния, его не ставят в -ing, даже со словом now."},
  {t:"mc",q:"«Я учу английский, потому что хочу стать разработчиком»:",o:["I'm learn English because I will be a developer","I'm learning English because I want to become a developer","I learning English because I be developer","I am learn English for be developer"],a:1,e:"am + learning (сейчас) + want to become (цель)."}],
 res:[
  ["Present Simple vs Continuous — разбор","yt","present simple vs present continuous разница для начинающих"],
@@ -1559,23 +1382,33 @@ res:[
 
 {id:"l2",title:"Past Simple: говорим о прошлом",
 theory:`
-<p>🎯 <b>Зачем это тебе:</b> вся твоя история — «я бросил хоккей», «я начал учить код» — это прошедшее время. Past Simple рассказывает о законченных действиях в прошлом. Без него не расскажешь ни про свой путь, ни про то, что сделал вчера на собеседовании.</p>
+<p>🎯 <b>Зачем это тебе:</b> вся твоя история — «я бросил хоккей», «я начал учить код» — это прошедшее время. Past Simple рассказывает о законченных действиях в прошлом. Без него не расскажешь ни про свой путь, ни про то, что сделал вчера.</p>
 
-<h3 style="margin:14px 0 4px;font-family:var(--font-display)">1. Правильные глаголы: просто + -ed</h3>
-<pre class="demo">I play<b>ed</b> hockey for ten years.
-She work<b>ed</b> late yesterday.</pre>
-<p>Разбор: законченное действие в прошлом. К правильным глаголам добавляем <b>-ed</b>. Маркеры времени: <code>yesterday</code>, <code>last week</code>, <code>... ago</code>, <code>in 2019</code>.</p>
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Правильные глаголы: просто + -ed</h3>
+<pre class="demo">I played hockey for ten years.
+She worked late yesterday.</pre>
+<p>Разбор: к обычным глаголам добавляем <b>-ed</b>. Мелкие правила написания: если слово кончается на <code>-e</code>, добавляем только <code>-d</code> (<code>like→liked</code>). Согласная + <code>y</code> → <code>-ied</code> (<code>study→studied</code>, <code>try→tried</code>). Короткое «гласная+согласная» — согласную удваиваем (<code>stop→stopped</code>, <code>plan→planned</code>).</p>
+<p><b>Маркеры прошлого:</b> <code>yesterday</code>, <code>last week / year</code>, <code>two days ago</code>, <code>in 2019</code>, <code>when I was young</code>.</p>
 
-<h3 style="margin:14px 0 4px;font-family:var(--font-display)">2. Неправильные глаголы — их учат наизусть</h3>
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Неправильные глаголы — учат наизусть</h3>
+<p>Самые частые формы стоит просто запомнить — они встречаются постоянно:</p>
 <table class="simple"><tr><th>Глагол</th><th>Прошедшее</th><th>Перевод</th></tr>
 <tr><td>go</td><td>went</td><td>идти</td></tr><tr><td>see</td><td>saw</td><td>видеть</td></tr>
 <tr><td>have</td><td>had</td><td>иметь</td></tr><tr><td>make</td><td>made</td><td>делать</td></tr>
-<tr><td>begin</td><td>began</td><td>начинать</td></tr><tr><td>write</td><td>wrote</td><td>писать</td></tr></table>
+<tr><td>get</td><td>got</td><td>получать</td></tr><tr><td>take</td><td>took</td><td>брать</td></tr>
+<tr><td>begin</td><td>began</td><td>начинать</td></tr><tr><td>write</td><td>wrote</td><td>писать</td></tr>
+<tr><td>read</td><td>read</td><td>читать (пишется так же, читается «ред»)</td></tr>
+<tr><td>find</td><td>found</td><td>находить</td></tr></table>
 
-<h3 style="margin:14px 0 4px;font-family:var(--font-display)">3. Отрицание и вопрос — через did</h3>
-<pre class="demo">I did<b>n't</b> see the film.   (НЕ "didn't saw")
-<b>Did</b> you finish the task?  (НЕ "Did you finished")</pre>
-<p>Разбор: <code>did</code> уже несёт прошедшее время, поэтому сам глагол возвращается в начальную форму. Это правило спотыкает почти всех — держи его в голове.</p>
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. was / were — «был / была / были»</h3>
+<p>У глагола <code>to be</code> в прошлом две формы: <code>was</code> (I / he / she / it) и <code>were</code> (you / we / they).</p>
+<pre class="demo">I was a hockey player.       They were tired.
+I wasn't ready.              Were you at home?</pre>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Отрицание и вопрос — через did</h3>
+<pre class="demo">I didn't see the film.   (НЕ "didn't saw")
+Did you finish the task? (НЕ "Did you finished")</pre>
+<p>Разбор: <code>did</code> уже несёт прошедшее время, поэтому сам глагол возвращается в <b>начальную форму</b>. Это правило спотыкает почти всех — держи его в голове. (С <code>was/were</code> помощник <code>did</code> не нужен: <i>Were you...?</i>, <i>I wasn't...</i>.)</p>
 
 <svg viewBox="0 0 600 145" class="diagram" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="80" x2="565" y2="80" stroke="#37936F" stroke-width="2"/>
@@ -1589,18 +1422,30 @@ She work<b>ed</b> late yesterday.</pre>
   <text x="315" y="76" fill="#9BA39D" font-size="10" font-style="italic">действие закончилось в прошлом</text>
 </svg>
 
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">5. Полезные фразы о своём пути</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>I was born in 2005.</td><td>Я родился в 2005.</td></tr>
+<tr><td>I played hockey for many years.</td><td>Я много лет играл в хоккей.</td></tr>
+<tr><td>Last year I started learning to code.</td><td>В прошлом году я начал учиться кодить.</td></tr>
+<tr><td>I used to play sports.</td><td>Раньше я занимался спортом.</td></tr>
+<tr><td>It was difficult, but I didn't give up.</td><td>Было трудно, но я не сдался.</td></tr></table>
+
 <p>⚠️ <b>Частые ошибки:</b></p>
 <span class="fix"><span class="was">I didn't saw it</span> → <span class="now">I didn't see it</span><br><span class="muted2">после did/didn't глагол в начальной форме</span></span>
 <span class="fix"><span class="was">Did you finished?</span> → <span class="now">Did you finish?</span><br><span class="muted2">did уже показывает прошлое — глагол без -ed</span></span>
-<span class="fix"><span class="was">I goed home</span> → <span class="now">I went home</span><br><span class="muted2">go — неправильный глагол, форму учат наизусть</span></span>`,
+<span class="fix"><span class="was">I goed home</span> → <span class="now">I went home</span><br><span class="muted2">go — неправильный глагол, форму учат наизусть</span></span>
+<span class="fix"><span class="was">I was play hockey</span> → <span class="now">I played hockey</span><br><span class="muted2">не смешивай was и глагол — либо was (был), либо played (играл)</span></span>`,
 ex:[
  {t:"fill",q:"I ___ (watch) a film yesterday.",a:["watched"],e:"Правильный глагол + -ed: watched."},
+ {t:"fill",q:"She ___ (study) all day yesterday.",a:["studied"],e:"study → studied (согласная + y → -ied)."},
  {t:"pairs",q:"Соедини глагол с его прошедшей формой",pairs:[["go","went"],["see","saw"],["have","had"],["make","made"]],e:"Это неправильные глаголы — их формы просто запоминают."},
  {t:"mc",q:"I ___ my homework an hour ago.",o:["finish","finished","have finished","finishing"],a:1,e:"«ago» = законченное прошлое → finished."},
+ {t:"mc",q:"They ___ tired after the game.",o:["was","were","did","are"],a:1,e:"they → were (были)."},
  {t:"bug",q:"Найди предложение с ошибкой",code:["I watched a good film.","She went home early.","He didn't saw the message.","They played chess yesterday."],a:2,e:"didn't saw → didn't see: после did глагол в начальной форме."},
  {t:"cloze",q:"Впиши прошедшие формы (оба глагола неправильные)",code:"Yesterday she {0} (go) to Moscow and {1} (write) a letter.",gaps:["went","wrote"],e:"go → went, write → wrote."},
  {t:"order",q:"Собери вопрос в прошедшем времени",lines:["Did","you","play","hockey","yesterday"],e:"Вопрос через did + начальная форма: Did you play hockey yesterday?"},
  {t:"fill",q:"I ___ (not/have) time yesterday.",a:["didn't have","did not have"],e:"didn't + have (начальная форма, не had!).",w:200},
+ {t:"mc",q:"Last year I ___ learning to code.",o:["start","started","was start","did started"],a:1,e:"Правильный глагол в прошлом: started."},
  {t:"mc",q:"«Я закончил хоккейную карьеру»:",o:["I finish my hockey career","I finished my hockey career","I have finish hockey carrera","I was finish my career"],a:1,e:"finished + career (career, не carrera — это испанский)."}],
 res:[
  ["Past Simple простыми словами","yt","past simple прошедшее время английский для начинающих"],
@@ -1610,20 +1455,31 @@ res:[
 
 {id:"l3",title:"Будущее и цели: will, going to, want to become",
 theory:`
-<p>🎯 <b>Зачем это тебе:</b> ты идёшь к цели — стать разработчиком. Чтобы говорить о планах и мечтах («я собираюсь выучить JavaScript», «хочу получить работу»), нужны три формы будущего. Это самые важные фразы для твоего пути, и именно в них у тебя были ошибки.</p>
+<p>🎯 <b>Зачем это тебе:</b> ты идёшь к цели — стать разработчиком. Чтобы говорить о планах и мечтах («я собираюсь выучить JavaScript», «хочу получить работу»), нужны формы будущего. Это самые важные фразы для твоего пути, и именно в них у тебя были ошибки.</p>
 
-<h3 style="margin:14px 0 4px;font-family:var(--font-display)">1. Три способа сказать о будущем</h3>
-<table class="simple"><tr><th>Форма</th><th>Когда</th><th>Пример</th></tr>
-<tr><td><b>will + V</b></td><td>решение в момент речи, обещание</td><td>I will help you</td></tr>
-<tr><td><b>going to + V</b></td><td>план (уже решил заранее)</td><td>I'm going to learn JavaScript</td></tr>
-<tr><td><b>want to + V</b></td><td>желание, цель</td><td>I want to become a developer</td></tr></table>
-<p>Разбор: <code>will</code> — когда решил только что («телефон звонит — I will answer»). <code>going to</code> — когда план был раньше. <code>want to</code> — про мечту и цель.</p>
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. will — решение и обещание в момент речи</h3>
+<pre class="demo">I will help you.            (+)
+I won't (will not) forget.  (−)
+Will you come? — Yes, I will. (?)</pre>
+<p>Разбор: <code>will + глагол</code> в начальной форме, для всех лиц одинаково (I will, he will, they will). Отрицание — <code>won't</code>. Используем, когда решаем <b>прямо сейчас</b>: «телефон звонит — I'll answer», или обещаем: «I'll practise every day».</p>
 
-<h3 style="margin:14px 0 4px;font-family:var(--font-display)">2. Волшебное слово «to» после want / need / goal</h3>
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. going to — план, который уже есть</h3>
+<pre class="demo">I'm going to learn JavaScript.
+She's going to look for a job.
+Are you going to study tonight?</pre>
+<p>Разбор: <code>am / is / are + going to + глагол</code>. Используем, когда решение принято <b>заранее</b>, есть намерение. Сравни: <i>I'll call him</i> (решил сейчас) vs <i>I'm going to call him</i> (уже собирался).</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Волшебное «to» после want / need / would like / goal</h3>
+<p>После этих слов всегда идёт <b>to + глагол</b>. Пропустить <code>to</code> — самая частая ошибка (у тебя тоже была: «i need be»).</p>
 <pre class="demo">I want <b>to</b> become a developer.
 I need <b>to</b> practise every day.
-My goal is <b>to</b> get a junior job.</pre>
-<p>Разбор: после <code>want</code>, <code>need</code>, <code>goal is</code> всегда идёт <b>to + глагол</b>. Пропустить <code>to</code> — самая частая ошибка (у тебя тоже была: «i need be»).</p>
+I'd like <b>to</b> get a junior job.
+My goal is <b>to</b> earn my first money in code.</pre>
+<table class="simple"><tr><th>Форма</th><th>Когда</th><th>Пример</th></tr>
+<tr><td><b>will + V</b></td><td>решение сейчас, обещание</td><td>I will help you</td></tr>
+<tr><td><b>going to + V</b></td><td>план (уже решил)</td><td>I'm going to learn JS</td></tr>
+<tr><td><b>want to + V</b></td><td>желание, цель</td><td>I want to become a dev</td></tr>
+<tr><td><b>need to + V</b></td><td>необходимость</td><td>I need to practise</td></tr></table>
 
 <svg viewBox="0 0 600 170" class="diagram" xmlns="http://www.w3.org/2000/svg">
   <rect x="188" y="82" width="387" height="26" fill="#B9FF47" fill-opacity="0.06"/>
@@ -1643,19 +1499,31 @@ My goal is <b>to</b> get a junior job.</pre>
   <text x="514" y="55" text-anchor="middle" fill="#9BA39D" font-size="9">цель, желание</text>
 </svg>
 
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Полезные фразы о целях</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>My goal is to become a junior developer.</td><td>Моя цель — стать джуном.</td></tr>
+<tr><td>I'm planning to build my first project.</td><td>Я планирую сделать свой первый проект.</td></tr>
+<tr><td>In a year I want to get a job in IT.</td><td>Через год я хочу получить работу в IT.</td></tr>
+<tr><td>I'm going to practise every single day.</td><td>Я собираюсь заниматься каждый день.</td></tr>
+<tr><td>I won't give up.</td><td>Я не сдамся.</td></tr></table>
+
 <p>⚠️ <b>Частые ошибки:</b></p>
 <span class="fix"><span class="was">I want become a developer</span> → <span class="now">I want to become a developer</span><br><span class="muted2">после want нужен to</span></span>
 <span class="fix"><span class="was">I need be the greatest version</span> → <span class="now">I need to be the greatest version</span><br><span class="muted2">после need тоже нужен to</span></span>
-<span class="fix"><span class="was">My goal is become junior</span> → <span class="now">My goal is to become a junior</span><br><span class="muted2">goal is → to become</span></span>`,
+<span class="fix"><span class="was">My goal is become junior</span> → <span class="now">My goal is to become a junior</span><br><span class="muted2">goal is → to become</span></span>
+<span class="fix"><span class="was">I will to help</span> → <span class="now">I will help</span><br><span class="muted2">а вот после will частицы to НЕ бывает</span></span>`,
 ex:[
  {t:"mc",q:"«Я хочу стать разработчиком»:",o:["I will developer","I want to become a developer","I want become developer","I be a developer"],a:1,e:"want + to + become + a developer."},
  {t:"mc",q:"I ___ learn CSS next week. I've already made a plan.",o:["will","am going to","want","going"],a:1,e:"План, решённый заранее → am going to."},
  {t:"mc",q:"— The phone is ringing! — OK, I ___ answer it.",o:["going to","will","want","am"],a:1,e:"Решение прямо сейчас → will."},
+ {t:"mc",q:"Выбери верное. После will:",o:["I will to practise","I will practise","I will practising","I will practised"],a:1,e:"После will — глагол в начальной форме, без to."},
  {t:"cloze",q:"Впиши пропуски (про цель)",code:"My goal {0} to {1} a junior developer.",gaps:["is","become"],e:"My goal IS TO become a junior developer."},
  {t:"order",q:"Собери план на будущее",lines:["I","am","going","to","learn","JavaScript"],e:"Going to для плана: I am going to learn JavaScript."},
  {t:"pairs",q:"Соедини форму с её значением",pairs:[["will + V","решение сейчас"],["going to + V","план заранее"],["want to + V","желание, цель"],["need to + V","необходимость"]],e:"will — спонтанно, going to — план, want to — мечта, need to — надо."},
  {t:"mc",q:"I need ___ every day.",o:["practise","to practise","practising","for practise"],a:1,e:"После need нужен to + глагол."},
- {t:"fill",q:"She ___ (not/will) come tomorrow.",a:["won't","will not"],e:"will not = won't."}],
+ {t:"fill",q:"She ___ (not/will) come tomorrow.",a:["won't","will not"],e:"will not = won't."},
+ {t:"fill",q:"I'd like ___ (get) a job in IT.",a:["to get"],e:"После would like (I'd like) нужен to + глагол."},
+ {t:"mc",q:"«Я не сдамся»:",o:["I don't give up","I won't give up","I'm not give up","I not give up"],a:1,e:"Будущее отрицание: won't + начальная форма."}],
 res:[
  ["will или going to — разница","yt","will vs going to разница простыми словами"],
  ["engblog.ru: будущее время","url","https://engblog.ru/grammar"],
@@ -1666,7 +1534,7 @@ res:[
 theory:`
 <p>🎯 <b>Зачем это тебе:</b> самый полезный урок — разбор твоих собственных фраз. Ошибки здесь настоящие, твои, а не из учебника. Починим их — и сразу станет видно три направления роста: времена, «to» после want/need, и артикли a / an / the.</p>
 
-<h3 style="margin:14px 0 4px;font-family:var(--font-display)">1. Твои фразы — до и после</h3>
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Твои фразы — до и после</h3>
 <span class="fix"><span class="was">i'm learn english because i will be a developer</span><br>
 <span class="now">I'm learning English because I want to become a developer.</span><br>
 <span class="muted2">am + V-ing; want to become; I — всегда с большой буквы.</span></span>
@@ -1677,8 +1545,14 @@ theory:`
 <span class="now">I need to be the greatest version of myself.</span><br>
 <span class="muted2">need TO be; the greatest; version OF myself.</span></span>
 
-<h3 style="margin:14px 0 4px;font-family:var(--font-display)">2. Артикли: a / an / the</h3>
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Артикли: a / an / the</h3>
 <p>Артикль — маленькое слово перед существительным. Их у тебя не хватало («very interesting guy» без <code>a</code>).</p>
+<ul style="margin:6px 0 6px 18px;padding:0">
+<li><b>a / an</b> — «какой-то один, любой», когда говорим о предмете <b>впервые</b> или вообще: <i>I want <b>a</b> job.</i></li>
+<li><b>an</b> — та же «a», но перед <b>гласным звуком</b>: <i>an apple, an hour, an interesting guy.</i></li>
+<li><b>the</b> — «тот самый, конкретный», уже известный или единственный: <i><b>the</b> job I told you about, <b>the</b> greatest version.</i></li>
+<li><b>без артикля</b> — с множественным «вообще» и с языками: <i>I like <b>books</b>. I speak <b>English</b>.</i></li>
+</ul>
 <svg viewBox="0 0 600 135" class="diagram" xmlns="http://www.w3.org/2000/svg">
   <rect x="24" y="28" width="168" height="82" rx="10" fill="#1C201E" stroke="#B9FF47"/>
   <text x="108" y="58" text-anchor="middle" fill="#B9FF47" font-size="20" font-weight="800">a</text>
@@ -1693,19 +1567,37 @@ theory:`
   <text x="480" y="80" text-anchor="middle" fill="#F4F6F2" font-size="11">конкретный, известный</text>
   <text x="480" y="97" text-anchor="middle" fill="#9BA39D" font-size="9">the greatest version</text>
 </svg>
-<p>«To look forward to» = <b>ждать с нетерпением</b>: <i>I look forward to my new life.</i></p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Мелочи, которые выдают уровень</h3>
+<ul style="margin:6px 0 6px 18px;padding:0">
+<li><b>I</b> — всегда с большой буквы, где бы ни стояло.</li>
+<li><b>to look forward to</b> = ждать с нетерпением: <i>I look forward to my new life.</i></li>
+<li><b>years old</b>, не «yars»; <b>a lot of</b>, не «alot».</li>
+<li><b>of</b> = «из / чего-то»: <i>the best version <b>of</b> myself</i>.</li>
+</ul>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Собери рассказ о себе</h3>
+<p>Выучи этот абзац целиком — это готовое самопредставление:</p>
+<pre class="demo">Hi! I'm Emil. I'm 20 years old and I live in Russia.
+I used to play hockey, but now I'm learning to code.
+My goal is to become a developer.
+I'm not afraid of mistakes — I learn from them.
+Wish me luck!</pre>
 
 <p>⚠️ <b>Частые ошибки:</b></p>
 <span class="fix"><span class="was">I am very interesting guy</span> → <span class="now">I am a very interesting guy</span><br><span class="muted2">перед «один любой» ставим a</span></span>
-<span class="fix"><span class="was">good luck for me</span> → <span class="now">wish me luck</span><br><span class="muted2">устойчивое выражение — запомни целиком</span></span>`,
+<span class="fix"><span class="was">good luck for me</span> → <span class="now">wish me luck</span><br><span class="muted2">устойчивое выражение — запомни целиком</span></span>
+<span class="fix"><span class="was">version on me</span> → <span class="now">version of myself</span><br><span class="muted2">of = «чего-то»; myself = «себя»</span></span>`,
 ex:[
  {t:"mc",q:"I am ___ interesting guy.",o:["very","a very","the very","an very"],a:1,e:"a + very + interesting + guy: перед «один любой» нужен артикль a."},
+ {t:"mc",q:"I waited for ___ hour.",o:["a","an","the","—"],a:1,e:"hour начинается с гласного звука (h не читается) → an."},
  {t:"bug",q:"Найди предложение с ошибкой",code:["I am a developer.","I need to practise every day.","I look forward to my job.","I want become a developer."],a:3,e:"want become → want to become: после want нужен to."},
  {t:"cloze",q:"Впиши пропущенные слова",code:"I need {0} be {1} greatest version of myself.",gaps:["to","the"],e:"need TO be; THE greatest (конкретный, единственный лучший)."},
  {t:"mc",q:"«I look forward to my first job» означает:",o:["Я смотрю вперёд на работу","Я с нетерпением жду первую работу","Я ищу первую работу","Я боюсь первой работы"],a:1,e:"look forward to = ждать с нетерпением."},
  {t:"fill",q:"I'm 20 ___ old.",a:["years"],e:"years old (не yars)."},
  {t:"pairs",q:"Соедини ошибку с исправлением",pairs:[["I'm learn","I'm learning"],["want become","want to become"],["need be","need to be"],["iinteristing","interesting"]],e:"Твои реальные фразы из теста и их правильные формы."},
  {t:"order",q:"Собери свою главную фразу",lines:["I","want","to","become","a","developer"],e:"I want to become a developer — цель через want to + a developer."},
+ {t:"fill",q:"The best version ___ myself. (предлог)",a:["of"],e:"version OF myself — of = «чего-то»."},
  {t:"mc",q:"Фраза без ошибок:",o:["I'm learn English every day","I learning English every day","I learn English every day","I am learn English every day"],a:2,e:"I learn (Simple) или I am learning (сейчас) — но не «I'm learn»."}],
 res:[
  ["Артикли a / an / the простыми словами","yt","артикли a an the английский простыми словами"],

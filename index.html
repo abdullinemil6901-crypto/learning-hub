@@ -891,15 +891,19 @@ function checkQuiz(qs,prefix,errKind,errId){
  save();return score;}
 
 /* ============ CODE SECTION ============ */
-/* Этапы пути «с нуля → веб»: C++ и алгоритмы как фундамент, веб — в финале */
+/* Путь «программирование с нуля»: логический CS-фундамент снизу вверх.
+   Каждый этап даёт выхлоп (project). Указатели и ООП идут ДО алгоритмов;
+   веб — отдельный прикладной трек в самом конце (JS — программирование, HTML/CSS — среда). */
 const PROG_BLOCKS=[
- {n:"00",title:"Инструменты",goal:"Настроить окружение и запустить первую программу",lessons:["c0"]},
- {n:"01",title:"Основы C++",goal:"Переменные, условия, циклы, функции, массивы",lessons:["c1","c2","c3","c4","c5"]},
- {n:"02",title:"Как работает компьютер",goal:"Двоичная система, процессор и память, компиляция",lessons:["k1","k2","k3"]},
- {n:"03",title:"Алгоритмы и структуры данных",goal:"Сложность, поиск, сортировки, рекурсия, STL — ядро пути",lessons:["a1","a2","a3","a4","a5","a6","a7","a8","a9"]},
- {n:"04",title:"Инженерная база",goal:"Указатели, ООП-минимум, git, первый проект",lessons:["e1","e2","e3","e4"]},
- {n:"05",title:"Веб-разработка",goal:"HTML, CSS, JavaScript, DOM, API — делаем сайты",lessons:["m1","m2","m3","m10","m11","m4","m5","m6","m7","m12","m13","m14","m15","m8","m16","m17","m9","m18","m19"]},
- {n:"06",title:"Дальше",goal:"Портфолио и развилка: фронтенд или бэкенд",lessons:["f1"]}
+ {n:"00",title:"Инструменты",goal:"Настроить окружение и запустить первую программу",project:"Скомпилировать и запустить «Hello, world» из терминала",lessons:["c0"]},
+ {n:"01",title:"Основы: данные и логика",goal:"Переменные, условия, циклы, функции, массивы",project:"Калькулятор или игра «угадай число»",lessons:["c1","c2","c3","c4","c5"]},
+ {n:"02",title:"Как работает компьютер",goal:"Двоичная система, процессор и память, компиляция",project:"Объяснить путь «компиляция → запуск» и перевести числа в двоичную",lessons:["k1","k2","k3"]},
+ {n:"03",title:"Данные, память и объекты",goal:"Строки, структуры, указатели, память, классы — моделируем реальные сущности",project:"Телефонная книга (массив структур), шифр Цезаря, класс «Игрок»",lessons:["c6","c7","e1","c8","e2"]},
+ {n:"04",title:"Алгоритмы",goal:"Сложность O(), поиск, сортировки, рекурсия",project:"Бинпоиск-словарь и бенчмарк сортировок",lessons:["a1","a2","a3","a4","a5"]},
+ {n:"05",title:"Структуры данных",goal:"Стек, очередь, set/map, STL, графы — правильный контейнер под задачу",project:"Счётчик частоты слов (map) и стек отмены",lessons:["a6","a7","a8","a9"]},
+ {n:"06",title:"Настоящая программа",goal:"Файлы, структура проекта, терминал, git — собираем и выкладываем",project:"Todo-менеджер с сохранением в файл (200+ строк) → выложить на GitHub",lessons:["c9","e4","e3"]},
+ {n:"07",title:"Выбор пути",goal:"Портфолио и развилка: фронтенд или бэкенд",project:"Выбрать направление и начать первый pet-проект",lessons:["f1"]},
+ {n:"08",title:"Веб — прикладной трек (по желанию)",goal:"HTML, CSS, JavaScript, DOM, API — делаем сайты",note:"Программирование здесь — это JavaScript. HTML и CSS — среда, в которой ты его показываешь. Это прикладная область, а не следующий шаг в «учусь программировать».",project:"Свой сайт → приложение с запросом к API",lessons:["m1","m2","m3","m10","m11","m4","m5","m6","m7","m12","m13","m14","m15","m8","m16","m17","m9","m18","m19"]}
 ];
 function progBlockDone(b){return b.lessons.every(id=>{const m=PROG.find(x=>x.id===id);return m&&progDone(m);});}
 function drawCodeList(){
@@ -913,9 +917,10 @@ function drawCodeList(){
   const steps=b.lessons.map(id=>{const m=PROG.find(x=>x.id===id);if(!m)return"";const d=progDone(m);const st=S.prog[id]||{};
    return `<div class="mstep ${d?"done":""}" onclick="view={tab:'code',id:'${id}'};draw()"><i class="ph-bold ${d?"ph-check-circle":"ph-circle"}"></i><span>${m.title}${st.quiz!=null?` · тест ${st.quiz}/${m.quiz.length}`:""}</span></div>`;}).join("");
   return `<div class="blockcard ${state}">
-   <div class="bhead"><span class="bnum" style="color:var(--acid)">${b.n}</span><div style="flex:1"><div class="btitle">${b.title}</div></div>${statusPill}</div>
+   <div class="bhead"><span class="bnum" style="color:var(--acid)">${b.n}</span><div style="flex:1"><div class="btitle">${b.title}</div>${b.goal?`<div class="muted" style="font-size:var(--fs-small)">${b.goal}</div>`:""}</div>${statusPill}</div>
+   ${b.note?`<div class="muted2" style="font-size:var(--fs-small);margin:2px 0 6px;padding:8px 10px;border-radius:10px;background:rgba(255,211,77,.07);border:1px solid rgba(255,211,77,.25)"><i class="ph-bold ph-info" style="color:var(--fire)"></i> ${b.note}</div>`:""}
    <div class="bsteps">${steps}</div>
-   <div class="bproject"><i class="ph-bold ph-flag-checkered"></i><span><b>Цель:</b> ${b.goal}</span></div></div>`;
+   ${b.project?`<div class="bproject"><i class="ph-bold ph-flag-checkered"></i><span><b>Проект этапа:</b> ${b.project}</span></div>`:""}</div>`;
  }).join("");
  main.innerHTML=`<div class="section-head"><span class="mono">Программирование с нуля → веб</span>
   <h1 class="disp">Программирование</h1>

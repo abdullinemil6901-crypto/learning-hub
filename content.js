@@ -2609,7 +2609,7 @@ quiz:[
  {q:"Что делать, чтобы не потерять алгоритмическую форму?",o:["Ничего","Решать пару задач в неделю (Codeforces/LeetCode)","Только читать","Забыть алгоритмы"],a:1,e:"Регулярная практика держит навык и готовит к техническим собеседованиям."},
  {t:"pairs",q:"Соедини направление с его стеком",pairs:[["Фронтенд","HTML/CSS/JS → React"],["Бэкенд","Node.js + база данных"],["портфолио","pet-проекты на GitHub"],["форма","задачи Codeforces"]],e:"Фронт — интерфейсы, бэк — сервер и данные; портфолио и практика — постоянные спутники."},
  {q:"Что работодатель смотрит у джуна в первую очередь?",o:["Диплом","Живые pet-проекты и код на GitHub","Возраст","Количество курсов"],a:1,e:"Реальные проекты показывают, что ты умеешь делать, а не только проходить курсы."},
- {q:"Какой раздел этого тренажёра даёт базу для обоих путей (фронт и бэк)?",o:["Английский","Веб (Этап 4): HTML/CSS/JS","Никакой","Только внешние курсы"],a:1,e:"Веб-раздел даёт HTML/CSS/JS — общий фундамент и для фронтенда, и для бэкенда на Node."},
+ {q:"Какой раздел этого тренажёра даёт базу для обоих путей (фронт и бэк)?",o:["Английский","Веб-трек: HTML/CSS/JS (программирование — это JavaScript)","Никакой","Только внешние курсы"],a:1,e:"Веб-трек даёт HTML/CSS/JS — общий фундамент и для фронтенда, и для бэкенда на Node. Программирование там — JavaScript, HTML/CSS — среда."},
  {t:"mc",q:"Сколько pet-проектов стоит собрать в портфолио?",o:["0","2–3, каждый сложнее предыдущего","20 одинаковых","1 и хватит"],a:1,e:"2–3 проекта нарастающей сложности убедительно показывают рост."},
  {q:"Как выбирать между фронтендом и бэкендом?",o:["Прямо сейчас, наугад","По ощущениям после веб-базы — что интереснее","Никогда","Бросить монетку и не менять"],a:1,e:"Сначала попробуй веб-базу, потом выбери направление по интересу — спешить не нужно."}],
 drill:{
@@ -2617,12 +2617,260 @@ drill:{
  tasks:[
   {t:"Заведи привычку: 1–2 задачи в неделю на Codeforces или LeetCode.",link:["Codeforces — задачи","url","https://codeforces.com/problemset"]},
   {t:"Придумай и начни первый pet-проект (что-то полезное лично тебе).",link:["Идеи pet-проектов","yt","идеи пет проектов для портфолио junior"]},
-  {t:"Переходи к разделу «Веб» этого тренажёра — это Этап 4 твоего пути.",link:["LeetCode — практика","url","https://leetcode.com/problemset/"]}]},
+  {t:"Если выбрал веб — переходи к прикладному веб-треку этого тренажёра (программирование там — это JavaScript).",link:["LeetCode — практика","url","https://leetcode.com/problemset/"]}]},
 res:[
  ["Как собрать портфолио джуна","yt","портфолио junior разработчика pet проекты"],
  ["Codeforces — практика","url","https://codeforces.com/problemset"],
  ["LeetCode — практика","url","https://leetcode.com/problemset/"],
- ["roadmap.sh — карты развития","url","https://roadmap.sh"]]}
+ ["roadmap.sh — карты развития","url","https://roadmap.sh"]]},
+{id:"c6",title:"C++ · Строки и текст",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> текст повсюду — имена, пароли, ввод пользователя, содержимое файлов. <code>string</code> — это инструмент для работы с текстом: склеить, найти, пройти по буквам. Без строк не написать ни чат, ни парсер, ни игру со словами.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Строка — это последовательность символов</h3>
+<pre class="demo">string name = "Emil";
+cout &lt;&lt; name.length();   // 4 — сколько символов
+cout &lt;&lt; name[0];         // E — первый символ (индекс с 0)</pre>
+<p>Разбор: строка внутри — как массив символов, пронумерованных <b>с нуля</b>. <code>name[0]</code> — первая буква, <code>name.length()</code> (или <code>.size()</code>) — длина. Каждый символ — тип <code>char</code>, а за ним стоит число из таблицы ASCII (помнишь урок про двоичную систему).</p>
+<svg viewBox="0 0 600 92" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <g font-family="monospace" text-anchor="middle">
+  <text x="300" y="14" fill="#9BA39D" font-size="10">string s = "Hello" — символы по индексам</text>
+  <rect x="130" y="26" width="56" height="34" fill="#1C201E" stroke="#FFD34D"/><text x="158" y="49" fill="#FFD34D" font-size="15">H</text><text x="158" y="76" fill="#9BA39D" font-size="11">0</text>
+  <rect x="186" y="26" width="56" height="34" fill="#1C201E" stroke="#37936F"/><text x="214" y="49" fill="#F4F6F2" font-size="15">e</text><text x="214" y="76" fill="#9BA39D" font-size="11">1</text>
+  <rect x="242" y="26" width="56" height="34" fill="#1C201E" stroke="#37936F"/><text x="270" y="49" fill="#F4F6F2" font-size="15">l</text><text x="270" y="76" fill="#9BA39D" font-size="11">2</text>
+  <rect x="298" y="26" width="56" height="34" fill="#1C201E" stroke="#37936F"/><text x="326" y="49" fill="#F4F6F2" font-size="15">l</text><text x="326" y="76" fill="#9BA39D" font-size="11">3</text>
+  <rect x="354" y="26" width="56" height="34" fill="#1C201E" stroke="#B9FF47"/><text x="382" y="49" fill="#B9FF47" font-size="15">o</text><text x="382" y="76" fill="#9BA39D" font-size="11">4</text>
+  <text x="470" y="47" fill="#9BA39D" font-size="11">length() = 5</text>
+  </g>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Склейка и обход</h3>
+<pre class="demo">string a = "Foo", b = "Bar";
+cout &lt;&lt; a + b;            // FooBar — склейка через +
+
+for (int i = 0; i &lt; a.length(); i++)
+    cout &lt;&lt; a[i] &lt;&lt; " ";  // F o o</pre>
+<p>Разбор: <code>+</code> склеивает строки. Цикл по индексам от 0 до <code>length()-1</code> проходит каждый символ — так считают гласные, шифруют, разворачивают текст.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Полезные операции и getline</h3>
+<pre class="demo">string s = "programming";
+cout &lt;&lt; s.substr(0, 4);   // prog — кусок с 0, длиной 4
+cout &lt;&lt; s.find("gram");   // 3 — с какого индекса начинается
+
+string line;
+getline(cin, line);       // прочитать ВСЮ строку (с пробелами)</pre>
+<p>Разбор: <code>substr(старт, длина)</code> вырезает подстроку, <code>find</code> ищет. Важно: <code>cin &gt;&gt; s</code> читает только <b>одно слово</b> (до пробела) — для строки с пробелами нужен <code>getline(cin, s)</code>.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">cin &gt;&gt; name; для «John Smith»</span> → <span class="now">getline(cin, name);</span><br><span class="muted2">cin &gt;&gt; останавливается на пробеле — прочитает только John</span></span>
+<span class="fix"><span class="was">s[s.length()]</span> → <span class="now">последний символ — s[s.length()-1]</span><br><span class="muted2">индексы 0..length-1, выход за границу ломает программу</span></span>
+<span class="fix"><span class="was">a - b для строк</span> → <span class="now">строки только склеивают (+)</span><br><span class="muted2">вычитания строк не бывает</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет код?",code:"string s = \"Hi\";\ncout << s[0];",o:["H","i","Hi","0"],a:0,e:"s[0] — первый символ (индекс с нуля) = H."},
+ {t:"output",q:"Что выведет код?",code:"string a = \"Foo\", b = \"Bar\";\ncout << a + b;",o:["FooBar","Foo Bar","BarFoo","ошибка"],a:0,e:"+ склеивает строки: Foo + Bar = FooBar."},
+ {q:"Что вернёт s.length() для строки \"Hello\"?",o:["4","5","6","0"],a:1,e:"В «Hello» пять символов → length() = 5."},
+ {t:"cloze",q:"Дострой обход строки по символам",code:"for (int i = 0; i < s.{0}(); i++)\n    cout << s[{1}];",gaps:[["length","size"],["i"]],e:"Идём от 0 до length()-1, берём s[i] — очередной символ."},
+ {t:"bug",q:"Почему прочитается только «John»?",code:["string name;","cin >> name;   // ввели: John Smith","cout << name;"],a:1,e:"cin >> останавливается на пробеле. Для полной строки нужен getline(cin, name)."},
+ {t:"pairs",q:"Соедини операцию со смыслом",pairs:[["s.length()","длина"],["s[i]","символ по индексу"],["a + b","склейка"],["s.substr(1,3)","подстрока"]],e:"length — длина, [i] — символ, + — склейка, substr — вырезать кусок."},
+ {t:"output",q:"Что выведет код?",code:"string s = \"programming\";\ncout << s.substr(0, 4);",o:["prog","gram","progr","progra"],a:0,e:"substr(0, 4) — 4 символа с индекса 0: prog."},
+ {q:"Какой индекс у первого символа строки?",o:["1","0","-1","зависит"],a:1,e:"Нумерация с нуля: первый символ — s[0]."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> обрабатываем текст на реальных задачах.</p>`,
+ tasks:[
+  {t:"Напиши шифр Цезаря: сдвинь каждую букву строки на N позиций в алфавите.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]},
+  {t:"Реши 5–6 задач на строки (счётчик слов/букв, разворот строки, палиндром).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Пройди тему «Строки» на курсе по C++.",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]}]},
+res:[
+ ["Строки в C++ — разбор","yt","c++ строки string для начинающих"],
+ ["learncpp.com — std::string","url","https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"c7",title:"C++ · Структуры (struct)",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> реальная вещь — это не одно число. Игрок = имя + уровень + здоровье. Товар = название + цена + количество. <b>Структура</b> склеивает разнородные данные в один тип, и ты моделируешь настоящие сущности, а не россыпь переменных.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Своя структура</h3>
+<pre class="demo">struct Player {
+    string name;
+    int level;
+    int hp;
+};
+
+Player p;
+p.name = "Emil";
+p.level = 5;
+cout &lt;&lt; p.name &lt;&lt; " ур. " &lt;&lt; p.level;   // Emil ур. 5</pre>
+<p>Разбор: <code>struct Player { ... };</code> описывает новый <b>тип</b> с полями (name, level, hp). Обрати внимание на <code>;</code> после закрывающей скобки — обязательна. Создаём объект <code>Player p;</code> и обращаемся к полям через точку: <code>p.name</code>.</p>
+<svg viewBox="0 0 600 110" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="180" y="18" width="240" height="80" rx="12" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="300" y="38" text-anchor="middle" fill="#B9FF47" font-size="13" font-weight="700" font-family="monospace">Player p</text>
+  <line x1="196" y1="46" x2="404" y2="46" stroke="#37936F" stroke-width="1"/>
+  <text x="210" y="63" fill="#FFD34D" font-size="11" font-family="monospace">name</text><text x="390" y="63" text-anchor="end" fill="#F4F6F2" font-size="11" font-family="monospace">"Emil"</text>
+  <text x="210" y="80" fill="#FFD34D" font-size="11" font-family="monospace">level</text><text x="390" y="80" text-anchor="end" fill="#F4F6F2" font-size="11" font-family="monospace">5</text>
+  <text x="210" y="94" fill="#FFD34D" font-size="11" font-family="monospace">hp</text><text x="390" y="94" text-anchor="end" fill="#F4F6F2" font-size="11" font-family="monospace">100</text>
+  <text x="90" y="60" text-anchor="middle" fill="#9BA39D" font-size="10">один объект —</text>
+  <text x="90" y="76" text-anchor="middle" fill="#9BA39D" font-size="10">разные поля вместе</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Массив структур</h3>
+<pre class="demo">Player team[3];
+team[0].name = "Emil";
+team[1].name = "Anna";
+for (int i = 0; i &lt; 3; i++)
+    cout &lt;&lt; team[i].name;</pre>
+<p>Разбор: массив структур — это таблица: телефонная книга (имя + номер), список товаров, команда игроков. Каждый элемент — целая структура со своими полями.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Структуры и функции</h3>
+<pre class="demo">void printPlayer(Player p) {
+    cout &lt;&lt; p.name &lt;&lt; " (" &lt;&lt; p.level &lt;&lt; ")";
+}</pre>
+<p>Разбор: структуру можно передать в функцию и вернуть из неё — как обычное значение. Дальше (в уроке про ООП) добавим к структуре <b>поведение</b> — так struct превратится в класс.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">struct Player { ... }</span> → <span class="now">struct Player { ... };</span><br><span class="muted2">после закрывающей скобки структуры нужна точка с запятой</span></span>
+<span class="fix"><span class="was">p->name (для обычного объекта)</span> → <span class="now">p.name</span><br><span class="muted2">через точку; стрелка -&gt; нужна только для указателя на структуру</span></span>
+<span class="fix"><span class="was">обращение к полю до создания объекта</span> → <span class="now">сначала Player p;</span><br><span class="muted2">поля есть только у созданного объекта</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет код?",code:"struct Point { int x; int y; };\nPoint p;\np.x = 3;\np.y = 7;\ncout << p.y;",o:["7","3","0","37"],a:0,e:"p.y обращается к полю y структуры = 7."},
+ {t:"cloze",q:"Дострой объявление и доступ",code:"struct Player {\n    string name;\n    int level;\n{0}\nPlayer p;\np.{1} = 5;",gaps:[["};"],["level"]],e:"Структура закрывается };  доступ к полю через точку: p.level."},
+ {t:"order",q:"Собери объявление и использование структуры",lines:["struct Dog {","    string name;","    int age;","};","Dog d;","d.name = \"Rex\";"],e:"Описываем поля, закрываем };  создаём объект, задаём поле."},
+ {t:"pairs",q:"Соедини понятие с ролью",pairs:[["struct","склеивает данные в тип"],["поле","часть структуры"],["p.name","доступ к полю"],["Dog d;","создать объект"]],e:"struct — тип, поля — его данные, точка — доступ, объявление — создание."},
+ {t:"bug",q:"В какой строке ошибка?",code:["struct Cat {","    string name;","}","Cat c;"],a:2,e:"После } структуры нужна точка с запятой: };"},
+ {q:"Как обратиться к полю x обычного объекта p?",o:["p->x","p.x","p:x","x(p)"],a:1,e:"Через точку: p.x. Стрелка -> — только для указателя на структуру."},
+ {t:"output",q:"Что выведет код?",code:"struct Item { int price; };\nItem cart[2];\ncart[0].price = 100;\ncart[1].price = 250;\ncout << cart[1].price;",o:["250","100","350","2"],a:0,e:"cart[1] — вторая структура в массиве, её поле price = 250."}]
+,
+drill:{
+ intro:`<p><b>Что делаем:</b> моделируем реальные сущности структурами.</p>`,
+ tasks:[
+  {t:"Собери телефонную книгу: массив структур {имя, номер}, добавление и вывод всех записей.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]},
+  {t:"Реши задачу с массивом структур (список студентов с оценками, найти лучшего).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Пройди тему «Структуры (struct)» на курсе по C++.",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]}]},
+res:[
+ ["Структуры в C++ — разбор","yt","c++ структуры struct для начинающих"],
+ ["learncpp.com — structs","url","https://www.learncpp.com/cpp-tutorial/introduction-to-structs-members-and-member-selection/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"c8",title:"C++ · Динамическая память",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> ты уже видел, что <code>vector</code> растёт сам, а массив <code>int a[5]</code> — нет. Теперь поймёшь, почему: где живут данные, что такое стек и куча, и как программа берёт память «на ходу». Это связывает урок про память с реальным кодом.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Два места для данных: стек и куча</h3>
+<svg viewBox="0 0 600 118" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="40" y="24" width="220" height="80" rx="10" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="150" y="44" text-anchor="middle" fill="#B9FF47" font-size="13" font-weight="700">Стек</text>
+  <text x="150" y="64" text-anchor="middle" fill="#9BA39D" font-size="10">локальные переменные</text>
+  <text x="150" y="80" text-anchor="middle" fill="#9BA39D" font-size="10">быстрый, авто-очистка</text>
+  <text x="150" y="96" text-anchor="middle" fill="#9BA39D" font-size="9">int x; Player p;</text>
+  <rect x="340" y="24" width="220" height="80" rx="10" fill="#141716" stroke="#FFD34D"/>
+  <text x="450" y="44" text-anchor="middle" fill="#FFD34D" font-size="13" font-weight="700">Куча</text>
+  <text x="450" y="64" text-anchor="middle" fill="#9BA39D" font-size="10">динамическая память</text>
+  <text x="450" y="80" text-anchor="middle" fill="#9BA39D" font-size="10">большая, живёт долго</text>
+  <text x="450" y="96" text-anchor="middle" fill="#9BA39D" font-size="9">vector, new</text>
+</svg>
+<p>Разбор: обычные переменные (<code>int x</code>, <code>Player p</code>) живут на <b>стеке</b> — он быстрый, и память освобождается сама, когда заканчивается функция. Но стек маленький и размер надо знать заранее. Для больших и «растущих» данных есть <b>куча</b> — там память берут по ходу работы.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. vector — умное управление кучей</h3>
+<pre class="demo">vector&lt;int&gt; v;      // пустой
+v.push_back(10);    // вектор сам взял память на куче
+v.push_back(20);    // не хватило — перевыделил больше
+cout &lt;&lt; v.size();   // 2</pre>
+<p>Разбор: <code>vector</code> под капотом хранит данные на куче и, когда места не хватает, <b>сам</b> берёт больше и переносит туда старые элементы. Тебе не нужно знать размер заранее и не нужно вручную освобождать память — вектор всё делает сам. Поэтому в 99% случаев берут именно его.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Ручная память: new / delete (обзор)</h3>
+<pre class="demo">int* p = new int(5);   // взяли память на куче руками
+cout &lt;&lt; *p;            // 5
+delete p;              // обязательно вернуть!</pre>
+<p>Разбор: <code>new</code> берёт память на куче и возвращает указатель (помнишь прошлый урок), <code>delete</code> её возвращает. Если забыть <code>delete</code> — память «утечёт» (программа занимает всё больше). Именно от этой мороки тебя избавляет <code>vector</code> — поэтому <code>new</code>/<code>delete</code> руками пишут редко.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">new без delete</span> → <span class="now">каждому new — свой delete</span><br><span class="muted2">иначе утечка памяти; или просто используй vector</span></span>
+<span class="fix"><span class="was">v[5] у вектора из 2 элементов</span> → <span class="now">индексы 0..size-1</span><br><span class="muted2">выход за границу ломает программу, даже у vector</span></span>
+<span class="fix"><span class="was">пишу new/delete вручную для списка</span> → <span class="now">vector&lt;int&gt; v;</span><br><span class="muted2">вектор управляет памятью сам — меньше багов</span></span>`,
+quiz:[
+ {q:"Где живут обычные локальные переменные (int x, Player p)?",o:["На стеке","На куче","На диске","В интернете"],a:0,e:"Локальные переменные размещаются на стеке — он быстрый и очищается сам."},
+ {q:"Почему vector может расти, а int a[5] — нет?",o:["vector волшебный","vector берёт память на куче и перевыделяет при росте","Массивы запрещены","Никак не связано"],a:1,e:"vector динамически выделяет память на куче и увеличивает её по мере push_back."},
+ {t:"output",q:"Что выведет код?",code:"vector<int> v;\nv.push_back(1);\nv.push_back(2);\nv.push_back(3);\ncout << v.size();",o:["3","2","1","0"],a:0,e:"Три push_back → в векторе 3 элемента → size() = 3."},
+ {t:"pairs",q:"Соедини понятие с ролью",pairs:[["стек","локальные, авто-очистка"],["куча","динамика, живёт долго"],["vector","умный динамический массив"],["push_back","добавить, вектор растёт"]],e:"Стек — авто, куча — ручная/динамическая, vector управляет кучей сам."},
+ {t:"bug",q:"Где выход за границу?",code:["vector<int> v;","v.push_back(5);","cout << v[3];"],a:2,e:"В векторе один элемент (индекс 0). v[3] — выход за границу."},
+ {q:"Что произойдёт, если сделать new и забыть delete?",o:["Ничего","Утечка памяти — программа занимает всё больше","Ускорение","Ошибка компиляции"],a:1,e:"Память не вернётся системе — это утечка. vector избавляет от этой проблемы."},
+ {q:"Чем vector удобнее ручного new/delete?",o:["Он медленнее","Сам управляет памятью — не нужно вызывать delete","Не хранит числа","Ничем"],a:1,e:"vector сам выделяет и освобождает память — меньше кода и багов."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> закрепляем модель памяти на практике.</p>`,
+ tasks:[
+  {t:"Собери число N с клавиатуры, заведи vector и заполни его N значениями (без заранее известного размера).",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]},
+  {t:"Реши задачу, где количество данных заранее неизвестно (читать до конца ввода в vector).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Посмотри разбор «стек vs куча» и как vector растёт под капотом.",link:["Стек и куча — разбор","yt","c++ стек и куча память vector для начинающих"]}]},
+res:[
+ ["Память в C++: стек и куча","yt","c++ стек куча динамическая память для начинающих"],
+ ["learncpp.com — dynamic memory","url","https://www.learncpp.com/cpp-tutorial/dynamic-memory-allocation-with-new-and-delete/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"c9",title:"C++ · Файлы: программа помнит",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> обычная программа забывает всё при выходе — переменные живут в RAM, а она очищается. Чтобы список задач, счёт или настройки сохранялись между запусками, их пишут в <b>файл</b> на диске. Это превращает «игрушку» в настоящую программу.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Запись в файл</h3>
+<pre class="demo">#include &lt;fstream&gt;
+
+ofstream out("data.txt");   // открыть файл на запись
+out &lt;&lt; "задача 1" &lt;&lt; endl;
+out &lt;&lt; "задача 2" &lt;&lt; endl;
+out.close();                // закрыть — иначе данные могут не записаться</pre>
+<p>Разбор: <code>ofstream</code> («output file stream») пишет в файл — <b>как cout, но в файл</b>. Подключается через <code>&lt;fstream&gt;</code>. После записи обязательно <code>close()</code>, чтобы данные точно попали на диск.</p>
+<svg viewBox="0 0 600 110" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+   <marker id="c9a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker>
+   <marker id="c9b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#37936F"/></marker></defs>
+  <rect x="60" y="38" width="150" height="46" rx="10" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="135" y="58" text-anchor="middle" fill="#B9FF47" font-size="12" font-weight="700">программа</text>
+  <text x="135" y="74" text-anchor="middle" fill="#9BA39D" font-size="9">данные в RAM</text>
+  <line x1="212" y1="52" x2="386" y2="52" stroke="#B9FF47" stroke-width="2" marker-end="url(#c9a)"/>
+  <text x="299" y="44" text-anchor="middle" fill="#B9FF47" font-size="9">ofstream (запись)</text>
+  <line x1="386" y1="70" x2="212" y2="70" stroke="#37936F" stroke-width="2" marker-end="url(#c9b)"/>
+  <text x="299" y="86" text-anchor="middle" fill="#37936F" font-size="9">ifstream (чтение)</text>
+  <rect x="390" y="34" width="150" height="54" rx="10" fill="#141716" stroke="#37936F"/>
+  <text x="465" y="56" text-anchor="middle" fill="#5BC79A" font-size="12" font-weight="700">💾 data.txt</text>
+  <text x="465" y="72" text-anchor="middle" fill="#9BA39D" font-size="8">на диске, переживёт выход</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Чтение из файла</h3>
+<pre class="demo">ifstream in("data.txt");    // открыть на чтение
+string line;
+while (getline(in, line)) {  // читаем строку за строкой
+    cout &lt;&lt; line &lt;&lt; endl;
+}
+in.close();</pre>
+<p>Разбор: <code>ifstream</code> («input file stream») читает — <b>как cin, но из файла</b>. <code>getline(in, line)</code> в цикле <code>while</code> достаёт строки, пока файл не кончится. Так программа при запуске восстанавливает то, что сохранила в прошлый раз.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Паттерн «сохранить / загрузить»</h3>
+<p>Почти любое приложение с памятью устроено так: при <b>запуске</b> — прочитать данные из файла в <code>vector</code>; во время работы — менять <code>vector</code>; при <b>выходе</b> (или после каждого изменения) — записать <code>vector</code> обратно в файл. Именно так работает твой todo-менеджер из проекта этапа.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">забыл out.close()</span> → <span class="now">закрывай файл после записи</span><br><span class="muted2">без close данные могут не дойти до диска</span></span>
+<span class="fix"><span class="was">данные в RAM «сохранятся сами»</span> → <span class="now">пиши в файл</span><br><span class="muted2">память очищается при выходе; переживает выход только диск</span></span>
+<span class="fix"><span class="was">cin &gt;&gt; вместо getline при чтении строк с пробелами</span> → <span class="now">getline(in, line)</span><br><span class="muted2">как и с cin, &gt;&gt; читает лишь до пробела</span></span>`,
+quiz:[
+ {q:"Почему список задач нужно сохранять в файл?",o:["Для красоты","Данные в RAM исчезают при выходе, а файл на диске — нет","Файлы быстрее","Незачем"],a:1,e:"Память очищается при завершении программы; файл на диске переживает перезапуск."},
+ {q:"Что делает ofstream?",o:["Читает из файла","Пишет в файл (как cout, но в файл)","Рисует окно","Удаляет файл"],a:1,e:"ofstream — поток вывода в файл, работает как cout."},
+ {t:"cloze",q:"Дострой запись в файл",code:"{0} out(\"data.txt\");\nout << \"hi\";\nout.{1}();",gaps:["ofstream","close"],e:"ofstream открывает файл на запись; close() закрывает, чтобы данные записались."},
+ {t:"pairs",q:"Соедини инструмент с действием",pairs:[["ofstream","запись в файл"],["ifstream","чтение из файла"],["getline","прочитать строку"],["close()","закрыть файл"]],e:"ofstream пишет, ifstream читает, getline берёт строку, close закрывает."},
+ {t:"bug",q:"Что забыли сделать?",code:["ofstream out(\"f.txt\");","out << \"data\";","// конец программы"],a:2,e:"Нет out.close(); — без закрытия данные могут не попасть на диск."},
+ {q:"ifstream нужен для…",o:["записи в файл","чтения из файла","вывода на экран","удаления файла"],a:1,e:"ifstream — поток чтения из файла, работает как cin."},
+ {q:"Что переживёт закрытие и повторный запуск программы?",o:["Переменные в RAM","Данные, записанные в файл на диске","Ничего","Только вывод cout"],a:1,e:"RAM очищается; сохранённое в файл на диске остаётся."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> учим программу помнить между запусками.</p>`,
+ tasks:[
+  {t:"Напиши программу: при запуске читает список из файла, даёт добавить строку, при выходе сохраняет обратно.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]},
+  {t:"Реши задачу с файловым вводом-выводом (прочитать числа из файла, записать результат в другой).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Посмотри разбор работы с файлами в C++ (ifstream/ofstream).",link:["Файлы в C++ — разбор","yt","c++ работа с файлами ifstream ofstream для начинающих"]}]},
+res:[
+ ["Работа с файлами в C++","yt","c++ работа с файлами ifstream ofstream для начинающих"],
+ ["learncpp.com — file I/O","url","https://www.learncpp.com/cpp-tutorial/basic-file-io/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]}
 
 ];
 

@@ -1871,7 +1871,385 @@ res:[
  ["Степени сравнения — просто","yt","степени сравнения прилагательных английский"],
  ["engblog.ru: степени сравнения","url","https://engblog.ru/stepeni-sravneniya-prilagatelnyh"],
  ["British Council: Comparatives","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/comparative-and-superlative-adjectives"],
- ["Reverso Context — примеры","url","https://context.reverso.net"]]}
+ ["Reverso Context — примеры","url","https://context.reverso.net"]]},
+{id:"l9",title:"Phrasal verbs: как говорят носители",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> носители говорят фразовыми глаголами постоянно — <i>get up, turn on, look for, give up</i>. Без них речь звучит «по учебнику», и, главное, ты не понимаешь их на слух в видео и подкастах. Разберём самые частые.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Что это такое</h3>
+<p><b>Фразовый глагол</b> = глагол + маленькое слово (up, on, for, out). Вместе они дают <b>новый смысл</b>, который не всегда угадаешь по частям.</p>
+<pre class="demo">give   = давать
+give up = сдаться   (совсем другой смысл!)
+look    = смотреть
+look for = искать</pre>
+
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="38" width="120" height="46" rx="10" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="90" y="60" text-anchor="middle" fill="#B9FF47" font-size="14" font-weight="700">give</text>
+  <text x="90" y="76" text-anchor="middle" fill="#9BA39D" font-size="9">давать</text>
+  <text x="168" y="68" text-anchor="middle" fill="#F4F6F2" font-size="20" font-weight="700">+</text>
+  <rect x="186" y="38" width="110" height="46" rx="10" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="241" y="60" text-anchor="middle" fill="#FFD34D" font-size="14" font-weight="700">up</text>
+  <text x="241" y="76" text-anchor="middle" fill="#9BA39D" font-size="9">вверх</text>
+  <text x="314" y="68" text-anchor="middle" fill="#F4F6F2" font-size="20" font-weight="700">=</text>
+  <rect x="332" y="34" width="240" height="54" rx="10" fill="#141716" stroke="#37936F"/>
+  <text x="452" y="58" text-anchor="middle" fill="#5BC79A" font-size="15" font-weight="800">give up</text>
+  <text x="452" y="76" text-anchor="middle" fill="#9BA39D" font-size="10">сдаться — совсем новый смысл</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Частотные — выучи наизусть</h3>
+<table class="simple"><tr><th>Глагол</th><th>Значение</th><th>Пример</th></tr>
+<tr><td>get up</td><td>вставать</td><td>I get up at 7.</td></tr>
+<tr><td>turn on / off</td><td>включить / выключить</td><td>Turn off the TV.</td></tr>
+<tr><td>look for</td><td>искать</td><td>I'm looking for a job.</td></tr>
+<tr><td>give up</td><td>сдаваться</td><td>Never give up.</td></tr>
+<tr><td>find out</td><td>выяснять</td><td>I found out the answer.</td></tr>
+<tr><td>figure out</td><td>разобраться</td><td>I can't figure out this bug.</td></tr></table>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Для кода и сайтов</h3>
+<table class="simple"><tr><th>Глагол</th><th>Значение</th></tr>
+<tr><td>log in / log out</td><td>войти / выйти из аккаунта</td></tr>
+<tr><td>sign up</td><td>зарегистрироваться</td></tr>
+<tr><td>set up</td><td>настроить, установить</td></tr>
+<tr><td>back up</td><td>сделать резервную копию</td></tr></table>
+<p>Мелочь: некоторые можно «разрывать» местоимением — <i>turn <b>it</b> on</i>, <i>set <b>it</b> up</i>. А <code>look for</code> не разрывается: <i>look for it</i>.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I look my keys</span> → <span class="now">I look for my keys</span><br><span class="muted2">«искать» — это look FOR, без for это «смотреть»</span></span>
+<span class="fix"><span class="was">Don't give up on coding... wait</span> → <span class="now">Don't give up</span><br><span class="muted2">«сдаться» = give up (частицу up не теряй)</span></span>
+<span class="fix"><span class="was">turn on it</span> → <span class="now">turn it on</span><br><span class="muted2">местоимение ставим внутрь: turn it on</span></span>`,
+ex:[
+ {t:"mc",q:"I ___ at 7 every morning.",o:["get up","get","up get","getting"],a:0,e:"get up = вставать."},
+ {t:"pairs",q:"Соедини фразовый глагол со значением",pairs:[["give up","сдаться"],["look for","искать"],["turn on","включить"],["find out","выяснить"]],e:"Глагол + частица = новый смысл."},
+ {t:"cloze",q:"Впиши фразовые глаголы",code:"Don't {0} up! You'll {1} out how it works.",gaps:["give","find"],e:"give up = сдаться, find out = выяснить."},
+ {t:"mc",q:"I'm looking ___ a new job.",o:["for","at","on","up"],a:0,e:"look for = искать."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["Please turn on the light.","I gave up smoking.","I look my phone every morning.","She found out the truth."],a:2,e:"look my phone → look for my phone (искать) или just look at."},
+ {t:"order",q:"Собери предложение",lines:["I","want","to","set","up","my","project"],e:"set up = настроить: I want to set up my project."},
+ {t:"mc",q:"To create an account, you need to ___.",o:["sign up","sign","up sign","signing"],a:0,e:"sign up = зарегистрироваться."},
+ {t:"fill",q:"I can't ___ ___ (figure) this bug ___. (разобраться)",a:["figure out","figure it out"],e:"figure out = разобраться.",w:220},
+ {t:"pairs",q:"IT-фразовые глаголы",pairs:[["log in","войти в аккаунт"],["sign up","зарегистрироваться"],["set up","настроить"],["back up","сделать копию"]],e:"Эти слова встречаются в каждом приложении и доке."},
+ {t:"mc",q:"«Никогда не сдавайся»:",o:["Never give","Never give up","Never up give","Never giving"],a:1,e:"give up = сдаться."}],
+res:[
+ ["Фразовые глаголы — топ-25","yt","фразовые глаголы английский самые частые"],
+ ["mmmEnglish: phrasal verbs","yt","mmmEnglish phrasal verbs"],
+ ["engblog.ru: фразовые глаголы","url","https://engblog.ru/phrasal-verbs"],
+ ["Reverso Context — примеры","url","https://context.reverso.net"]]},
+
+{id:"l10",title:"Условные предложения: if …",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> «если выучу — получу работу», «если бы у меня было больше времени…». Условные фразы — про планы, мечты и последствия. Их три типа, и разница простая: насколько это реально.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Zero — всегда правда (факт)</h3>
+<pre class="demo">If you heat water, it boils.
+If I don't sleep, I feel tired.</pre>
+<p>Разбор: закон природы, привычка. Схема: <b>If + Present, Present</b>. Можно заменить <code>if</code> на <code>when</code> — смысл тот же.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. First — реально в будущем</h3>
+<pre class="demo">If I practise every day, I will get a job.
+If you help me, I'll finish faster.</pre>
+<p>Разбор: реальная возможность в будущем. Схема: <b>If + Present, will + глагол</b>. Важно: после <code>if</code> — <b>Present</b>, <code>will</code> туда НЕ ставят.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Second — мечта / нереально сейчас</h3>
+<pre class="demo">If I had more time, I would travel.
+If I were you, I would start today.</pre>
+<p>Разбор: воображаемая ситуация, желание. Схема: <b>If + Past, would + глагол</b>. В мечтах для «быть» часто говорят <code>were</code> для всех лиц: <i>If I were rich…</i></p>
+
+<svg viewBox="0 0 600 165" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="20" width="540" height="40" rx="9" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="46" y="38" fill="#B9FF47" font-size="12" font-weight="700">Zero · факт</text>
+  <text x="46" y="53" fill="#9BA39D" font-size="10">If you heat water, it boils. — If + Present, Present</text>
+  <rect x="30" y="66" width="540" height="40" rx="9" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="46" y="84" fill="#FFD34D" font-size="12" font-weight="700">First · реально в будущем</text>
+  <text x="46" y="99" fill="#9BA39D" font-size="10">If I practise, I will get a job. — If + Present, will + V</text>
+  <rect x="30" y="112" width="540" height="40" rx="9" fill="#1C201E" stroke="#37936F"/>
+  <text x="46" y="130" fill="#5BC79A" font-size="12" font-weight="700">Second · мечта / нереально</text>
+  <text x="46" y="145" fill="#9BA39D" font-size="10">If I had time, I would travel. — If + Past, would + V</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Полезные фразы</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>If I get the job, I'll be happy.</td><td>Если получу работу, буду счастлив.</td></tr>
+<tr><td>If I were you, I'd practise more.</td><td>На твоём месте я бы больше занимался.</td></tr>
+<tr><td>I'll succeed if I don't give up.</td><td>Я добьюсь, если не сдамся.</td></tr></table>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">If I will practise, I will improve</span> → <span class="now">If I practise, I will improve</span><br><span class="muted2">после if в First — Present, без will</span></span>
+<span class="fix"><span class="was">If I would have time, I would travel</span> → <span class="now">If I had time, I would travel</span><br><span class="muted2">в Second после if — Past, без would</span></span>
+<span class="fix"><span class="was">easier then before</span> → <span class="now">If … then …</span><br><span class="muted2">then («тогда») — не путай с than («чем»)</span></span>`,
+ex:[
+ {t:"mc",q:"If you heat water, it ___.",o:["boils","will boil","would boil","boiled"],a:0,e:"Zero conditional (факт): If + Present, Present."},
+ {t:"mc",q:"If I practise every day, I ___ a job.",o:["get","will get","would get","got"],a:1,e:"First conditional: If + Present, will + V."},
+ {t:"mc",q:"If I ___ more time, I would travel.",o:["have","will have","had","would have"],a:2,e:"Second conditional: If + Past (had), would + V."},
+ {t:"cloze",q:"Дострой First conditional",code:"If I {0} (get) the job, I {1} (buy) a new laptop.",gaps:[["get"],["will buy","'ll buy"]],e:"If + Present (get), will + V (will buy)."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["If it rains, we stay home.","If I will practise, I will improve.","If I had money, I would help.","If you heat ice, it melts."],a:1,e:"If I will practise → If I practise: после if в First нет will."},
+ {t:"order",q:"Собери мечту (Second conditional)",lines:["If","I","had","time","I","would","learn","Spanish"],e:"If + Past (had), would + V: If I had time, I would learn Spanish."},
+ {t:"pairs",q:"Соедини тип с формулой",pairs:[["Zero (факт)","If + Present, Present"],["First (будущее)","If + Present, will"],["Second (мечта)","If + Past, would"]],e:"Разница — насколько реально: факт → будущее → мечта."},
+ {t:"fill",q:"If I ___ (be) you, I would start today.",a:["were","was"],e:"В Second для «быть» часто were: If I were you.",w:160},
+ {t:"mc",q:"«Если я выучу английский, я найду работу»:",o:["If I will learn English, I will find a job","If I learn English, I will find a job","If I learn English, I find a job","If I learned English, I will find a job"],a:1,e:"First: If + Present (learn), will + V (will find)."},
+ {t:"cloze",q:"Дострой Second conditional",code:"If I {0} (be) a developer, I {1} (work) remotely.",gaps:[["were","was"],["would work","'d work"]],e:"If + Past (were), would + V (would work)."}],
+res:[
+ ["Условные предложения — просто","yt","условные предложения английский conditionals 0 1 2"],
+ ["engblog.ru: условные предложения","url","https://engblog.ru/uslovnye-predlozheniya-v-anglijskom-yazyke"],
+ ["British Council: Conditionals","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/conditionals-1"],
+ ["Reverso Context — примеры","url","https://context.reverso.net"]]},
+
+{id:"l11",title:"Модальные глаголы: can, should, must, might",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> модальные глаголы добавляют «оттенок»: умею, стоит, обязан, возможно. Это то, чем каждый день описывают способности, советы и планы — «I can code», «you should practise», «I might get the job».</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Главное правило</h3>
+<p>После модального — <b>глагол в начальной форме, без to и без -s</b>. Один на всех лиц.</p>
+<pre class="demo">I can code.      He can code.   (НЕ "cans", НЕ "can to")
+You should rest.  She might come.</pre>
+
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="14" y="20" width="138" height="82" rx="10" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="83" y="48" text-anchor="middle" fill="#B9FF47" font-size="15" font-weight="800">can</text>
+  <text x="83" y="70" text-anchor="middle" fill="#F4F6F2" font-size="10">умею / могу</text>
+  <text x="83" y="86" text-anchor="middle" fill="#9BA39D" font-size="9">I can code</text>
+  <rect x="160" y="20" width="138" height="82" rx="10" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="229" y="48" text-anchor="middle" fill="#FFD34D" font-size="15" font-weight="800">should</text>
+  <text x="229" y="70" text-anchor="middle" fill="#F4F6F2" font-size="10">совет, стоит</text>
+  <text x="229" y="86" text-anchor="middle" fill="#9BA39D" font-size="9">you should rest</text>
+  <rect x="306" y="20" width="138" height="82" rx="10" fill="#1C201E" stroke="#37936F"/>
+  <text x="375" y="48" text-anchor="middle" fill="#5BC79A" font-size="15" font-weight="800">must</text>
+  <text x="375" y="70" text-anchor="middle" fill="#F4F6F2" font-size="10">обязан, надо</text>
+  <text x="375" y="86" text-anchor="middle" fill="#9BA39D" font-size="9">I must go</text>
+  <rect x="452" y="20" width="134" height="82" rx="10" fill="#1C201E" stroke="#C98BFF"/>
+  <text x="519" y="48" text-anchor="middle" fill="#C98BFF" font-size="15" font-weight="800">might</text>
+  <text x="519" y="70" text-anchor="middle" fill="#F4F6F2" font-size="10">возможно</text>
+  <text x="519" y="86" text-anchor="middle" fill="#9BA39D" font-size="9">I might apply</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Кто что значит</h3>
+<ul style="margin:6px 0 6px 18px;padding:0">
+<li><b>can / can't</b> — умение и возможность: <i>I can build a simple site. I can't fix it yet.</i></li>
+<li><b>should</b> — совет («стоит»): <i>You should read the docs.</i></li>
+<li><b>must / have to</b> — обязанность («надо»): <i>I must practise. I have to work tomorrow.</i></li>
+<li><b>might / may</b> — вероятность («возможно»): <i>I might get the job.</i></li>
+</ul>
+<p>Особый случай — <code>have to</code>: это тоже «надо», но ведёт себя как обычный глагол (has to для he, do/does в вопросе): <i>Does he have to go?</i></p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Полезные фразы</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>I can build a simple website.</td><td>Я умею сделать простой сайт.</td></tr>
+<tr><td>You should practise every day.</td><td>Тебе стоит заниматься каждый день.</td></tr>
+<tr><td>I might apply for a junior job soon.</td><td>Возможно, скоро подам на джуна.</td></tr>
+<tr><td>Can you help me with this?</td><td>Можешь помочь мне с этим?</td></tr></table>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I can to code</span> → <span class="now">I can code</span><br><span class="muted2">после модального — без to</span></span>
+<span class="fix"><span class="was">He can codes</span> → <span class="now">He can code</span><br><span class="muted2">после модального глагол без -s, даже для he</span></span>
+<span class="fix"><span class="was">I must to go</span> → <span class="now">I must go</span><br><span class="muted2">must тоже без to (а вот have TO — с to)</span></span>`,
+ex:[
+ {t:"mc",q:"I ___ speak a little English.",o:["can","can to","cans","am can"],a:0,e:"can + начальная форма, без to."},
+ {t:"mc",q:"You ___ read the documentation. (совет)",o:["must","should","might","can"],a:1,e:"should = совет, «тебе стоит»."},
+ {t:"mc",q:"I ___ go now, I'm late. (обязан)",o:["should","might","must","can"],a:2,e:"must = обязанность, «надо»."},
+ {t:"cloze",q:"Впиши модальные (умение / необходимость)",code:"I {0} build a simple site, but I {1} practise more to improve.",gaps:[["can"],["must","need to","should","have to"]],e:"can = умею; must/need to = надо."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["I can code.","He can codes.","You should rest.","I must go now."],a:1,e:"can codes → can code: после модального глагол без -s."},
+ {t:"mc",q:"I ___ go now.",o:["must","must to","have go","should to"],a:0,e:"must + глагол без to."},
+ {t:"pairs",q:"Соедини модальный с его смыслом",pairs:[["can","умею / могу"],["should","совет"],["must","обязан"],["might","возможно"]],e:"can — умение, should — совет, must — обязанность, might — вероятность."},
+ {t:"order",q:"Собери совет",lines:["You","should","read","the","documentation"],e:"should + начальная форма: You should read the documentation."},
+ {t:"fill",q:"He ___ (can/not) come today. (сокращённо)",a:["can't","cannot"],e:"can't = не могу / не умею.",w:150},
+ {t:"mc",q:"«Тебе стоит читать документацию»:",o:["You must to read the documentation","You should read the documentation","You should to read the documentation","You can reads the documentation"],a:1,e:"should + начальная форма, без to."}],
+res:[
+ ["Модальные глаголы — просто","yt","модальные глаголы английский can must should"],
+ ["engblog.ru: модальные глаголы","url","https://engblog.ru/modalnye-glagoly-v-anglijskom-yazyke"],
+ ["British Council: Modals","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/modal-verbs"],
+ ["Reverso Context — примеры","url","https://context.reverso.net"]]},
+{id:"l12",title:"Английский для IT: лексика и git",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> вся разработка — на английском: команды git, сообщения об ошибках, названия действий. Знать эти 20–30 слов важнее, чем идеальная грамматика: без них ты не поймёшь ни туториал, ни коллегу. Это прямой мостик к работе.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Базовые слова разработчика</h3>
+<table class="simple"><tr><th>Слово</th><th>Перевод</th><th>В деле</th></tr>
+<tr><td>bug</td><td>ошибка в коде</td><td>I found a bug.</td></tr>
+<tr><td>fix</td><td>чинить / починка</td><td>I fixed the bug.</td></tr>
+<tr><td>feature</td><td>функция, возможность</td><td>a new feature</td></tr>
+<tr><td>issue</td><td>проблема / задача</td><td>Open an issue.</td></tr>
+<tr><td>release</td><td>выпуск версии</td><td>the next release</td></tr>
+<tr><td>deploy</td><td>выкатить на сервер</td><td>Deploy to production.</td></tr></table>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Git — язык командной работы</h3>
+<p>Git хранит историю кода. Его команды — обычные английские глаголы, и понимание слов = понимание процесса:</p>
+<svg viewBox="0 0 600 130" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="l12a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="18" y="46" width="118" height="44" rx="9" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="77" y="65" text-anchor="middle" fill="#B9FF47" font-size="12" font-weight="700">commit</text>
+  <text x="77" y="81" text-anchor="middle" fill="#9BA39D" font-size="9">сохранить</text>
+  <line x1="138" y1="68" x2="196" y2="68" stroke="#B9FF47" stroke-width="2" marker-end="url(#l12a)"/>
+  <rect x="200" y="46" width="118" height="44" rx="9" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="259" y="65" text-anchor="middle" fill="#FFD34D" font-size="12" font-weight="700">push</text>
+  <text x="259" y="81" text-anchor="middle" fill="#9BA39D" font-size="9">отправить</text>
+  <line x1="320" y1="68" x2="378" y2="68" stroke="#B9FF47" stroke-width="2" marker-end="url(#l12a)"/>
+  <rect x="382" y="46" width="130" height="44" rx="9" fill="#1C201E" stroke="#5BC79A"/>
+  <text x="447" y="65" text-anchor="middle" fill="#5BC79A" font-size="12" font-weight="700">pull request</text>
+  <text x="447" y="81" text-anchor="middle" fill="#9BA39D" font-size="9">просьба влить</text>
+  <line x1="514" y1="68" x2="560" y2="68" stroke="#B9FF47" stroke-width="2" marker-end="url(#l12a)"/>
+  <rect x="516" y="20" width="70" height="30" rx="8" fill="#141716" stroke="#37936F"/>
+  <text x="551" y="39" text-anchor="middle" fill="#F4F6F2" font-size="10" font-weight="700">merge</text>
+</svg>
+<table class="simple"><tr><th>Команда</th><th>Дословно</th><th>Что делает</th></tr>
+<tr><td>commit</td><td>зафиксировать</td><td>сохранить изменения в историю</td></tr>
+<tr><td>push</td><td>толкнуть</td><td>отправить код на сервер</td></tr>
+<tr><td>pull</td><td>тянуть</td><td>забрать свежий код себе</td></tr>
+<tr><td>merge</td><td>слить</td><td>объединить ветки кода</td></tr>
+<tr><td>branch</td><td>ветка</td><td>отдельная линия разработки</td></tr></table>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Фразы, которые реально пишут</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>I fixed the login bug.</td><td>Я починил баг со входом.</td></tr>
+<tr><td>Please review my pull request.</td><td>Посмотри, пожалуйста, мой PR.</td></tr>
+<tr><td>The build is failing.</td><td>Сборка падает.</td></tr>
+<tr><td>I'll push my changes tonight.</td><td>Залью изменения вечером.</td></tr></table>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I make a commit yesterday</span> → <span class="now">I made a commit yesterday</span><br><span class="muted2">yesterday → прошедшее: made</span></span>
+<span class="fix"><span class="was">I have a lot of bug</span> → <span class="now">I have a lot of bugs</span><br><span class="muted2">bug исчисляемое: во множественном — bugs</span></span>
+<span class="fix"><span class="was">merge to the branch (произносят «мёрж»)</span> → <span class="now">merge /mɜːrdʒ/</span><br><span class="muted2">читается «мёрдж», не «мерге»</span></span>`,
+ex:[
+ {t:"pairs",q:"Соедини слово с переводом",pairs:[["bug","ошибка в коде"],["fix","починить"],["feature","функция"],["deploy","выкатить на сервер"]],e:"Базовые слова, без которых не понять ни туториал, ни коллегу."},
+ {t:"pairs",q:"Соедини git-команду с действием",pairs:[["commit","сохранить изменения"],["push","отправить на сервер"],["pull","забрать свежий код"],["merge","слить ветки"]],e:"Команды git — это обычные английские глаголы."},
+ {t:"mc",q:"«Я нашёл баг во входе»:",o:["I find a bug in login","I found a bug in the login","I founded a bug","I have find a bug"],a:1,e:"found (прошедшее от find) + a bug."},
+ {t:"fill",q:"Please ___ (review) my pull request.",a:["review"],e:"review = проверить код: Please review my PR."},
+ {t:"cloze",q:"Впиши IT-слова",code:"I {0} (починил) the bug and I will {1} (залить) my changes.",gaps:[["fixed"],["push"]],e:"fixed the bug; push my changes."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["I fixed the bug.","The build is failing.","I have a lot of bug.","She merged the branch."],a:2,e:"a lot of bug → a lot of bugs: bug исчисляемое."},
+ {t:"mc",q:"To save your changes in git history, you ___.",o:["deploy","commit","review","merge"],a:1,e:"commit = сохранить изменения в историю."},
+ {t:"order",q:"Собери рабочую фразу",lines:["I","will","push","my","changes","tonight"],e:"I will push my changes tonight — залью изменения вечером."},
+ {t:"mc",q:"A ___ is a separate line of development in git.",o:["branch","bug","build","board"],a:0,e:"branch = ветка, отдельная линия разработки."},
+ {t:"fill",q:"We need to ___ (deploy) the app to production.",a:["deploy"],e:"deploy = выкатить на сервер.",w:150}],
+res:[
+ ["english4it.com — английский для IT","url","https://www.english4it.com"],
+ ["Speak Tech English","url","https://speaktechenglish.com"],
+ ["Английский для программистов","yt","английский для программистов лексика IT"],
+ ["Git — глоссарий (GitHub)","url","https://docs.github.com/en/get-started/quickstart/git-and-github-learning-resources"]]},
+
+{id:"l13",title:"Чтение документации на английском",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> лучшая документация — MDN, React, Node — только на английском. Читать её — навык №1 для джуна: 80% работы это гуглить и читать доки. Хорошая новость: язык доков простой и повторяющийся, его быстро осваиваешь.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Повелительное наклонение (императив)</h3>
+<p>Доки говорят командами: глагол в начале, без подлежащего. Это и есть инструкции.</p>
+<pre class="demo">Install the package.      Открой/установи пакет.
+Add this to your file.    Добавь это в файл.
+Return the result.        Верни результат.
+Do not modify this line.  Не меняй эту строку.</pre>
+<p>Разбор: <code>Install…</code>, <code>Add…</code>, <code>Return…</code> — просто глагол командой. Отрицание — <code>Do not / Don't + глагол</code>.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Слова-сигналы в доках</h3>
+<table class="simple"><tr><th>Слово</th><th>Значение</th></tr>
+<tr><td>returns</td><td>возвращает (что выдаёт функция)</td></tr>
+<tr><td>takes / accepts</td><td>принимает (аргументы)</td></tr>
+<tr><td>required / optional</td><td>обязательный / необязательный</td></tr>
+<tr><td>default</td><td>значение по умолчанию</td></tr>
+<tr><td>deprecated</td><td>устарело, не используй</td></tr>
+<tr><td>throws</td><td>выбрасывает ошибку</td></tr></table>
+
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="24" width="560" height="74" rx="10" fill="#141716" stroke="#37936F"/>
+  <text x="34" y="46" fill="#5BC79A" font-size="11" font-family="monospace" font-weight="700">map(callback)</text>
+  <text x="300" y="46" text-anchor="middle" fill="#9BA39D" font-size="10">← читаем как инструкцию</text>
+  <text x="34" y="68" fill="#F4F6F2" font-size="11" font-family="monospace"><tspan fill="#FFD34D">takes</tspan> a callback, <tspan fill="#FFD34D">returns</tspan> a new array.</text>
+  <text x="34" y="88" fill="#9BA39D" font-size="10">«принимает функцию, возвращает новый массив» — и всё понятно</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Пассив — доки любят «безличность»</h3>
+<p>Часто пишут не «ты делаешь», а «это делается». Форма: <b>is / are + V3</b>.</p>
+<pre class="demo">The value is returned as a string.  Значение возвращается строкой.
+This method is called automatically. Метод вызывается автоматически.</pre>
+<p>Разбор: <code>is returned</code>, <code>is called</code> — действие происходит «само», без указания, кто делает. Понимай это как «возвращается / вызывается».</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Полезные фразы</h3>
+<table class="simple"><tr><th>Фраза в доке</th><th>Перевод</th></tr>
+<tr><td>See the example below.</td><td>Смотри пример ниже.</td></tr>
+<tr><td>This parameter is optional.</td><td>Этот параметр необязательный.</td></tr>
+<tr><td>Note: this is deprecated.</td><td>Внимание: это устарело.</td></tr>
+<tr><td>Make sure the server is running.</td><td>Убедись, что сервер запущен.</td></tr></table>
+
+<p>⚠️ <b>Частые ошибки при чтении:</b></p>
+<span class="fix"><span class="was">«deprecated» = рекомендовано</span> → <span class="now">deprecated = устарело, НЕ используй</span><br><span class="muted2">частая ловушка: слово похоже на «предпочтительно», но смысл обратный</span></span>
+<span class="fix"><span class="was">«optional» = обязательно</span> → <span class="now">optional = по желанию, можно пропустить</span><br><span class="muted2">optional ≠ обязательный; обязательный — required</span></span>
+<span class="fix"><span class="was">«it returns» перевожу как прошедшее</span> → <span class="now">returns = возвращает (настоящее)</span><br><span class="muted2">-s здесь про функцию (it), а не про прошлое</span></span>`,
+ex:[
+ {t:"pairs",q:"Соедини слово из доки с переводом",pairs:[["returns","возвращает"],["required","обязательный"],["optional","необязательный"],["deprecated","устарело"]],e:"Слова-сигналы, которые встречаются в каждой документации."},
+ {t:"mc",q:"В доке написано «This parameter is optional». Значит:",o:["Параметр обязателен","Параметр можно не указывать","Параметр устарел","Параметр — ошибка"],a:1,e:"optional = по желанию, можно пропустить."},
+ {t:"mc",q:"«Install the package» — это:",o:["Вопрос","Команда-инструкция (императив)","Прошедшее время","Пассив"],a:1,e:"Глагол в начале без подлежащего — повелительное наклонение (инструкция)."},
+ {t:"mc",q:"«This method is called automatically» — как понять?",o:["Метод вызывает сам","Метод вызывается автоматически","Метод сломан","Метод устарел"],a:1,e:"is called — пассив: действие происходит «само»."},
+ {t:"cloze",q:"Дострой строку из доки",code:"map() {0} a callback and {1} a new array.",gaps:[["takes","accepts"],["returns"]],e:"takes a callback (принимает), returns a new array (возвращает)."},
+ {t:"bug",q:"Где НЕВЕРНЫЙ перевод сигнального слова?",code:["returns — возвращает","required — обязательный","deprecated — рекомендуется","optional — необязательный"],a:2,e:"deprecated = устарело, НЕ используй (а не «рекомендуется»)."},
+ {t:"order",q:"Собери инструкцию из доки",lines:["Make","sure","the","server","is","running"],e:"Make sure the server is running — «убедись, что сервер запущен»."},
+ {t:"mc",q:"«The value is returned as a string» — это:",o:["Активный залог","Пассивный залог (is + V3)","Будущее время","Вопрос"],a:1,e:"is returned — пассив: is/are + V3."},
+ {t:"fill",q:"Note: this feature is ___ (устарело, не используй).",a:["deprecated"],e:"deprecated = устарело.",w:170},
+ {t:"mc",q:"«See the example below» просит тебя:",o:["Написать пример","Посмотреть пример ниже","Удалить пример","Скачать пример"],a:1,e:"below = ниже; «смотри пример ниже»."}],
+res:[
+ ["MDN — документация (читать)","url","https://developer.mozilla.org/en-US/docs/Web/JavaScript"],
+ ["english4it.com","url","https://www.english4it.com"],
+ ["Как читать документацию","yt","как читать техническую документацию английский"],
+ ["Reverso Context — примеры","url","https://context.reverso.net"]]},
+
+{id:"l14",title:"Собеседование junior на английском",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> финальная цель — работа. Многие вакансии и компании требуют базовый английский, и часть собеседования проходит на нём. Хорошая новость: вопросы junior-собеседования почти всегда одни и те же. Выучишь заготовки — будешь готов.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. «Tell me about yourself» — расскажи о себе</h3>
+<p>Первый вопрос почти всегда этот. Готовь короткий рассказ (30–40 секунд):</p>
+<pre class="demo">Hi, I'm Emil. I'm a self-taught developer.
+I've been learning web development for a year.
+I can build simple websites with HTML, CSS and JavaScript.
+I'm looking for my first junior job.
+I learn fast and I'm not afraid of hard tasks.</pre>
+<p>Разбор: настоящее (кто ты), Present Perfect (<code>I've been learning</code> — сколько учишься), <code>can</code> (что умеешь), цель (<code>I'm looking for</code>). Всё из прошлых уроков.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Частые вопросы и заготовки</h3>
+<table class="simple"><tr><th>Вопрос</th><th>Заготовка ответа</th></tr>
+<tr><td>Why do you want this job?</td><td>I want to grow as a developer and work in a real team.</td></tr>
+<tr><td>What are your strengths?</td><td>I'm persistent and I learn quickly.</td></tr>
+<tr><td>What's your weakness?</td><td>I'm still improving my English, but I practise every day.</td></tr>
+<tr><td>Do you have experience?</td><td>I've built a few personal projects.</td></tr></table>
+
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="l14a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="18" y="44" width="120" height="46" rx="9" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="78" y="64" text-anchor="middle" fill="#B9FF47" font-size="11" font-weight="700">кто я сейчас</text>
+  <text x="78" y="80" text-anchor="middle" fill="#9BA39D" font-size="9">I'm a developer</text>
+  <line x1="140" y1="67" x2="188" y2="67" stroke="#B9FF47" stroke-width="2" marker-end="url(#l14a)"/>
+  <rect x="192" y="44" width="120" height="46" rx="9" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="252" y="64" text-anchor="middle" fill="#FFD34D" font-size="11" font-weight="700">что умею</text>
+  <text x="252" y="80" text-anchor="middle" fill="#9BA39D" font-size="9">I can build…</text>
+  <line x1="314" y1="67" x2="362" y2="67" stroke="#B9FF47" stroke-width="2" marker-end="url(#l14a)"/>
+  <rect x="366" y="44" width="120" height="46" rx="9" fill="#1C201E" stroke="#5BC79A"/>
+  <text x="426" y="64" text-anchor="middle" fill="#5BC79A" font-size="11" font-weight="700">чего хочу</text>
+  <text x="426" y="80" text-anchor="middle" fill="#9BA39D" font-size="9">I'm looking for…</text>
+  <text x="300" y="24" text-anchor="middle" fill="#F4F6F2" font-size="11">структура рассказа о себе</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Спасательные фразы (если не понял)</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>Could you repeat that, please?</td><td>Повторите, пожалуйста.</td></tr>
+<tr><td>Sorry, could you speak more slowly?</td><td>Извините, можно помедленнее?</td></tr>
+<tr><td>Let me think for a second.</td><td>Дайте секунду подумать.</td></tr>
+<tr><td>That's a good question.</td><td>Хороший вопрос.</td></tr></table>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I have 20 years</span> → <span class="now">I'm 20 (years old)</span><br><span class="muted2">возраст — через to be, не have</span></span>
+<span class="fix"><span class="was">I no understand</span> → <span class="now">I don't understand / Sorry, I didn't catch that</span><br><span class="muted2">отрицание через don't, а не «no + глагол»</span></span>
+<span class="fix"><span class="was">I want work here</span> → <span class="now">I want to work here</span><br><span class="muted2">после want — to</span></span>`,
+ex:[
+ {t:"mc",q:"Лучшее начало ответа на «Tell me about yourself»:",o:["I have 20 years","Hi, I'm Emil, a self-taught developer","I no speak English","Me developer"],a:1,e:"Начни с имени и кто ты; возраст — через I'm, не «I have»."},
+ {t:"pairs",q:"Соедини вопрос с темой ответа",pairs:[["Tell me about yourself","кто ты и цель"],["What are your strengths?","сильные стороны"],["Do you have experience?","проекты, опыт"],["Why this job?","мотивация"]],e:"Вопросы junior-собеседования почти всегда одни и те же — готовь заготовки."},
+ {t:"cloze",q:"Дострой рассказ о себе",code:"I {0} (умею) build simple websites, and I'm {1} for my first job.",gaps:[["can"],["looking"]],e:"I can build…; I'm looking for my first job."},
+ {t:"mc",q:"Ты не расслышал вопрос. Что сказать?",o:["I no understand","Could you repeat that, please?","Repeat!","What you say?"],a:1,e:"Вежливая просьба повторить: Could you repeat that, please?"},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["I'm 20 years old.","I want to work here.","I have experience with JavaScript.","I no understand the question."],a:3,e:"I no understand → I don't understand: отрицание через don't."},
+ {t:"order",q:"Собери фразу о цели",lines:["I","am","looking","for","my","first","job"],e:"I am looking for my first job — «ищу первую работу»."},
+ {t:"mc",q:"«Мне 20 лет»:",o:["I have 20 years","I'm 20 years old","I am 20 years","My age 20"],a:1,e:"Возраст — через to be: I'm 20 years old."},
+ {t:"fill",q:"That's a good ___. Let me think for a second.",a:["question"],e:"That's a good question — «хороший вопрос» (тянем время вежливо)."},
+ {t:"mc",q:"«I've been learning to code for a year» означает:",o:["Я выучил код за год","Я учусь кодить уже год","Я буду учить код год","Я учил код год назад"],a:1,e:"Present Perfect Continuous: действие длится до сих пор — «уже год»."},
+ {t:"mc",q:"Вежливо попросить говорить медленнее:",o:["Speak slow!","Could you speak more slowly, please?","You speak fast","Slowly please talk"],a:1,e:"Could you speak more slowly, please? — вежливая просьба."}],
+res:[
+ ["Собеседование на английском (IT)","yt","собеседование junior разработчик английский вопросы"],
+ ["Speak Tech English — interview","url","https://speaktechenglish.com"],
+ ["english4it.com — interview","url","https://www.english4it.com"],
+ ["Tell me about yourself — примеры","yt","tell me about yourself answer developer"]]}
 ];
 
 

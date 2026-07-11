@@ -1409,55 +1409,53 @@ function cloudClick(){
    <h1 class="disp" style="font-size:22px">${esc(sbUser.email||"")}</h1>
    <p class="muted" style="margin:0">Прогресс автоматически сохраняется в облако. Зайди с любого устройства под этой почтой — всё подтянется.</p>
    <button class="btn" onclick="document.getElementById('cloudOv').remove()">Отлично</button>
+   <button class="btn secondary" onclick="cloudChangePass()">Сменить пароль</button>
    <button class="btn secondary" onclick="cloudLogout()">Выйти из облака</button></div>`;}
  else{
   ov.innerHTML=`<div class="wcard">
    <span class="mono">Облачная синхронизация</span>
-   <h1 class="disp" style="font-size:22px">Вход по почте<span style="color:var(--acid)">.</span></h1>
-   <p class="muted" style="margin:0" id="cloudHint">Введи почту — пришлём письмо со ссылкой для входа. Пароль не нужен. После входа прогресс хранится в облаке и доступен с любого устройства.</p>
-   <div id="cloudStep1">
-    <input type="email" class="tf" id="cloudEmail" placeholder="you@example.com" autocomplete="email" inputmode="email" style="width:100%;margin-bottom:10px" onkeydown="if(event.key==='Enter')cloudLogin()">
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-     <button class="btn" onclick="cloudLogin()">Отправить письмо</button>
-     <button class="btn secondary" onclick="document.getElementById('cloudOv').remove()">Позже</button></div>
-   </div>
-   <div id="cloudStep2" style="display:none">
-    <input type="text" class="tf" id="cloudCode" placeholder="• • • • • •" inputmode="numeric" autocomplete="one-time-code" maxlength="6" style="width:100%;letter-spacing:.35em;text-align:center;font-size:22px;margin-bottom:10px" onkeydown="if(event.key==='Enter')cloudVerify()">
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-     <button class="btn" onclick="cloudVerify()">Войти</button>
-     <button class="btn secondary" onclick="cloudBackToEmail()">Другая почта</button></div>
-   </div>
-   <span class="muted" id="cloudMsg"></span></div>`;}
+   <h1 class="disp" style="font-size:22px">Вход в облако<span style="color:var(--acid)">.</span></h1>
+   <p class="muted" style="margin:0">Введи почту и пароль. Если аккаунта ещё нет — он создастся сам. После входа прогресс хранится в облаке и доступен с любого устройства под этой почтой.</p>
+   <input type="email" class="tf" id="cloudEmail" placeholder="you@example.com" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" style="width:100%;margin-bottom:10px">
+   <input type="password" class="tf" id="cloudPass" placeholder="пароль (минимум 6 символов)" autocomplete="current-password" style="width:100%;margin-bottom:10px" onkeydown="if(event.key==='Enter')cloudAuth()">
+   <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn" onclick="cloudAuth()">Войти / создать</button>
+    <button class="btn secondary" onclick="document.getElementById('cloudOv').remove()">Позже</button></div>
+   <span class="muted" id="cloudMsg" style="display:block;margin-top:4px"></span></div>`;}
  document.body.appendChild(ov);}
-async function cloudLogin(){
- const em=(document.getElementById("cloudEmail").value||"").trim();
+async function cloudAuth(){
+ const em=(document.getElementById("cloudEmail").value||"").trim().toLowerCase();
+ const pw=(document.getElementById("cloudPass").value||"");
  const msg=document.getElementById("cloudMsg");
+ msg.style.color="";
  if(!/.+@.+\..+/.test(em)){msg.textContent="Похоже, это не почта — проверь адрес";return;}
- msg.textContent="Отправляю код…";
- try{const{error}=await sbc.auth.signInWithOtp({email:em,options:{shouldCreateUser:true,emailRedirectTo:location.href.split('#')[0]}});
-  if(error)throw error;
-  window._cloudEmail=em;
-  document.getElementById("cloudStep1").style.display="none";
-  document.getElementById("cloudStep2").style.display="block";
-  document.getElementById("cloudHint").innerHTML=`Письмо на <b style="color:var(--text-1)">${esc(em)}</b>. Открой его и нажми ссылку <b>«Sign in»</b> — войдёшь автоматически. <span style="opacity:.7">Если внутри 6 цифр — можешь ввести их ниже.</span>`;
-  const cc=document.getElementById("cloudCode");if(cc)cc.focus();
-  msg.textContent="";}
- catch(e){msg.textContent="Не получилось отправить: "+(e.message||e);}}
-async function cloudVerify(){
- const token=(document.getElementById("cloudCode").value||"").replace(/\D/g,"");
- const msg=document.getElementById("cloudMsg");
- if(token.length<6){msg.textContent="Введи 6 цифр из письма";return;}
- msg.textContent="Проверяю…";
- try{const{error}=await sbc.auth.verifyOtp({email:window._cloudEmail,token:token,type:"email"});
-  if(error)throw error;
+ if(pw.length<6){msg.textContent="Пароль — минимум 6 символов";return;}
+ msg.textContent="Вхожу…";
+ try{
+  let{error}=await sbc.auth.signInWithPassword({email:em,password:pw});
+  if(error){
+   // возможно, аккаунта ещё нет — создаём (подтверждение включается автоматически)
+   const reg=await sbc.auth.signUp({email:em,password:pw});
+   if(reg.error){
+    if(/already|registered|exist/i.test(reg.error.message||"")){
+     msg.textContent="Эта почта уже занята, а пароль не подошёл. Проверь пароль.";return;}
+    msg.textContent="Не получилось: "+(reg.error.message||reg.error);return;}
+   if(!reg.data||!reg.data.session){
+    const si=await sbc.auth.signInWithPassword({email:em,password:pw});
+    if(si.error){msg.textContent="Аккаунт создан, но вход не прошёл: "+si.error.message;return;}}
+   toast("Аккаунт создан — прогресс теперь в облаке");
+  } else {
+   toast("Вход выполнен — прогресс синхронизируется");
+  }
   const el=document.getElementById("cloudOv");if(el)el.remove();
-  toast("Вход выполнен — прогресс теперь в облаке");}
- catch(e){msg.textContent="Код не подошёл или истёк — проверь письмо: "+(e.message||e);}}
-function cloudBackToEmail(){
- const s2=document.getElementById("cloudStep2"),s1=document.getElementById("cloudStep1");
- if(s2)s2.style.display="none";if(s1)s1.style.display="block";
- const h=document.getElementById("cloudHint");if(h)h.textContent="Введи почту — пришлём письмо для входа.";
- const m=document.getElementById("cloudMsg");if(m)m.textContent="";}
+ }catch(e){msg.textContent="Ошибка: "+(e.message||e);}}
+async function cloudChangePass(){
+ const np=prompt("Новый пароль (минимум 6 символов):");
+ if(np==null)return;
+ if(np.length<6){toast("Пароль слишком короткий — минимум 6 символов");return;}
+ try{const{error}=await sbc.auth.updateUser({password:np});
+  toast(error?("Не вышло сменить пароль: "+error.message):"Пароль обновлён");}
+ catch(e){toast("Ошибка: "+(e.message||e));}}
 async function cloudLogout(){
  try{await sbc.auth.signOut();}catch(e){}
  sbUser=null;setCloudIcon("off");

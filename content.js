@@ -1603,7 +1603,275 @@ res:[
  ["Артикли a / an / the простыми словами","yt","артикли a an the английский простыми словами"],
  ["engblog.ru: артикли","url","https://engblog.ru/articles-in-english"],
  ["British Council: Articles","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/articles-1"],
- ["YouGlish — произношение фраз","url","https://youglish.com"]]}
+ ["YouGlish — произношение фраз","url","https://youglish.com"]]},
+{id:"l5",title:"Present Perfect: прошлое, которое важно сейчас",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> Present Perfect — про опыт и результат: «я уже сделал», «я никогда не был», «я только что закончил». Русскоязычные его вечно путают с простым прошедшим. Разберёшься — сможешь говорить о том, что успел в жизни, и это звучит по-взрослому.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Форма: have / has + V3</h3>
+<pre class="demo">I have finished the task.     (have + V3)
+She has finished the task.    (has для he/she/it)
+I haven't started yet.        (−)
+Have you finished?            (?)</pre>
+<p>Разбор: <b>V3</b> — третья форма глагола (past participle). У правильных она совпадает с <code>-ed</code> (<code>finish→finished</code>), у неправильных её учат: <code>go→gone</code>, <code>see→seen</code>, <code>do→done</code>. Для he/she/it — <code>has</code>, для остальных — <code>have</code>.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Три случая, когда нужен Perfect</h3>
+<ul style="margin:6px 0 6px 18px;padding:0">
+<li><b>Опыт</b> («когда-нибудь / никогда»): <i>I <b>have</b> never <b>been</b> abroad. <b>Have</b> you ever <b>tried</b> Python?</i></li>
+<li><b>Результат виден сейчас</b> (just / already / yet): <i>I <b>have just finished</b>. She <b>has already left</b>. I haven't done it <b>yet</b>.</i></li>
+<li><b>Незаконченный период</b> (this week, today): <i>I <b>have written</b> three commits today.</i></li>
+</ul>
+
+<svg viewBox="0 0 600 150" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <line x1="30" y1="95" x2="565" y2="95" stroke="#37936F" stroke-width="2"/>
+  <polygon points="575,95 563,90 563,100" fill="#37936F"/>
+  <line x1="470" y1="60" x2="470" y2="110" stroke="#FFD34D" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="470" y="126" text-anchor="middle" fill="#FFD34D" font-size="11" font-weight="700">СЕЙЧАС</text>
+  <circle cx="140" cy="95" r="9" fill="#1C201E" stroke="#B9FF47" stroke-width="2"/>
+  <text x="140" y="70" text-anchor="middle" fill="#B9FF47" font-size="12" font-weight="700">I have done it</text>
+  <path d="M140,86 Q305,22 468,86" fill="none" stroke="#B9FF47" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="305" y="42" text-anchor="middle" fill="#9BA39D" font-size="10">сделал в прошлом — а результат важен сейчас</text>
+  <text x="140" y="120" text-anchor="middle" fill="#9BA39D" font-size="9">время НЕ указано</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Perfect или Past Simple?</h3>
+<p>Простое правило: <b>есть конкретное время в прошлом</b> (yesterday, in 2019, an hour ago) → Past Simple. <b>Времени нет</b>, важен опыт/результат → Present Perfect.</p>
+<pre class="demo">I have seen this film.        (когда — неважно)
+I saw this film yesterday.    (есть "yesterday" → Past)</pre>
+<table class="simple"><tr><th>V1</th><th>V2 (прошедшее)</th><th>V3 (participle)</th></tr>
+<tr><td>go</td><td>went</td><td>gone</td></tr><tr><td>see</td><td>saw</td><td>seen</td></tr>
+<tr><td>do</td><td>did</td><td>done</td></tr><tr><td>write</td><td>wrote</td><td>written</td></tr>
+<tr><td>be</td><td>was/were</td><td>been</td></tr><tr><td>have</td><td>had</td><td>had</td></tr></table>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Полезные фразы</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>I've just started learning to code.</td><td>Я только что начал учиться кодить.</td></tr>
+<tr><td>Have you ever built a website?</td><td>Ты когда-нибудь делал сайт?</td></tr>
+<tr><td>I've never given up.</td><td>Я никогда не сдавался.</td></tr>
+<tr><td>I haven't finished the course yet.</td><td>Я ещё не закончил курс.</td></tr></table>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I have saw it</span> → <span class="now">I have seen it</span><br><span class="muted2">после have/has нужна V3 (seen), а не V2 (saw)</span></span>
+<span class="fix"><span class="was">I have finished it yesterday</span> → <span class="now">I finished it yesterday</span><br><span class="muted2">есть «yesterday» → это Past Simple, не Perfect</span></span>
+<span class="fix"><span class="was">Did you ever try it?</span> → <span class="now">Have you ever tried it?</span><br><span class="muted2">про опыт «когда-нибудь» — Present Perfect</span></span>`,
+ex:[
+ {t:"mc",q:"I ___ finished my first project.",o:["have","has","am","did"],a:0,e:"I + have + V3 (finished)."},
+ {t:"mc",q:"She ___ never been to London.",o:["have","has","is","did"],a:1,e:"he/she/it → has."},
+ {t:"fill",q:"I ___ (see) this film before.",a:["have seen","'ve seen"],e:"have + V3: seen (не saw).",w:200},
+ {t:"cloze",q:"Дострой Present Perfect",code:"I {0} (just/finish) the task, but I {1} (not/start) the next one yet.",gaps:[["have just finished","'ve just finished"],["haven't started","have not started"]],e:"have just finished; haven't started yet — результат важен сейчас."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["I have seen it.","She has gone home.","They have did it.","We have finished."],a:2,e:"have did → have done: после have нужна V3 (done)."},
+ {t:"order",q:"Собери вопрос об опыте",lines:["Have","you","ever","been","abroad"],e:"Have you ever been abroad? — опыт «когда-нибудь»."},
+ {t:"pairs",q:"Соедини глагол с его V3 (participle)",pairs:[["go","gone"],["see","seen"],["do","done"],["write","written"]],e:"Третья форма для Present Perfect — её учат наизусть."},
+ {t:"mc",q:"I ___ him yesterday.",o:["have seen","saw","seen","have saw"],a:1,e:"Есть «yesterday» → конкретное прошлое → Past Simple: saw."},
+ {t:"fill",q:"___ you ___ (finish) the course? (вопрос)",a:["have finished","have you finished"],e:"Have you finished the course?",w:220},
+ {t:"mc",q:"«Я никогда не был за границей»:",o:["I never was abroad","I have never been abroad","I didn't been abroad","I have never be abroad"],a:1,e:"have + never + been (V3)."}],
+res:[
+ ["engblog.ru: Present Perfect","url","https://engblog.ru/present-perfect-tense"],
+ ["Present Perfect простыми словами","yt","present perfect простыми словами для начинающих"],
+ ["British Council: Present perfect","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/present-perfect"],
+ ["Неправильные глаголы (3 формы)","url","https://engblog.ru/irregular-verbs"]]},
+
+{id:"l6",title:"Артикли a / the / без артикля — уверенно",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> артикли — первое, что выдаёт уровень. В твоём тесте их не хватало («very interesting guy» без a). Это маленькие слова, но без них речь звучит как у робота. Разложим по полочкам, когда какой.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. a / an — «какой-то один»</h3>
+<p>Ставим, когда говорим о предмете <b>впервые</b> или «один из многих». Только с исчисляемым в единственном числе.</p>
+<pre class="demo">I want a job.            (какую-то работу, вообще)
+I'm a developer.         (профессия — всегда с a/an)
+It was an interesting day. (an перед гласным звуком)</pre>
+<p>Разбор: <b>an</b> — та же «a», но перед <b>гласным звуком</b>: <code>an apple</code>, <code>an hour</code> (h не читается), <code>an interesting guy</code>. Смотри на звук, а не на букву: <code>a university</code> (звучит «ю»).</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. the — «тот самый, конкретный»</h3>
+<p>Ставим, когда собеседник понимает, о чём речь: уже упоминали, единственный в мире, или превосходная степень.</p>
+<pre class="demo">I have a plan. The plan is simple.  (2-е упоминание → the)
+The sun is a star.                  (единственное → the)
+This is the best day.               (the + превосходная)</pre>
+
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="14" y="18" width="132" height="84" rx="10" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="80" y="46" text-anchor="middle" fill="#B9FF47" font-size="18" font-weight="800">a</text>
+  <text x="80" y="68" text-anchor="middle" fill="#F4F6F2" font-size="10">один из многих</text>
+  <text x="80" y="85" text-anchor="middle" fill="#9BA39D" font-size="9">a job, a bug</text>
+  <rect x="156" y="18" width="132" height="84" rx="10" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="222" y="46" text-anchor="middle" fill="#FFD34D" font-size="18" font-weight="800">an</text>
+  <text x="222" y="68" text-anchor="middle" fill="#F4F6F2" font-size="10">+ гласный звук</text>
+  <text x="222" y="85" text-anchor="middle" fill="#9BA39D" font-size="9">an app, an hour</text>
+  <rect x="298" y="18" width="132" height="84" rx="10" fill="#1C201E" stroke="#37936F"/>
+  <text x="364" y="46" text-anchor="middle" fill="#5BC79A" font-size="18" font-weight="800">the</text>
+  <text x="364" y="68" text-anchor="middle" fill="#F4F6F2" font-size="10">конкретный</text>
+  <text x="364" y="85" text-anchor="middle" fill="#9BA39D" font-size="9">the best, the sun</text>
+  <rect x="440" y="18" width="146" height="84" rx="10" fill="#141716" stroke="#5b6560" stroke-dasharray="4 3"/>
+  <text x="513" y="46" text-anchor="middle" fill="#9BA39D" font-size="15" font-weight="800">— без артикля</text>
+  <text x="513" y="68" text-anchor="middle" fill="#F4F6F2" font-size="10">мн.ч. и языки вообще</text>
+  <text x="513" y="85" text-anchor="middle" fill="#9BA39D" font-size="9">I like books · English</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Без артикля (zero)</h3>
+<ul style="margin:6px 0 6px 18px;padding:0">
+<li>Множественное «вообще»: <i>I like <b>books</b>. <b>Developers</b> write code.</i></li>
+<li>Неисчисляемое «вообще»: <i>I drink <b>coffee</b>. I need <b>money</b>.</i></li>
+<li>Языки, большинство стран и имён: <i>I speak <b>English</b>. I live in <b>Russia</b>.</i></li>
+</ul>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Полезные фразы</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>I'm a self-taught developer.</td><td>Я разработчик-самоучка.</td></tr>
+<tr><td>I want to get a good job.</td><td>Хочу получить хорошую работу.</td></tr>
+<tr><td>This is the best decision of my life.</td><td>Это лучшее решение в моей жизни.</td></tr>
+<tr><td>I speak Russian and I'm learning English.</td><td>Я говорю по-русски и учу английский.</td></tr></table>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">I am developer</span> → <span class="now">I am a developer</span><br><span class="muted2">профессия — всегда с a/an</span></span>
+<span class="fix"><span class="was">I like a books</span> → <span class="now">I like books</span><br><span class="muted2">множественное «вообще» — без артикля</span></span>
+<span class="fix"><span class="was">the English is hard</span> → <span class="now">English is hard</span><br><span class="muted2">языки — без the</span></span>`,
+ex:[
+ {t:"mc",q:"I'm ___ developer.",o:["—","a","an","the"],a:1,e:"Профессия в единственном числе → a developer."},
+ {t:"mc",q:"___ sun is very bright today.",o:["A","An","The","—"],a:2,e:"Солнце единственное → the sun."},
+ {t:"fill",q:"I waited for ___ hour. (артикль)",a:["an"],e:"hour начинается с гласного звука (h немая) → an."},
+ {t:"cloze",q:"Впиши артикли",code:"I have {0} idea. It's {1} best idea ever!",gaps:["an","the"],e:"an idea (гласный звук), the best (превосходная степень)."},
+ {t:"pairs",q:"Соедини пример с правилом",pairs:[["a job","один из многих"],["the sun","единственный"],["English","язык — без артикля"],["an apple","гласный звук"]],e:"a — новый/любой, the — конкретный, языки/мн.ч. — без артикля, an — перед гласным."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["I am a developer.","The Moon is bright.","I like a books.","She has an idea."],a:2,e:"a books → books: множественное «вообще» идёт без артикля."},
+ {t:"mc",q:"I speak ___ English fluently one day.",o:["a","an","the","—"],a:3,e:"Языки — без артикля."},
+ {t:"order",q:"Собери предложение с превосходной степенью",lines:["She","is","the","best","in","the","team"],e:"the + превосходная степень: She is the best in the team."},
+ {t:"fill",q:"I have a plan. ___ plan is simple. (артикль на 2-е упоминание)",a:["The"],e:"Второе упоминание того же → the.",w:120},
+ {t:"mc",q:"«Я хочу получить хорошую работу»:",o:["I want to get good job","I want to get a good job","I want to get the good job","I want get good job"],a:1,e:"a good job — новая, «какая-то» работа."}],
+res:[
+ ["Артикли a / an / the — просто","yt","артикли a an the английский простыми словами"],
+ ["engblog.ru: артикли","url","https://engblog.ru/articles-in-english"],
+ ["British Council: Articles","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/articles-1"],
+ ["Reverso Context — примеры","url","https://context.reverso.net"]]},
+
+{id:"l7",title:"Предлоги in / on / at: время и место",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> крошечные слова, огромные ошибки. «in Monday» вместо «on Monday» сразу выдаёт новичка. Хорошая новость: у in/on/at есть чёткая логика — от точки к большому периоду.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Время: от точного к общему</h3>
+<ul style="margin:6px 0 6px 18px;padding:0">
+<li><b>at</b> — точное время и точки суток: <i>at 7 o'clock, at noon, at night, at the weekend.</i></li>
+<li><b>on</b> — дни и даты: <i>on Monday, on Friday, on July 5, on my birthday.</i></li>
+<li><b>in</b> — месяцы, годы, части суток, большие периоды: <i>in July, in 2025, in the morning, in winter.</i></li>
+</ul>
+
+<svg viewBox="0 0 600 165" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <text x="30" y="22" fill="#B9FF47" font-size="12" font-weight="700">ВРЕМЯ — от точки к периоду →</text>
+  <rect x="30" y="32" width="150" height="42" rx="9" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="105" y="52" text-anchor="middle" fill="#B9FF47" font-size="13" font-weight="700">at</text>
+  <text x="105" y="68" text-anchor="middle" fill="#9BA39D" font-size="9">at 7:00 · at night</text>
+  <rect x="192" y="32" width="150" height="42" rx="9" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="267" y="52" text-anchor="middle" fill="#FFD34D" font-size="13" font-weight="700">on</text>
+  <text x="267" y="68" text-anchor="middle" fill="#9BA39D" font-size="9">on Monday · on July 5</text>
+  <rect x="354" y="32" width="222" height="42" rx="9" fill="#1C201E" stroke="#37936F"/>
+  <text x="465" y="52" text-anchor="middle" fill="#5BC79A" font-size="13" font-weight="700">in</text>
+  <text x="465" y="68" text-anchor="middle" fill="#9BA39D" font-size="9">in July · in 2025 · in the morning</text>
+  <text x="30" y="102" fill="#FFD34D" font-size="12" font-weight="700">МЕСТО</text>
+  <rect x="30" y="112" width="176" height="42" rx="9" fill="#141716" stroke="#B9FF47"/>
+  <text x="118" y="132" text-anchor="middle" fill="#B9FF47" font-size="13" font-weight="700">at</text>
+  <text x="118" y="148" text-anchor="middle" fill="#9BA39D" font-size="9">точка · at home, at work</text>
+  <rect x="216" y="112" width="176" height="42" rx="9" fill="#141716" stroke="#FFD34D"/>
+  <text x="304" y="132" text-anchor="middle" fill="#FFD34D" font-size="13" font-weight="700">on</text>
+  <text x="304" y="148" text-anchor="middle" fill="#9BA39D" font-size="9">поверхность · on the table</text>
+  <rect x="402" y="112" width="174" height="42" rx="9" fill="#141716" stroke="#37936F"/>
+  <text x="489" y="132" text-anchor="middle" fill="#5BC79A" font-size="13" font-weight="700">in</text>
+  <text x="489" y="148" text-anchor="middle" fill="#9BA39D" font-size="9">внутри · in Russia, in a room</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Место: точка / поверхность / внутри</h3>
+<ul style="margin:6px 0 6px 18px;padding:0">
+<li><b>at</b> — точка, место события: <i>at home, at work, at the station.</i></li>
+<li><b>on</b> — на поверхности: <i>on the table, on the wall, on the screen.</i></li>
+<li><b>in</b> — внутри чего-то: <i>in the room, in Russia, in the box.</i></li>
+</ul>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Полезные фразы</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>I study in the evening.</td><td>Я занимаюсь по вечерам.</td></tr>
+<tr><td>See you on Monday!</td><td>Увидимся в понедельник!</td></tr>
+<tr><td>I work from home.</td><td>Я работаю из дома.</td></tr>
+<tr><td>The meeting is at 10 a.m.</td><td>Встреча в 10 утра.</td></tr></table>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">in Monday</span> → <span class="now">on Monday</span><br><span class="muted2">дни недели — с on</span></span>
+<span class="fix"><span class="was">at the morning</span> → <span class="now">in the morning</span><br><span class="muted2">части суток — с in (кроме at night)</span></span>
+<span class="fix"><span class="was">I am in home</span> → <span class="now">I am at home</span><br><span class="muted2">home как место — at home (устойчиво)</span></span>`,
+ex:[
+ {t:"mc",q:"See you ___ Monday!",o:["in","on","at","—"],a:1,e:"Дни недели — с on."},
+ {t:"mc",q:"The meeting is ___ 7 o'clock.",o:["in","on","at","—"],a:2,e:"Точное время — с at."},
+ {t:"mc",q:"I was born ___ 2005.",o:["in","on","at","—"],a:0,e:"Годы — с in."},
+ {t:"cloze",q:"Впиши предлоги времени",code:"I usually study {0} the morning and sometimes {1} night.",gaps:["in","at"],e:"in the morning, но at night — это исключение."},
+ {t:"pairs",q:"Соедини выражение с правилом",pairs:[["at 7:00","точное время"],["on Monday","день недели"],["in July","месяц"],["at home","место-точка"]],e:"at — точка (время/место), on — день/поверхность, in — период/внутри."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["I live in Russia.","See you on Friday.","The keys are on the table.","I get up at the morning."],a:3,e:"at the morning → in the morning: части суток идут с in."},
+ {t:"fill",q:"The laptop is ___ the table. (предлог места)",a:["on"],e:"На поверхности — on the table.",w:120},
+ {t:"mc",q:"I work ___ home most days.",o:["in","on","at","to"],a:2,e:"at home — устойчивое выражение места."},
+ {t:"order",q:"Собери предложение",lines:["I","will","call","you","in","the","evening"],e:"in the evening — часть суток с in."},
+ {t:"fill",q:"We have a standup ___ Mondays. (предлог)",a:["on"],e:"Дни недели (даже во множественном) — с on.",w:120}],
+res:[
+ ["Предлоги in on at — просто","yt","предлоги in on at времени и места английский"],
+ ["engblog.ru: предлоги времени","url","https://engblog.ru/predlogi-vremeni-in-on-at"],
+ ["British Council: Prepositions of time","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/prepositions-time"],
+ ["Reverso Context — примеры","url","https://context.reverso.net"]]},
+
+{id:"l8",title:"Сравнения: bigger, the best, as … as",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> сравнивать приходится постоянно: «этот язык проще», «он лучший в команде», «мой код быстрее». Пара простых правил — и ты свободно сравниваешь что угодно.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Сравнительная степень: «более …»</h3>
+<p>Короткое слово (1 слог) → <b>+er</b>. Длинное (2+ слога) → <b>more</b> перед словом. После — <code>than</code> («чем»).</p>
+<pre class="demo">Python is easier than Java.        (easy → easier)
+This task is more difficult than that one. (long → more)</pre>
+<p>Мелочи написания: <code>big→bigger</code> (удвоение), <code>easy→easier</code> (y→i).</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Превосходная степень: «самый …»</h3>
+<p>Короткое → <b>the …est</b>, длинное → <b>the most …</b>. Часто с <code>in</code> («в группе»).</p>
+<pre class="demo">He is the fastest coder in the team.
+This is the most useful app.</pre>
+
+<svg viewBox="0 0 600 150" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <rect x="70" y="86" width="90" height="40" rx="6" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="115" y="112" text-anchor="middle" fill="#9BA39D" font-size="10">большой</text>
+  <text x="115" y="142" text-anchor="middle" fill="#B9FF47" font-size="12" font-weight="700">big</text>
+  <rect x="250" y="56" width="90" height="70" rx="6" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="295" y="94" text-anchor="middle" fill="#9BA39D" font-size="10">больше</text>
+  <text x="295" y="142" text-anchor="middle" fill="#FFD34D" font-size="12" font-weight="700">bigger</text>
+  <rect x="430" y="26" width="90" height="100" rx="6" fill="#1C201E" stroke="#37936F"/>
+  <text x="475" y="64" text-anchor="middle" fill="#9BA39D" font-size="10">самый</text>
+  <text x="475" y="142" text-anchor="middle" fill="#5BC79A" font-size="12" font-weight="700">the biggest</text>
+  <text x="300" y="16" text-anchor="middle" fill="#F4F6F2" font-size="11">-er … than · the -est … in</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Исключения и as … as</h3>
+<table class="simple"><tr><th>Слово</th><th>Сравнит.</th><th>Превосх.</th></tr>
+<tr><td>good</td><td>better</td><td>the best</td></tr>
+<tr><td>bad</td><td>worse</td><td>the worst</td></tr>
+<tr><td>far</td><td>further</td><td>the furthest</td></tr></table>
+<p><b>as … as</b> = «такой же … как» (равенство): <i>This laptop is <b>as fast as</b> mine.</i></p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">4. Полезные фразы</h3>
+<table class="simple"><tr><th>Фраза</th><th>Перевод</th></tr>
+<tr><td>I'm getting better every day.</td><td>Я становлюсь лучше с каждым днём.</td></tr>
+<tr><td>This is the best decision I've made.</td><td>Это лучшее решение, что я принял.</td></tr>
+<tr><td>Coding is easier than it looks.</td><td>Кодить проще, чем кажется.</td></tr></table>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">He is more faster</span> → <span class="now">He is faster</span><br><span class="muted2">либо -er, либо more — не оба сразу</span></span>
+<span class="fix"><span class="was">the goodest</span> → <span class="now">the best</span><br><span class="muted2">good — исключение: better / the best</span></span>
+<span class="fix"><span class="was">easier then Java</span> → <span class="now">easier than Java</span><br><span class="muted2">«чем» = than, а не then</span></span>`,
+ex:[
+ {t:"mc",q:"This bug is ___ than the last one.",o:["hard","harder","hardest","more hard"],a:1,e:"Короткое слово → +er: harder + than."},
+ {t:"mc",q:"He is the ___ developer in the team.",o:["good","better","best","goodest"],a:2,e:"good → the best (исключение)."},
+ {t:"fill",q:"JavaScript is ___ (easy) than C++.",a:["easier"],e:"easy → easier (y меняется на i)."},
+ {t:"cloze",q:"Впиши обе степени",code:"This task is {0} (difficult) than the last one, but it's not the {1} (difficult).",gaps:[["more difficult"],["most difficult"]],e:"Длинное слово: more difficult / the most difficult."},
+ {t:"pairs",q:"Соедини слово со сравнительной формой",pairs:[["good","better"],["bad","worse"],["big","bigger"],["far","further"]],e:"good/bad/far — исключения, big — удвоение согласной."},
+ {t:"bug",q:"Найди предложение с ошибкой",code:["She is taller than me.","This is the best day.","He is more faster.","I feel better now."],a:2,e:"more faster → faster: нельзя ставить и more, и -er вместе."},
+ {t:"mc",q:"This laptop is as fast ___ mine.",o:["as","than","then","that"],a:0,e:"as … as — равенство: as fast as."},
+ {t:"order",q:"Собери сравнение",lines:["Python","is","easier","than","Java"],e:"easier than: короткое прилагательное + er + than."},
+ {t:"fill",q:"This is the ___ (good) app I've ever used.",a:["best"],e:"good → the best.",w:120},
+ {t:"mc",q:"«Он лучший в команде»:",o:["He is more good in team","He is the best in the team","He is goodest in team","He is better in the team"],a:1,e:"the best in the team — превосходная степень с the и in."}],
+res:[
+ ["Степени сравнения — просто","yt","степени сравнения прилагательных английский"],
+ ["engblog.ru: степени сравнения","url","https://engblog.ru/stepeni-sravneniya-prilagatelnyh"],
+ ["British Council: Comparatives","url","https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/comparative-and-superlative-adjectives"],
+ ["Reverso Context — примеры","url","https://context.reverso.net"]]}
 ];
 
 

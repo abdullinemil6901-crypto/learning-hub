@@ -1826,7 +1826,515 @@ res:[
  ["Как программа превращается в машинный код","yt","как работает компилятор простыми словами"],
  ["Crash Course Computer Science","yt","crash course computer science operating systems русские субтитры"],
  ["learncpp.com — компиляция","url","https://www.learncpp.com/cpp-tutorial/introduction-to-the-compiler-linker-and-libraries/"],
- ["Книга «Код» Ч. Петцольда","url","https://www.google.com/search?q=Петцольд+Код+тайный+язык+информатики"]]}
+ ["Книга «Код» Ч. Петцольда","url","https://www.google.com/search?q=Петцольд+Код+тайный+язык+информатики"]]},
+{id:"a1",title:"Алгоритмы · Сложность O(n)",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> два решения одной задачи могут отличаться в миллион раз по скорости. «Оценка сложности» — умение на глаз сказать, потянет ли код большие данные или повиснет. Без этого навыка застревают на джуниоре — это прямо из твоего роадмапа.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Что такое O()</h3>
+<p><b>O-нотация</b> отвечает на вопрос: как растёт время работы, когда данных становится больше? Считаем не секунды, а <b>количество операций</b> в зависимости от размера входа <code>n</code>.</p>
+<table class="simple"><tr><th>Сложность</th><th>Название</th><th>Пример</th></tr>
+<tr><td>O(1)</td><td>константа</td><td>взять a[0]</td></tr>
+<tr><td>O(log n)</td><td>логарифм</td><td>бинарный поиск</td></tr>
+<tr><td>O(n)</td><td>линейная</td><td>один проход циклом</td></tr>
+<tr><td>O(n²)</td><td>квадратичная</td><td>цикл внутри цикла</td></tr></table>
+
+<svg viewBox="0 0 600 165" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <line x1="40" y1="140" x2="560" y2="140" stroke="#5b6560" stroke-width="1"/>
+  <line x1="40" y1="140" x2="40" y2="20" stroke="#5b6560" stroke-width="1"/>
+  <text x="300" y="158" text-anchor="middle" fill="#9BA39D" font-size="10">размер данных n →</text>
+  <text x="30" y="26" text-anchor="end" fill="#9BA39D" font-size="10">время</text>
+  <polyline points="40,128 560,126" fill="none" stroke="#37936F" stroke-width="2"/>
+  <text x="565" y="126" fill="#37936F" font-size="10" font-weight="700">O(1)</text>
+  <polyline points="40,132 140,116 300,104 560,96" fill="none" stroke="#5BC79A" stroke-width="2"/>
+  <text x="500" y="90" fill="#5BC79A" font-size="10" font-weight="700">O(log n)</text>
+  <polyline points="40,138 560,40" fill="none" stroke="#B9FF47" stroke-width="2"/>
+  <text x="470" y="52" fill="#B9FF47" font-size="10" font-weight="700">O(n)</text>
+  <polyline points="40,140 180,132 320,104 440,64 520,26" fill="none" stroke="#FFD34D" stroke-width="2"/>
+  <text x="360" y="70" fill="#FFD34D" font-size="10" font-weight="700">O(n²)</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Как оценить свой код</h3>
+<p>Правило простое — считай <b>вложенность циклов</b> по данным:</p>
+<pre class="demo">for (int i = 0; i &lt; n; i++) ...        // O(n) — один проход
+for (i...) for (j...) ...               // O(n²) — цикл в цикле
+a[0], v.size()                          // O(1) — не зависит от n</pre>
+<p>Разбор: один цикл по n — это n операций, O(n). Цикл внутри цикла — n·n = O(n²). Действие без циклов — O(1). Константы и мелочи в O() отбрасывают: O(2n) → O(n).</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Почему это важно на практике</h3>
+<p>При n = 100 000: O(n) — 100 тысяч операций (мгновенно). O(n²) — 10 <b>миллиардов</b> (повиснет). Поэтому на больших данных ищут решения быстрее, чем «два вложенных цикла».</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">O(2n) считаю хуже, чем O(n)</span> → <span class="now">O(2n) = O(n)</span><br><span class="muted2">константы в O() отбрасывают — важен рост, а не множитель</span></span>
+<span class="fix"><span class="was">вложенный цикл — это O(n)</span> → <span class="now">O(n²)</span><br><span class="muted2">цикл внутри цикла перемножает проходы</span></span>
+<span class="fix"><span class="was">O(n²) сойдёт для n = 10⁵</span> → <span class="now">ищи O(n) или O(n log n)</span><br><span class="muted2">10¹⁰ операций не успеют за отведённое время</span></span>`,
+quiz:[
+ {t:"mc",q:"Какая сложность у одного цикла for от 0 до n?",o:["O(1)","O(n)","O(n²)","O(log n)"],a:1,e:"Один проход по n элементам — n операций → O(n)."},
+ {t:"mc",q:"Цикл внутри цикла (оба до n) — это…",o:["O(n)","O(2n)","O(n²)","O(log n)"],a:2,e:"n·n = O(n²): для каждого i внутренний цикл делает n шагов."},
+ {t:"pairs",q:"Соедини операцию со сложностью",pairs:[["взять a[0]","O(1)"],["один цикл по n","O(n)"],["два вложенных цикла","O(n²)"],["бинарный поиск","O(log n)"]],e:"Без циклов — O(1), один цикл — O(n), вложенные — O(n²), деление пополам — O(log n)."},
+ {t:"mc",q:"Чему равно O(3n + 5) после упрощения?",o:["O(3n)","O(n)","O(n+5)","O(8)"],a:1,e:"Константы и множители отбрасывают: остаётся рост O(n)."},
+ {q:"Почему O(n²) плохо при n = 100 000?",o:["Это ~10 миллиардов операций — слишком долго","Ничего страшного","O(n²) быстрее O(n)","Не запустится вообще"],a:0,e:"n² = 10¹⁰ операций не успеют выполниться за отведённое время — нужен алгоритм быстрее."},
+ {t:"mc",q:"У какого алгоритма сложность O(log n)?",o:["Линейный поиск","Бинарный поиск в отсортированном массиве","Вложенные циклы","Вывод одного элемента"],a:1,e:"Бинпоиск каждый шаг делит область вдвое → O(log n)."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> учимся называть сложность своих решений. Отмечай по мере тренировки.</p>`,
+ tasks:[
+  {t:"Для 5 своих прошлых решений (циклы, массивы) назови сложность O(). Проверь себя: один цикл — O(n), вложенный — O(n²).",link:["Асимптотика — объяснение","yt","асимптотика сложность алгоритмов O большое простыми словами"]},
+  {t:"Пройди тему про сложность/асимптотику на курсе по алгоритмам.",link:["Stepik — алгоритмы","url","https://stepik.org/catalog/search?query=алгоритмы"]}]},
+res:[
+ ["Сложность алгоритмов O() — просто","yt","сложность алгоритмов O большое для начинающих"],
+ ["Книга «Грокаем алгоритмы»","url","https://www.google.com/search?q=грокаем+алгоритмы+бхаргава"],
+ ["Stepik — курсы по алгоритмам","url","https://stepik.org/catalog/search?query=алгоритмы"],
+ ["Codeforces — практика","url","https://codeforces.com/problemset"]]},
+
+{id:"a2",title:"Алгоритмы · Бинарный поиск",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> искать в списке из миллиона можно за 20 шагов вместо миллиона — если список отсортирован. Бинарный поиск — самый частый и самый любимый на собеседованиях приём. Плюс «бинпоиск по ответу» решает кучу задач, где напрямую не подойти.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Идея: делим пополам</h3>
+<p>Массив <b>отсортирован</b>. Смотрим на средний элемент. Если он меньше искомого — ответ справа, отбрасываем левую половину. Больше — отбрасываем правую. Каждый шаг область поиска <b>уменьшается вдвое</b> → O(log n).</p>
+<svg viewBox="0 0 600 96" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <g font-family="monospace" text-anchor="middle">
+  <text x="300" y="14" fill="#9BA39D" font-size="10">ищем 7 · середина = 5, 5 &lt; 7 → отбрасываем левую половину</text>
+  <rect x="40" y="26" width="60" height="34" fill="#141716" stroke="#5b6560" opacity="0.5"/><text x="70" y="49" fill="#9BA39D" font-size="13">1</text>
+  <rect x="100" y="26" width="60" height="34" fill="#141716" stroke="#5b6560" opacity="0.5"/><text x="130" y="49" fill="#9BA39D" font-size="13">3</text>
+  <rect x="160" y="26" width="60" height="34" fill="#1C201E" stroke="#FFD34D"/><text x="190" y="49" fill="#FFD34D" font-size="13" font-weight="700">5</text><text x="190" y="76" fill="#FFD34D" font-size="9">mid</text>
+  <rect x="220" y="26" width="60" height="34" fill="#1C201E" stroke="#B9FF47"/><text x="250" y="49" fill="#B9FF47" font-size="13" font-weight="700">7</text>
+  <rect x="280" y="26" width="60" height="34" fill="#1C201E" stroke="#B9FF47"/><text x="310" y="49" fill="#B9FF47" font-size="13">9</text>
+  <rect x="340" y="26" width="60" height="34" fill="#1C201E" stroke="#B9FF47"/><text x="370" y="49" fill="#B9FF47" font-size="13">11</text>
+  <text x="480" y="47" fill="#9BA39D" font-size="10">→ ищем в правой</text>
+  </g>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Код</h3>
+<pre class="demo">int l = 0, r = n - 1;
+while (l &lt;= r) {
+    int mid = (l + r) / 2;
+    if (a[mid] == x) { cout &lt;&lt; "нашли на " &lt;&lt; mid; break; }
+    if (a[mid] &lt; x) l = mid + 1;   // ответ справа
+    else r = mid - 1;              // ответ слева
+}</pre>
+<p>Разбор: <code>l</code> и <code>r</code> — границы области поиска. <code>mid</code> — середина. Сравниваем <code>a[mid]</code> с искомым <code>x</code> и сдвигаем ту границу, за которой ответа точно нет. Цикл идёт, пока <code>l &lt;= r</code> (область не пуста).</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Главное условие</h3>
+<p>Бинпоиск работает <b>только на отсортированных</b> данных. Поэтому частая связка: сначала <code>sort()</code>, потом бинпоиск.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">бинпоиск по неотсортированному</span> → <span class="now">сначала sort()</span><br><span class="muted2">на неупорядоченных данных он даёт неверный ответ</span></span>
+<span class="fix"><span class="was">while (l &lt; r)</span> → <span class="now">while (l &lt;= r)</span><br><span class="muted2">при &lt; пропустишь случай из одного элемента</span></span>
+<span class="fix"><span class="was">l = mid; r = mid;</span> → <span class="now">l = mid + 1; r = mid - 1;</span><br><span class="muted2">без ±1 границы не сдвигаются — зациклится</span></span>`,
+quiz:[
+ {q:"Какое главное условие для бинарного поиска?",o:["Массив отсортирован","Массив пустой","Чисел меньше 10","Ничего"],a:0,e:"Бинпоиск работает только на отсортированных данных."},
+ {t:"mc",q:"Сколько шагов примерно нужно бинпоиску в массиве из 1 000 000?",o:["~1 000 000","~1000","~20","~100"],a:2,e:"Каждый шаг делит вдвое: log₂(10⁶) ≈ 20."},
+ {t:"cloze",q:"Дострой вычисление середины и сдвиг границы",code:"int mid = (l + r) / 2;\nif (a[mid] < x) l = mid {0} 1;\nelse r = mid - 1;",gaps:["+"],e:"Если середина меньше искомого — ответ справа: l = mid + 1."},
+ {t:"bug",q:"Почему поиск может зациклиться?",code:["while (l <= r) {","    int mid = (l + r) / 2;","    if (a[mid] < x) l = mid;","    else r = mid - 1;","}"],a:2,e:"l = mid не сдвигает границу — нужно l = mid + 1, иначе бесконечный цикл."},
+ {t:"order",q:"Собери один шаг бинпоиска",lines:["int mid = (l + r) / 2;","if (a[mid] == x) return mid;","if (a[mid] < x) l = mid + 1;","else r = mid - 1;"],e:"Находим середину, проверяем совпадение, сдвигаем нужную границу."},
+ {q:"Какая сложность у бинарного поиска?",o:["O(n)","O(log n)","O(n²)","O(1)"],a:1,e:"Область каждый шаг делится вдвое → O(log n)."},
+ {t:"mc",q:"a = [1,3,5,7,9], ищем 7. Что сравнивается первым?",o:["1","5 (середина)","9","7"],a:1,e:"Индексы 0..4, середина mid=2 → a[2]=5 сравнивается первым."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> набиваем руку на бинпоиске — его спрашивают на каждом собеседовании.</p>`,
+ tasks:[
+  {t:"Реши 5–6 задач на бинарный поиск (поиск элемента, первое/последнее вхождение).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Разбери «бинпоиск по ответу» и реши пару таких задач.",link:["Бинпоиск по ответу — разбор","yt","бинарный поиск по ответу разбор c++"]},
+  {t:"Напиши бинпоиск сам, без подглядывания, и проверь на отсортированном массиве.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Бинарный поиск — разбор","yt","бинарный поиск c++ для начинающих"],
+ ["Книга «Грокаем алгоритмы»","url","https://www.google.com/search?q=грокаем+алгоритмы+бхаргава"],
+ ["Codeforces — задачи","url","https://codeforces.com/problemset"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"a3",title:"Алгоритмы · Сортировки",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> упорядоченные данные — половина всех задач: найти медиану, сгруппировать, применить бинпоиск. Важно понимать, как сортировка работает внутри, но в бою почти всегда звать готовую <code>sort()</code>.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Как это работает (пузырёк)</h3>
+<p>Простейшая сортировка — <b>пузырьком</b>: проходим по массиву и меняем местами соседей, если они не по порядку. Большие «всплывают» в конец. Так повторяем, пока всё не встанет на места.</p>
+<pre class="demo">for (int i = 0; i &lt; n - 1; i++)
+    for (int j = 0; j &lt; n - 1 - i; j++)
+        if (a[j] &gt; a[j+1]) swap(a[j], a[j+1]);</pre>
+<p>Разбор: два вложенных цикла → сложность <b>O(n²)</b>. Медленно на больших данных — пузырёк учат только для понимания идеи.</p>
+<svg viewBox="0 0 600 100" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <g font-family="monospace" text-anchor="middle">
+  <text x="150" y="16" fill="#9BA39D" font-size="10">было</text><text x="450" y="16" fill="#9BA39D" font-size="10">стало (по возрастанию)</text>
+  <rect x="70" y="60" width="30" height="24" fill="#1C201E" stroke="#FFD34D"/><text x="85" y="77" fill="#FFD34D" font-size="12">5</text>
+  <rect x="110" y="48" width="30" height="36" fill="#1C201E" stroke="#FFD34D"/><text x="125" y="72" fill="#FFD34D" font-size="12">8</text>
+  <rect x="150" y="72" width="30" height="12" fill="#1C201E" stroke="#FFD34D"/><text x="165" y="82" fill="#FFD34D" font-size="10">1</text>
+  <rect x="190" y="66" width="30" height="18" fill="#1C201E" stroke="#FFD34D"/><text x="205" y="80" fill="#FFD34D" font-size="11">3</text>
+  <text x="290" y="72" fill="#B9FF47" font-size="18">→</text>
+  <rect x="370" y="72" width="30" height="12" fill="#1C201E" stroke="#B9FF47"/><text x="385" y="82" fill="#B9FF47" font-size="10">1</text>
+  <rect x="410" y="66" width="30" height="18" fill="#1C201E" stroke="#B9FF47"/><text x="425" y="80" fill="#B9FF47" font-size="11">3</text>
+  <rect x="450" y="60" width="30" height="24" fill="#1C201E" stroke="#B9FF47"/><text x="465" y="77" fill="#B9FF47" font-size="12">5</text>
+  <rect x="490" y="48" width="30" height="36" fill="#1C201E" stroke="#B9FF47"/><text x="505" y="72" fill="#B9FF47" font-size="12">8</text>
+  </g>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. В бою — std::sort</h3>
+<pre class="demo">#include &lt;algorithm&gt;
+vector&lt;int&gt; v = {5, 8, 1, 3};
+sort(v.begin(), v.end());        // по возрастанию: 1 3 5 8
+sort(v.rbegin(), v.rend());      // по убыванию: 8 5 3 1</pre>
+<p>Разбор: <code>sort</code> из <code>&lt;algorithm&gt;</code> работает за <b>O(n log n)</b> — намного быстрее пузырька. Ему передают начало и конец диапазона. Это стандартный выбор.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Связка sort + бинпоиск</h3>
+<p>Классический приём: отсортировал <code>sort()</code>, затем ищешь бинпоиском за O(log n). Вместе — быстрый поиск в изначально неупорядоченных данных.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">пишу свою сортировку на олимпиаде</span> → <span class="now">sort(v.begin(), v.end())</span><br><span class="muted2">готовая быстрее и без багов</span></span>
+<span class="fix"><span class="was">sort(v)</span> → <span class="now">sort(v.begin(), v.end())</span><br><span class="muted2">sort принимает начало и конец диапазона</span></span>
+<span class="fix"><span class="was">пузырёк на n = 10⁵</span> → <span class="now">O(n²) повиснет — бери O(n log n)</span><br><span class="muted2">пузырёк — только для понимания идеи</span></span>`,
+quiz:[
+ {q:"Какая сложность у std::sort?",o:["O(n)","O(n log n)","O(n²)","O(1)"],a:1,e:"Стандартная сортировка работает за O(n log n) — быстро."},
+ {t:"output",q:"Что будет в v после кода?",code:"vector<int> v = {4, 2, 7, 1};\nsort(v.begin(), v.end());\n// v = ?",o:["1 2 4 7","4 2 7 1","7 4 2 1","1 4 2 7"],a:0,e:"sort по умолчанию сортирует по возрастанию: 1 2 4 7."},
+ {t:"mc",q:"Какая сложность у сортировки пузырьком?",o:["O(n)","O(log n)","O(n²)","O(1)"],a:2,e:"Два вложенных цикла → O(n²), поэтому её не используют на больших данных."},
+ {t:"cloze",q:"Отсортируй вектор по возрастанию",code:"sort(v.{0}(), v.{1}());",gaps:["begin","end"],e:"sort принимает диапазон: v.begin() и v.end()."},
+ {t:"pairs",q:"Соедини алгоритм со сложностью",pairs:[["пузырёк","O(n²)"],["std::sort","O(n log n)"],["взять v[0]","O(1)"],["бинпоиск","O(log n)"]],e:"Пузырёк квадратичный, std::sort — n log n, доступ по индексу — O(1)."},
+ {t:"order",q:"Собери связку: отсортировать и искать бинпоиском",lines:["sort(v.begin(), v.end());","int l = 0, r = v.size() - 1;","while (l <= r) {","    int mid = (l + r) / 2;","}"],e:"Сначала сортируем, затем запускаем бинарный поиск по границам."},
+ {t:"mc",q:"Зачем сортировать перед бинарным поиском?",o:["Так красивее","Бинпоиск работает только на отсортированных данных","Чтобы было медленнее","Незачем"],a:1,e:"Бинпоиск требует упорядоченности; sort её обеспечивает."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> используем sort и связку с бинпоиском на задачах.</p>`,
+ tasks:[
+  {t:"Реши 5–6 задач, где нужна сортировка (упорядочить, найти k-й по величине, сгруппировать).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Реши задачу на связку sort + бинпоиск (есть ли элемент; сколько элементов меньше x).",link:["Codeforces — задачи","url","https://codeforces.com/problemset"]},
+  {t:"Напиши пузырёк сам (для понимания), затем перепиши через std::sort.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Сортировки — разбор","yt","сортировки c++ пузырёк std sort для начинающих"],
+ ["Книга «Грокаем алгоритмы»","url","https://www.google.com/search?q=грокаем+алгоритмы+бхаргава"],
+ ["cppreference — std::sort","url","https://en.cppreference.com/w/cpp/algorithm/sort"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"a4",title:"Алгоритмы · Два указателя, префиксы, окно",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> три приёма, которые превращают медленное O(n²) в быстрое O(n). Их обожают на собеседованиях, и они закрывают огромный класс задач про массивы: суммы отрезков, пары, подотрезки.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Два указателя</h3>
+<p>Держим два индекса (обычно с концов или оба слева) и двигаем их навстречу или следом. Пример: в отсортированном массиве найти пару с суммой X.</p>
+<pre class="demo">int l = 0, r = n - 1;
+while (l &lt; r) {
+    int s = a[l] + a[r];
+    if (s == x) { /* нашли */ break; }
+    if (s &lt; x) l++;      // сумма мала — двигаем левый вправо
+    else r--;            // сумма велика — двигаем правый влево
+}</pre>
+<p>Разбор: вместо перебора всех пар за O(n²) — один проход за O(n). Указатели сходятся, каждый сдвиг отсекает лишнее.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Префиксные суммы</h3>
+<p>Заранее считаем массив <code>pre</code>, где <code>pre[i]</code> — сумма первых i элементов. Тогда сумма любого отрезка от l до r — за <b>O(1)</b>:</p>
+<pre class="demo">pre[0] = 0;
+for (int i = 0; i &lt; n; i++) pre[i+1] = pre[i] + a[i];
+// сумма отрезка [l, r]:
+int s = pre[r+1] - pre[l];</pre>
+<svg viewBox="0 0 600 92" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <g font-family="monospace" text-anchor="middle">
+  <text x="300" y="14" fill="#9BA39D" font-size="10">сумма отрезка = pre[r+1] − pre[l] за один шаг</text>
+  <rect x="120" y="30" width="70" height="30" fill="#1C201E" stroke="#37936F"/><text x="155" y="50" fill="#F4F6F2" font-size="12">pre[l]</text>
+  <rect x="190" y="30" width="150" height="30" fill="#1C201E" stroke="#FFD34D"/><text x="265" y="50" fill="#FFD34D" font-size="12">отрезок [l, r]</text>
+  <rect x="340" y="30" width="80" height="30" fill="#1C201E" stroke="#37936F"/><text x="380" y="50" fill="#F4F6F2" font-size="12">pre[r+1]</text>
+  <text x="265" y="78" fill="#9BA39D" font-size="9">не суммируем заново — вычитаем префиксы</text>
+  </g>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Скользящее окно</h3>
+<p>Двигаем «окно» фиксированной или растущей ширины по массиву, поддерживая его сумму: добавили правый элемент, убрали левый. Так находят, например, максимальную сумму k подряд идущих элементов за O(n).</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">два указателя на неотсортированном (для пары с суммой)</span> → <span class="now">сначала sort</span><br><span class="muted2">приём со схождением требует порядка</span></span>
+<span class="fix"><span class="was">пересчитываю сумму отрезка циклом каждый раз</span> → <span class="now">префиксные суммы, O(1) на запрос</span><br><span class="muted2">иначе много запросов → O(n) каждый</span></span>
+<span class="fix"><span class="was">в окне пересчитываю сумму заново</span> → <span class="now">добавь правый, вычти левый</span><br><span class="muted2">окно обновляют за O(1), а не за O(k)</span></span>`,
+quiz:[
+ {q:"Что дают префиксные суммы?",o:["Сумму любого отрезка за O(1)","Сортировку","Поиск максимума","Ничего"],a:0,e:"Через pre[r+1] − pre[l] сумма отрезка считается за один шаг."},
+ {t:"cloze",q:"Дострой формулу суммы отрезка [l, r]",code:"int s = pre[r+1] {0} pre[l];",gaps:["-"],e:"Из суммы до r+1 вычитаем сумму до l — остаётся сумма отрезка."},
+ {t:"mc",q:"Метод двух указателей (навстречу) обычно требует, чтобы массив был…",o:["отсортирован","пустой","из чётных чисел","огромный"],a:0,e:"Схождение указателей по сумме работает на упорядоченных данных."},
+ {t:"output",q:"a = [2, 4, 1, 3], pre = [0, 2, 6, 7, 10]. Сумма отрезка [1, 2] (a[1]+a[2])?",code:"int s = pre[3] - pre[1];",o:["5","6","7","4"],a:0,e:"pre[3] − pre[1] = 7 − 2 = 5 (это 4 + 1)."},
+ {t:"pairs",q:"Соедини приём с задачей",pairs:[["два указателя","пара с суммой X"],["префиксные суммы","сумма отрезка"],["скользящее окно","макс сумма k подряд"],["бинпоиск","поиск в отсортированном"]],e:"Каждый приём закрывает свой типовой класс задач про массивы."},
+ {t:"mc",q:"Скользящее окно обновляют так:",o:["Пересчитывают всё заново","Добавляют правый элемент и убирают левый","Сортируют окно","Удаляют массив"],a:1,e:"Окно двигают за O(1): +новый правый, −ушедший левый."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> отрабатываем приёмы на задачах про массивы.</p>`,
+ tasks:[
+  {t:"Реши задачу на два указателя (пара с заданной суммой в отсортированном массиве).",link:["Codeforces — задачи","url","https://codeforces.com/problemset"]},
+  {t:"Реши задачу на префиксные суммы (много запросов «сумма на отрезке»).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Реши задачу на скользящее окно (максимальная сумма k подряд идущих элементов).",link:["Скользящее окно — разбор","yt","скользящее окно алгоритм разбор c++"]}]},
+res:[
+ ["Два указателя и префиксные суммы","yt","метод двух указателей префиксные суммы c++"],
+ ["Codeforces — задачи","url","https://codeforces.com/problemset"],
+ ["Книга «Грокаем алгоритмы»","url","https://www.google.com/search?q=грокаем+алгоритмы+бхаргава"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"a5",title:"Алгоритмы · Рекурсия",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> рекурсия — когда функция вызывает саму себя. Это ключ к перебору, обходу деревьев и графов, к «разделяй и властвуй». Мозгу поначалу непривычно, но без неё не понять половину алгоритмов.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. База и шаг</h3>
+<p>У любой рекурсии две части: <b>база</b> — когда останавливаемся, и <b>шаг</b> — где вызываем себя для задачи поменьше.</p>
+<pre class="demo">int factorial(int n) {
+    if (n &lt;= 1) return 1;          // база: стоп
+    return n * factorial(n - 1);   // шаг: задача меньше
+}</pre>
+<p>Разбор: <code>factorial(4)</code> = 4 · <code>factorial(3)</code> = 4 · 3 · <code>factorial(2)</code> … и так до <code>factorial(1)</code> = 1 (база). Затем всё перемножается обратно: 1·2·3·4 = 24.</p>
+<svg viewBox="0 0 600 130" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a5a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <g font-family="monospace" text-anchor="middle">
+  <rect x="40" y="20" width="110" height="26" rx="6" fill="#1C201E" stroke="#B9FF47"/><text x="95" y="38" fill="#B9FF47" font-size="11">factorial(4)</text>
+  <rect x="90" y="52" width="110" height="26" rx="6" fill="#1C201E" stroke="#B9FF47"/><text x="145" y="70" fill="#B9FF47" font-size="11">factorial(3)</text>
+  <rect x="140" y="84" width="110" height="26" rx="6" fill="#1C201E" stroke="#FFD34D"/><text x="195" y="102" fill="#FFD34D" font-size="11">... factorial(1)</text>
+  <line x1="95" y1="46" x2="130" y2="52" stroke="#B9FF47" stroke-width="1.5" marker-end="url(#a5a)"/>
+  <line x1="145" y1="78" x2="180" y2="84" stroke="#B9FF47" stroke-width="1.5" marker-end="url(#a5a)"/>
+  <text x="400" y="55" fill="#9BA39D" font-size="11">спускаемся до базы (n=1),</text>
+  <text x="400" y="74" fill="#9BA39D" font-size="11">потом перемножаем на обратном пути</text>
+  </g>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Где живут вызовы</h3>
+<p>Каждый вызов кладётся на <b>стек</b> (та самая память из урока про компьютер). Дошли до базы — начинаем возвращаться, снимая вызовы со стека. Если базы нет — стек переполнится (<i>stack overflow</i>).</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Осторожно со сложностью</h3>
+<p>Наивный Фибоначчи <code>fib(n) = fib(n-1) + fib(n-2)</code> без хитростей считает одно и то же по многу раз — это <b>экспонента</b>, повиснет уже на n ≈ 45. Рекурсия мощная, но за её ценой нужно следить.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">рекурсия без базы</span> → <span class="now">добавь условие остановки</span><br><span class="muted2">без базы вызовы бесконечны → stack overflow</span></span>
+<span class="fix"><span class="was">factorial(n) { return n * factorial(n-1); }</span> → <span class="now">if (n &lt;= 1) return 1;</span><br><span class="muted2">без базы не остановится</span></span>
+<span class="fix"><span class="was">наивный fib(50)</span> → <span class="now">запомни уже посчитанное (мемоизация)</span><br><span class="muted2">иначе экспоненциальное время</span></span>`,
+quiz:[
+ {t:"output",q:"Что вернёт factorial(4)?",code:"int factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}",o:["24","10","4","1"],a:0,e:"4·3·2·1 = 24."},
+ {q:"Что такое «база» рекурсии?",o:["Условие остановки","Первый вызов","Цикл","Массив"],a:0,e:"База — случай, когда функция возвращает ответ без вызова себя, и рекурсия останавливается."},
+ {t:"bug",q:"Почему эта рекурсия зациклится?",code:["int f(int n) {","    return n + f(n - 1);","}"],a:0,e:"Нет базы (условия остановки) — вызовы бесконечны, стек переполнится."},
+ {t:"cloze",q:"Дострой базу факториала",code:"int factorial(int n) {\n    if (n <= 1) {0} 1;\n    return n * factorial(n - 1);\n}",gaps:["return"],e:"База: return 1 при n<=1 — иначе рекурсия не остановится."},
+ {t:"order",q:"Собери рекурсивную сумму 1..n",lines:["int sum(int n) {","    if (n == 0) return 0;","    return n + sum(n - 1);","}"],e:"База n==0 → 0; шаг: n плюс сумма меньшей задачи."},
+ {q:"Куда складываются рекурсивные вызовы?",o:["На стек","На диск","В интернет","В массив a"],a:0,e:"Каждый вызов кладётся на стек вызовов; при возврате снимается."},
+ {t:"mc",q:"Почему наивный рекурсивный fib(n) медленный?",o:["Считает одни и те же значения много раз (экспонента)","Использует массив","Слишком короткий","Не имеет базы"],a:0,e:"fib(n-1) и fib(n-2) пересчитывают общие подзадачи многократно → экспоненциальное время."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> тренируем рекурсивное мышление.</p>`,
+ tasks:[
+  {t:"Напиши рекурсивно: факториал, сумму 1..n, возведение в степень.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]},
+  {t:"Реши 4–5 задач на рекурсию/перебор (все перестановки, обход, разбиения).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Пройди тему «Рекурсия» на курсе по алгоритмам.",link:["Stepik — алгоритмы","url","https://stepik.org/catalog/search?query=алгоритмы"]}]},
+res:[
+ ["Рекурсия — просто","yt","рекурсия c++ для начинающих простыми словами"],
+ ["Книга «Грокаем алгоритмы»","url","https://www.google.com/search?q=грокаем+алгоритмы+бхаргава"],
+ ["Stepik — курсы по алгоритмам","url","https://stepik.org/catalog/search?query=алгоритмы"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+{id:"a6",title:"Алгоритмы · Стек и очередь",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> две базовые структуры, на которых стоят обходы, отмена действий (Ctrl+Z), обработка задач по порядку. Разница простая — с какого конца берём элементы.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Стек — «последним пришёл, первым ушёл» (LIFO)</h3>
+<p>Как стопка тарелок: кладём и берём <b>сверху</b>. Последний добавленный уходит первым.</p>
+<pre class="demo">#include &lt;stack&gt;
+stack&lt;int&gt; s;
+s.push(1); s.push(2); s.push(3);
+cout &lt;&lt; s.top();   // 3 — верхний
+s.pop();           // убрали 3
+cout &lt;&lt; s.top();   // 2</pre>
+<p>Разбор: <code>push</code> кладёт наверх, <code>top</code> смотрит верхний, <code>pop</code> убирает верхний (ничего не возвращает!). Применяют для отмены, проверки скобок, обхода в глубину.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Очередь — «первым пришёл, первым ушёл» (FIFO)</h3>
+<p>Как очередь в магазине: кто первый встал — первый и обслужен.</p>
+<pre class="demo">#include &lt;queue&gt;
+queue&lt;int&gt; q;
+q.push(1); q.push(2); q.push(3);
+cout &lt;&lt; q.front();  // 1 — первый в очереди
+q.pop();            // убрали 1
+cout &lt;&lt; q.front();  // 2</pre>
+<svg viewBox="0 0 600 130" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <g font-family="monospace" text-anchor="middle">
+  <text x="150" y="16" fill="#B9FF47" font-size="11" font-weight="700">Стек (LIFO)</text>
+  <rect x="110" y="40" width="80" height="24" fill="#1C201E" stroke="#FFD34D"/><text x="150" y="57" fill="#FFD34D" font-size="12">3 ← верх</text>
+  <rect x="110" y="64" width="80" height="24" fill="#1C201E" stroke="#37936F"/><text x="150" y="81" fill="#F4F6F2" font-size="12">2</text>
+  <rect x="110" y="88" width="80" height="24" fill="#1C201E" stroke="#37936F"/><text x="150" y="105" fill="#F4F6F2" font-size="12">1</text>
+  <text x="450" y="16" fill="#B9FF47" font-size="11" font-weight="700">Очередь (FIFO)</text>
+  <rect x="330" y="60" width="60" height="30" fill="#1C201E" stroke="#FFD34D"/><text x="360" y="80" fill="#FFD34D" font-size="12">1</text>
+  <rect x="390" y="60" width="60" height="30" fill="#1C201E" stroke="#37936F"/><text x="420" y="80" fill="#F4F6F2" font-size="12">2</text>
+  <rect x="450" y="60" width="60" height="30" fill="#1C201E" stroke="#37936F"/><text x="480" y="80" fill="#F4F6F2" font-size="12">3</text>
+  <text x="360" y="106" fill="#9BA39D" font-size="9">выход (front)</text>
+  <text x="480" y="106" fill="#9BA39D" font-size="9">вход (back)</text>
+  </g>
+</svg>
+<p>Разбор: у очереди берут с начала (<code>front</code>), кладут в конец (<code>push</code>). Применяют для обхода в ширину (BFS), обработки задач по порядку.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">int x = s.pop();</span> → <span class="now">int x = s.top(); s.pop();</span><br><span class="muted2">pop() ничего не возвращает — сначала top(), потом pop()</span></span>
+<span class="fix"><span class="was">s.top() у пустого стека</span> → <span class="now">проверь s.empty()</span><br><span class="muted2">обращение к пустому — ошибка</span></span>
+<span class="fix"><span class="was">путаю: очередь берёт с конца</span> → <span class="now">очередь — с начала (front)</span><br><span class="muted2">стек — сверху (LIFO), очередь — с начала (FIFO)</span></span>`,
+quiz:[
+ {q:"Стек работает по принципу…",o:["Первым пришёл — первым ушёл","Последним пришёл — первым ушёл","Случайно","По возрастанию"],a:1,e:"Стек — LIFO: последний добавленный уходит первым (стопка тарелок)."},
+ {t:"output",q:"Что выведет код?",code:"stack<int> s;\ns.push(1); s.push(2); s.push(3);\ns.pop();\ncout << s.top();",o:["2","3","1","0"],a:0,e:"push 1,2,3 → верх 3; pop убрал 3; top теперь 2."},
+ {t:"output",q:"Что выведет код?",code:"queue<int> q;\nq.push(5); q.push(7);\ncout << q.front();",o:["5","7","2","0"],a:0,e:"Очередь FIFO: первым добавили 5 → front = 5."},
+ {t:"bug",q:"В чём ошибка?",code:["stack<int> s;","s.push(10);","int x = s.pop();"],a:2,e:"pop() ничего не возвращает. Нужно: int x = s.top(); s.pop();"},
+ {t:"pairs",q:"Соедини структуру с принципом",pairs:[["стек","LIFO (сверху)"],["очередь","FIFO (с начала)"],["s.top()","верх стека"],["q.front()","начало очереди"]],e:"Стек берёт сверху, очередь — с начала."},
+ {q:"Где естественно применить очередь?",o:["Обход в ширину (BFS), задачи по порядку","Сортировка","Возведение в степень","Нигде"],a:0,e:"Очередь обрабатывает элементы в порядке поступления — идеально для BFS."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> применяем стек и очередь на задачах.</p>`,
+ tasks:[
+  {t:"Реши задачу на стек (проверка правильной скобочной последовательности).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Реши задачу на очередь (моделирование очереди, обработка запросов по порядку).",link:["Codeforces — задачи","url","https://codeforces.com/problemset"]},
+  {t:"Напиши сам: через стек развернуть последовательность чисел.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Стек и очередь — разбор","yt","стек и очередь структуры данных c++"],
+ ["cppreference — std::stack","url","https://en.cppreference.com/w/cpp/container/stack"],
+ ["Книга «Грокаем алгоритмы»","url","https://www.google.com/search?q=грокаем+алгоритмы+бхаргава"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"a7",title:"Алгоритмы · set и map",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> две структуры, которые экономят кучу кода и времени: <code>set</code> хранит <b>уникальные</b> значения и мгновенно проверяет наличие, <code>map</code> — это <b>словарь</b> «ключ → значение». Обе ищут за O(log n), а не за O(n).</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. set — множество уникальных</h3>
+<pre class="demo">#include &lt;set&gt;
+set&lt;int&gt; s;
+s.insert(3); s.insert(1); s.insert(3);  // второй 3 игнорируется
+cout &lt;&lt; s.size();                        // 2
+cout &lt;&lt; s.count(1);                       // 1 — есть; иначе 0</pre>
+<p>Разбор: <code>set</code> сам выкидывает дубликаты и держит элементы <b>отсортированными</b>. <code>insert</code> добавляет, <code>count(x)</code> отвечает «есть ли x» (1 или 0), <code>erase</code> удаляет. Всё за O(log n).</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. map — словарь ключ → значение</h3>
+<pre class="demo">#include &lt;map&gt;
+map&lt;string, int&gt; age;
+age["Emil"] = 20;
+age["Anna"] = 25;
+cout &lt;&lt; age["Emil"];        // 20</pre>
+<svg viewBox="0 0 600 110" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a7a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <g font-family="monospace">
+  <text x="60" y="20" fill="#9BA39D" font-size="10">ключ</text><text x="340" y="20" fill="#9BA39D" font-size="10">значение</text>
+  <rect x="40" y="30" width="150" height="28" fill="#1C201E" stroke="#FFD34D"/><text x="115" y="49" text-anchor="middle" fill="#FFD34D" font-size="12">"Emil"</text>
+  <line x1="192" y1="44" x2="316" y2="44" stroke="#B9FF47" stroke-width="2" marker-end="url(#a7a)"/>
+  <rect x="320" y="30" width="120" height="28" fill="#1C201E" stroke="#37936F"/><text x="380" y="49" text-anchor="middle" fill="#F4F6F2" font-size="12">20</text>
+  <rect x="40" y="66" width="150" height="28" fill="#1C201E" stroke="#FFD34D"/><text x="115" y="85" text-anchor="middle" fill="#FFD34D" font-size="12">"Anna"</text>
+  <line x1="192" y1="80" x2="316" y2="80" stroke="#B9FF47" stroke-width="2" marker-end="url(#a7a)"/>
+  <rect x="320" y="66" width="120" height="28" fill="#1C201E" stroke="#37936F"/><text x="380" y="85" text-anchor="middle" fill="#F4F6F2" font-size="12">25</text>
+  </g>
+</svg>
+<p>Разбор: обращаемся по ключу в квадратных скобках, как в массиве, но ключом может быть строка. Частое применение — <b>подсчёт частот</b>: <code>cnt[word]++</code> считает, сколько раз встретилось слово.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">жду, что set сохранит дубликаты</span> → <span class="now">set хранит только уникальные</span><br><span class="muted2">повторный insert игнорируется</span></span>
+<span class="fix"><span class="was">if (m["key"] ...) для проверки наличия</span> → <span class="now">if (m.count("key"))</span><br><span class="muted2">обращение m["key"] само создаёт ключ со значением 0</span></span>
+<span class="fix"><span class="was">ищу в векторе за O(n)</span> → <span class="now">set/map ищут за O(log n)</span><br><span class="muted2">для частых проверок наличия это в разы быстрее</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет код?",code:"set<int> s;\ns.insert(5); s.insert(5); s.insert(2);\ncout << s.size();",o:["2","3","1","5"],a:0,e:"set хранит уникальные: два раза 5 считаются как один → размер 2."},
+ {q:"Что такое map?",o:["Массив чисел","Словарь «ключ → значение»","Сортировка","Стек"],a:1,e:"map сопоставляет ключам значения, ключом может быть даже строка."},
+ {t:"output",q:"Что выведет код?",code:"map<string,int> cnt;\ncnt[\"a\"]++;\ncnt[\"a\"]++;\ncout << cnt[\"a\"];",o:["2","1","0","a"],a:0,e:"cnt[\"a\"] начинается с 0, два ++ → 2. Классический подсчёт частот."},
+ {t:"mc",q:"Как правильно проверить, есть ли ключ в map, не создавая его?",o:["m[\"key\"]","m.count(\"key\")","m.size()","m.top()"],a:1,e:"count возвращает 1/0; m[\"key\"] само создаёт ключ."},
+ {t:"pairs",q:"Соедини структуру с назначением",pairs:[["set","уникальные значения"],["map","ключ → значение"],["s.count(x)","есть ли x"],["cnt[word]++","подсчёт частот"]],e:"set — множество, map — словарь; count проверяет наличие, ++ считает."},
+ {q:"За сколько set и map находят элемент?",o:["O(n)","O(log n)","O(n²)","O(1) всегда"],a:1,e:"Они построены на сбалансированном дереве → поиск/вставка O(log n)."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> применяем set и map — они экономят массу кода.</p>`,
+ tasks:[
+  {t:"Реши задачу с set (сколько различных чисел во вводе).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Реши задачу с map (подсчёт частот слов/чисел, самое частое значение).",link:["Codeforces — задачи","url","https://codeforces.com/problemset"]},
+  {t:"Напиши сам: программа читает слова и выводит, сколько раз встретилось каждое.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["set и map в C++ — разбор","yt","set map c++ ассоциативные контейнеры"],
+ ["cppreference — std::map","url","https://en.cppreference.com/w/cpp/container/map"],
+ ["Книга «Грокаем алгоритмы» (хеш-таблицы)","url","https://www.google.com/search?q=грокаем+алгоритмы+бхаргава"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"a8",title:"Алгоритмы · STL: рабочий минимум",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> STL (стандартная библиотека) — это готовые структуры и функции, которые не надо писать руками. Владеть связкой <code>vector</code> + <code>sort</code> + <code>set</code> + <code>map</code> + <code>pair</code> — это база продуктивного C++. Меньше кода — меньше багов.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Контейнеры под задачу</h3>
+<table class="simple"><tr><th>Нужно</th><th>Берём</th></tr>
+<tr><td>список значений, доступ по индексу</td><td><code>vector</code></td></tr>
+<tr><td>уникальные, быстрый поиск</td><td><code>set</code></td></tr>
+<tr><td>ключ → значение</td><td><code>map</code></td></tr>
+<tr><td>два значения вместе</td><td><code>pair</code></td></tr>
+<tr><td>LIFO / FIFO</td><td><code>stack</code> / <code>queue</code></td></tr></table>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. pair — два значения в одном</h3>
+<pre class="demo">pair&lt;int, string&gt; p = {5, "Emil"};
+cout &lt;&lt; p.first;    // 5
+cout &lt;&lt; p.second;   // Emil
+vector&lt;pair&lt;int,int&gt;&gt; points;   // список пар (координаты)</pre>
+<p>Разбор: <code>pair</code> склеивает два значения. <code>.first</code> и <code>.second</code> — доступ к ним. Часто хранят <code>vector</code> пар: координаты, «значение + индекс», рёбра графа.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Полезные функции из &lt;algorithm&gt;</h3>
+<pre class="demo">sort(v.begin(), v.end());        // сортировка
+int mx = *max_element(v.begin(), v.end());   // максимум
+int c = count(v.begin(), v.end(), 7);        // сколько семёрок
+reverse(v.begin(), v.end());     // развернуть</pre>
+<svg viewBox="0 0 600 96" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <g text-anchor="middle" font-family="monospace">
+  <text x="300" y="16" fill="#9BA39D" font-size="10">STL — готовый ящик с инструментами</text>
+  <rect x="30" y="32" width="100" height="40" rx="8" fill="#1C201E" stroke="#B9FF47"/><text x="80" y="50" fill="#B9FF47" font-size="12">vector</text><text x="80" y="65" fill="#9BA39D" font-size="8">список</text>
+  <rect x="140" y="32" width="90" height="40" rx="8" fill="#1C201E" stroke="#FFD34D"/><text x="185" y="50" fill="#FFD34D" font-size="12">set</text><text x="185" y="65" fill="#9BA39D" font-size="8">уникальные</text>
+  <rect x="240" y="32" width="90" height="40" rx="8" fill="#1C201E" stroke="#5BC79A"/><text x="285" y="50" fill="#5BC79A" font-size="12">map</text><text x="285" y="65" fill="#9BA39D" font-size="8">словарь</text>
+  <rect x="340" y="32" width="90" height="40" rx="8" fill="#1C201E" stroke="#B9FF47"/><text x="385" y="50" fill="#B9FF47" font-size="12">pair</text><text x="385" y="65" fill="#9BA39D" font-size="8">два значения</text>
+  <rect x="440" y="32" width="130" height="40" rx="8" fill="#1C201E" stroke="#FFD34D"/><text x="505" y="50" fill="#FFD34D" font-size="11">sort/max/count</text><text x="505" y="65" fill="#9BA39D" font-size="8">algorithm</text>
+  </g>
+</svg>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">p.first() как метод</span> → <span class="now">p.first (без скобок)</span><br><span class="muted2">first и second — это поля, не функции</span></span>
+<span class="fix"><span class="was">max_element(...) как число</span> → <span class="now">*max_element(...)</span><br><span class="muted2">возвращается итератор — разыменуй звёздочкой</span></span>
+<span class="fix"><span class="was">забыл #include &lt;algorithm&gt;</span> → <span class="now">подключи его для sort/count</span><br><span class="muted2">без него компилятор не найдёт функции</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет код?",code:"pair<int,string> p = {7, \"hi\"};\ncout << p.first;",o:["7","hi","0","first"],a:0,e:"p.first — первое значение пары = 7."},
+ {t:"pairs",q:"Подбери контейнер под задачу",pairs:[["список с индексом","vector"],["уникальные значения","set"],["ключ → значение","map"],["два значения вместе","pair"]],e:"Правильный контейнер под задачу экономит код и время."},
+ {t:"mc",q:"Как получить сам максимум (число) из вектора?",o:["max_element(v.begin(), v.end())","*max_element(v.begin(), v.end())","v.max()","max(v)"],a:1,e:"max_element возвращает итератор; звёздочка * даёт само значение."},
+ {t:"cloze",q:"Дострой доступ к полям пары",code:"pair<int,int> p = {3, 8};\ncout << p.{0} << \" \" << p.{1};",gaps:["first","second"],e:"p.first = 3, p.second = 8 — без скобок."},
+ {t:"output",q:"Что выведет код?",code:"vector<int> v = {1, 7, 3, 7};\ncout << count(v.begin(), v.end(), 7);",o:["2","1","7","4"],a:0,e:"count считает, сколько раз встречается 7 → две штуки."},
+ {q:"Что такое STL?",o:["Язык программирования","Стандартная библиотека готовых структур и функций","Компилятор","Тип данных"],a:1,e:"STL даёт готовые vector/set/map/sort и т.д. — их не нужно писать руками."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> собираем задачи, где STL заметно упрощает решение.</p>`,
+ tasks:[
+  {t:"Реши 5–6 задач, комбинируя vector + sort + set/map (уникальные, частоты, сортировка пар).",link:["Codeforces — задачи","url","https://codeforces.com/problemset"]},
+  {t:"Пройди раздел про STL-контейнеры на курсе по C++/алгоритмам.",link:["Stepik — алгоритмы","url","https://stepik.org/catalog/search?query=алгоритмы"]},
+  {t:"Напиши сам: считай список пар (число, имя), отсортируй по числу, выведи.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["STL за час — обзор","yt","c++ stl обзор vector set map для начинающих"],
+ ["cppreference — контейнеры","url","https://en.cppreference.com/w/cpp/container"],
+ ["Codeforces — задачи","url","https://codeforces.com/problemset"],
+ ["Stepik — курсы по алгоритмам","url","https://stepik.org/catalog/search?query=алгоритмы"]]},
+
+{id:"a9",title:"Алгоритмы · Графы и динамика (обзор)",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> это «вершина» алгоритмов. Для веб-разработки они не критичны, но знать идею полезно — и на собеседованиях спрашивают. Здесь — обзорно, без глубокого погружения: понять, что это и когда пригодится.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Граф — вершины и связи</h3>
+<p><b>Граф</b> — набор <b>вершин</b>, соединённых <b>рёбрами</b>. Так моделируют что угодно: города и дороги, друзей в соцсети, страницы и ссылки.</p>
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <line x1="120" y1="60" x2="240" y2="35" stroke="#37936F" stroke-width="2"/>
+  <line x1="120" y1="60" x2="240" y2="90" stroke="#37936F" stroke-width="2"/>
+  <line x1="240" y1="35" x2="360" y2="60" stroke="#37936F" stroke-width="2"/>
+  <line x1="240" y1="90" x2="360" y2="60" stroke="#37936F" stroke-width="2"/>
+  <circle cx="120" cy="60" r="18" fill="#1C201E" stroke="#B9FF47" stroke-width="2"/><text x="120" y="65" text-anchor="middle" fill="#B9FF47" font-size="13" font-weight="700">A</text>
+  <circle cx="240" cy="35" r="18" fill="#1C201E" stroke="#FFD34D" stroke-width="2"/><text x="240" y="40" text-anchor="middle" fill="#FFD34D" font-size="13" font-weight="700">B</text>
+  <circle cx="240" cy="90" r="18" fill="#1C201E" stroke="#FFD34D" stroke-width="2"/><text x="240" y="95" text-anchor="middle" fill="#FFD34D" font-size="13" font-weight="700">C</text>
+  <circle cx="360" cy="60" r="18" fill="#1C201E" stroke="#37936F" stroke-width="2"/><text x="360" y="65" text-anchor="middle" fill="#5BC79A" font-size="13" font-weight="700">D</text>
+  <text x="470" y="55" text-anchor="middle" fill="#9BA39D" font-size="10">вершины (A–D)</text>
+  <text x="470" y="72" text-anchor="middle" fill="#9BA39D" font-size="10">и рёбра между ними</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Два обхода: BFS и DFS</h3>
+<ul style="margin:6px 0 6px 18px;padding:0">
+<li><b>BFS (в ширину)</b> — расходимся «волнами» от старта, слой за слоем. Держим <b>очередь</b>. Находит кратчайший путь по числу рёбер.</li>
+<li><b>DFS (в глубину)</b> — идём вглубь по одной ветке до упора, потом назад. Держим <b>стек</b> или пишем <b>рекурсией</b>.</li>
+</ul>
+<p>Разбор: заметь связь с прошлыми уроками — BFS это про очередь, DFS про стек/рекурсию. Структуры данных были не зря.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Динамическое программирование (идея)</h3>
+<p><b>Динамика (ДП)</b> — разбить задачу на подзадачи и <b>запоминать</b> их ответы, чтобы не считать дважды. Помнишь наивный Фибоначчи-экспоненту? Если сохранять уже посчитанные <code>fib</code> в массив — станет O(n). Это и есть суть ДП: «не решай одно и то же повторно».</p>
+
+<p>⚠️ <b>На заметку (обзорно):</b></p>
+<span class="fix"><span class="was">BFS пишут рекурсией</span> → <span class="now">BFS — это очередь</span><br><span class="muted2">рекурсия/стек — это DFS</span></span>
+<span class="fix"><span class="was">ДП — это сложно и не для меня</span> → <span class="now">ДП = запоминать подзадачи</span><br><span class="muted2">начни с мемоизации Фибоначчи</span></span>
+<span class="fix"><span class="was">графы обязательны для веба</span> → <span class="now">для веба — по желанию</span><br><span class="muted2">полезно для кругозора и собеседований, но не блокирует переход</span></span>`,
+quiz:[
+ {q:"Что такое граф?",o:["Вершины, соединённые рёбрами","Тип сортировки","Массив чисел","Функция"],a:0,e:"Граф — вершины и связи между ними; моделирует города-дороги, друзей, ссылки."},
+ {t:"pairs",q:"Соедини обход со структурой",pairs:[["BFS (в ширину)","очередь"],["DFS (в глубину)","стек / рекурсия"],["кратчайший путь по рёбрам","BFS"],["обход вглубь","DFS"]],e:"BFS опирается на очередь, DFS — на стек или рекурсию."},
+ {q:"В чём идея динамического программирования?",o:["Запоминать ответы подзадач, чтобы не считать дважды","Сортировать быстрее","Использовать графы","Писать без функций"],a:0,e:"ДП сохраняет решения подзадач (мемоизация), убирая повторные вычисления."},
+ {t:"mc",q:"Как ускорить наивный рекурсивный Фибоначчи?",o:["Никак","Запоминать уже посчитанные значения (мемоизация)","Сделать цикл бесконечным","Убрать базу"],a:1,e:"Сохраняя fib в массив, убираем повторный счёт → из экспоненты в O(n)."},
+ {q:"Нужны ли графы и ДП для старта в веб-разработке?",o:["Обязательны","Полезны для кругозора и собеседований, но не критичны","Вредны","Только они и нужны"],a:1,e:"Для веба это бонус; двигаться дальше можно и с обзорным пониманием."},
+ {t:"mc",q:"BFS находит…",o:["Кратчайший путь по числу рёбер","Максимальное число","Сумму массива","Ничего"],a:0,e:"Расходясь волнами, BFS первым достигает вершины по минимуму рёбер."}],
+drill:{
+ intro:`<p><b>Что делаем (обзорно):</b> знакомимся с графами и ДП. Глубоко — по желанию, для веба не блокирует.</p>`,
+ tasks:[
+  {t:"Посмотри разбор BFS и DFS на простом графе — свяжи с очередью и стеком.",link:["BFS и DFS — разбор","yt","обход графа bfs dfs простыми словами c++"]},
+  {t:"Разбери мемоизацию Фибоначчи (наивный vs с массивом) — почувствуй идею ДП.",link:["Динамическое программирование — введение","yt","динамическое программирование для начинающих фибоначчи"]}]},
+res:[
+ ["Графы: BFS и DFS — разбор","yt","обход графа bfs dfs c++ для начинающих"],
+ ["Динамика с нуля","yt","динамическое программирование введение фибоначчи"],
+ ["Книга «Грокаем алгоритмы»","url","https://www.google.com/search?q=грокаем+алгоритмы+бхаргава"],
+ ["Codeforces — задачи","url","https://codeforces.com/problemset"]]}
 
 ];
 

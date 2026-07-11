@@ -2334,7 +2334,295 @@ res:[
  ["Графы: BFS и DFS — разбор","yt","обход графа bfs dfs c++ для начинающих"],
  ["Динамика с нуля","yt","динамическое программирование введение фибоначчи"],
  ["Книга «Грокаем алгоритмы»","url","https://www.google.com/search?q=грокаем+алгоритмы+бхаргава"],
- ["Codeforces — задачи","url","https://codeforces.com/problemset"]]}
+ ["Codeforces — задачи","url","https://codeforces.com/problemset"]]},
+{id:"e1",title:"C++ · Указатели и ссылки",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> тут связывается всё, что ты узнал про память. Указатели и ссылки — про то, где лежат данные и как менять оригинал, а не копию. Это отличает того, кто «пишет по образцу», от того, кто понимает, что происходит.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Адрес и указатель</h3>
+<p>У каждой переменной есть <b>адрес</b> в памяти. <code>&amp;x</code> — «взять адрес x». <b>Указатель</b> — переменная, которая хранит адрес: <code>int* p = &amp;x;</code>. Звёздочка <code>*p</code> — «значение по этому адресу».</p>
+<pre class="demo">int x = 5;
+int* p = &amp;x;      // p хранит адрес x
+cout &lt;&lt; *p;       // 5 — значение по адресу
+*p = 10;          // меняем x через указатель
+cout &lt;&lt; x;        // 10</pre>
+<svg viewBox="0 0 600 110" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="e1a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <g font-family="monospace">
+  <rect x="360" y="36" width="150" height="44" rx="8" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="435" y="58" text-anchor="middle" fill="#FFD34D" font-size="14" font-weight="700">x = 5</text>
+  <text x="435" y="74" text-anchor="middle" fill="#9BA39D" font-size="9">адрес 0x7ffe</text>
+  <rect x="40" y="36" width="150" height="44" rx="8" fill="#1C201E" stroke="#B9FF47"/>
+  <text x="115" y="58" text-anchor="middle" fill="#B9FF47" font-size="13" font-weight="700">p</text>
+  <text x="115" y="74" text-anchor="middle" fill="#9BA39D" font-size="9">хранит 0x7ffe</text>
+  <line x1="192" y1="58" x2="356" y2="58" stroke="#B9FF47" stroke-width="2" marker-end="url(#e1a)"/>
+  <text x="274" y="50" text-anchor="middle" fill="#9BA39D" font-size="10">*p → значение x</text>
+  </g>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Ссылка — псевдоним</h3>
+<pre class="demo">int x = 5;
+int&amp; r = x;     // r — другое имя того же x
+r = 20;
+cout &lt;&lt; x;      // 20</pre>
+<p>Разбор: <b>ссылка</b> <code>int&amp; r = x</code> — это второе имя той же переменной. Меняешь <code>r</code> — меняется <code>x</code>. Проще указателя: без звёздочек и адресов.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Зачем: передача по ссылке</h3>
+<pre class="demo">void addOne(int&amp; n) { n++; }   // по ссылке — меняет оригинал
+void addOne(int n)  { n++; }   // по значению — меняет копию
+
+int a = 5;
+addOne(a);   // если по ссылке → a стало 6</pre>
+<p>Разбор: обычно аргумент копируется (<b>по значению</b>) — функция меняет копию, оригинал цел. Добавишь <code>&amp;</code> — функция получит <b>сам</b> объект и изменит его. Так работает <code>swap</code> и передача больших структур без копирования.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">void f(int n){ n++; } — жду, что оригинал изменится</span> → <span class="now">void f(int&amp; n)</span><br><span class="muted2">без &amp; функция меняет копию, не оригинал</span></span>
+<span class="fix"><span class="was">*p при p, который никуда не указывает</span> → <span class="now">сначала присвой p корректный адрес</span><br><span class="muted2">разыменование «пустого» указателя ломает программу</span></span>
+<span class="fix"><span class="was">путаю *p и &amp;x</span> → <span class="now">&amp; берёт адрес, * берёт значение по адресу</span><br><span class="muted2">это обратные операции</span></span>`,
+quiz:[
+ {t:"output",q:"Что выведет код?",code:"int x = 5;\nint* p = &x;\n*p = 10;\ncout << x;",o:["10","5","0","адрес"],a:0,e:"*p = 10 меняет значение по адресу x → x стало 10."},
+ {q:"Что делает оператор & перед переменной (как &x)?",o:["Берёт значение","Берёт адрес переменной","Удаляет её","Копирует"],a:1,e:"&x — адрес переменной x в памяти."},
+ {t:"output",q:"Что выведет код?",code:"int x = 5;\nint& r = x;\nr = 20;\ncout << x;",o:["20","5","0","r"],a:0,e:"r — псевдоним x; r = 20 меняет сам x."},
+ {t:"mc",q:"Чтобы функция изменила оригинал аргумента, параметр надо передать…",o:["по значению","по ссылке (int&)","как строку","никак"],a:1,e:"По ссылке (int& n) функция работает с самим объектом, а не с копией."},
+ {t:"bug",q:"Почему a не изменится?",code:["void addOne(int n) { n++; }","int a = 5;","addOne(a);"],a:0,e:"Параметр int n — копия. Нужно int& n, чтобы менять оригинал."},
+ {t:"pairs",q:"Соедини запись со смыслом",pairs:[["&x","адрес x"],["*p","значение по адресу"],["int& r","ссылка (псевдоним)"],["int* p","указатель"]],e:"& берёт адрес, * — значение по адресу, & в типе — ссылка, * в типе — указатель."},
+ {t:"cloze",q:"Сделай функцию, меняющую оригинал",code:"void addOne(int{0} n) {\n    n++;\n}",gaps:[["&"]],e:"int& n — приём по ссылке: функция изменит сам аргумент."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> руками щупаем ссылки и указатели.</p>`,
+ tasks:[
+  {t:"Напиши функцию swap(int& a, int& b), меняющую два числа местами, и проверь её.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]},
+  {t:"Реши 3–4 задачи, где функция должна менять переданные значения (через ссылку).",link:["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]},
+  {t:"Пройди тему «Указатели и ссылки» на курсе по C++.",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]}]},
+res:[
+ ["Указатели и ссылки — разбор","yt","c++ указатели ссылки для начинающих"],
+ ["learncpp.com — pointers","url","https://www.learncpp.com/cpp-tutorial/introduction-to-pointers/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"e2",title:"C++ · ООП: классы (минимум)",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> когда данные и действия над ними разрастаются, их удобно собрать в один «тип» — класс. Это основа больших программ и мостик к любому современному языку (в JS/TS дальше будет то же). Берём необходимый минимум, без глубокого погружения.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Класс — свой тип данных</h3>
+<pre class="demo">class Player {
+public:
+    string name;
+    int level;
+
+    void levelUp() { level++; }
+};
+
+Player p;
+p.name = "Emil";
+p.level = 1;
+p.levelUp();
+cout &lt;&lt; p.level;   // 2</pre>
+<p>Разбор: <code>class</code> описывает <b>шаблон</b>: какие в нём <b>поля</b> (данные: name, level) и <b>методы</b> (действия: levelUp). Из класса создают <b>объекты</b> (<code>Player p</code>) — конкретные экземпляры. Обращаемся через точку: <code>p.level</code>.</p>
+<svg viewBox="0 0 600 120" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="e2a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="30" y="30" width="150" height="60" rx="10" fill="#1C201E" stroke="#FFD34D"/>
+  <text x="105" y="52" text-anchor="middle" fill="#FFD34D" font-size="13" font-weight="700">class Player</text>
+  <text x="105" y="72" text-anchor="middle" fill="#9BA39D" font-size="9">шаблон: name, level</text>
+  <line x1="182" y1="48" x2="250" y2="40" stroke="#B9FF47" stroke-width="2" marker-end="url(#e2a)"/>
+  <line x1="182" y1="72" x2="250" y2="82" stroke="#B9FF47" stroke-width="2" marker-end="url(#e2a)"/>
+  <rect x="256" y="24" width="150" height="40" rx="9" fill="#141716" stroke="#B9FF47"/>
+  <text x="331" y="42" text-anchor="middle" fill="#B9FF47" font-size="11" font-weight="700">p1: Emil, lvl 2</text>
+  <text x="331" y="57" text-anchor="middle" fill="#9BA39D" font-size="9">объект</text>
+  <rect x="256" y="70" width="150" height="40" rx="9" fill="#141716" stroke="#37936F"/>
+  <text x="331" y="88" text-anchor="middle" fill="#5BC79A" font-size="11" font-weight="700">p2: Anna, lvl 5</text>
+  <text x="331" y="103" text-anchor="middle" fill="#9BA39D" font-size="9">объект</text>
+  <text x="500" y="60" text-anchor="middle" fill="#9BA39D" font-size="10">один шаблон —</text>
+  <text x="500" y="76" text-anchor="middle" fill="#9BA39D" font-size="10">много объектов</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Конструктор — задать поля при создании</h3>
+<pre class="demo">class Player {
+public:
+    string name;
+    int level;
+    Player(string n, int l) { name = n; level = l; }
+};
+
+Player p("Emil", 1);   // сразу с данными</pre>
+<p>Разбор: <b>конструктор</b> — метод с именем класса, вызывается при создании объекта. Удобно задавать поля сразу, а не по одному.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Инкапсуляция: public / private</h3>
+<p><code>public</code> — доступно снаружи, <code>private</code> — только внутри класса. Прячут детали, чтобы снаружи пользовались только «кнопками» (методами), а не лезли в внутренности. Пока достаточно понимать идею.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">поля без public — обращаюсь снаружи</span> → <span class="now">пометь public</span><br><span class="muted2">по умолчанию в class всё private</span></span>
+<span class="fix"><span class="was">конструктор с другим именем</span> → <span class="now">имя конструктора = имя класса</span><br><span class="muted2">иначе это обычный метод, а не конструктор</span></span>
+<span class="fix"><span class="was">забыл ; после } класса</span> → <span class="now">class {...};</span><br><span class="muted2">объявление класса завершается точкой с запятой</span></span>`,
+quiz:[
+ {q:"Что такое класс?",o:["Готовый объект","Шаблон: поля (данные) + методы (действия)","Цикл","Массив"],a:1,e:"Класс описывает, какие данные и действия будут у объектов этого типа."},
+ {t:"output",q:"Что выведет код?",code:"class Box {\npublic:\n    int n = 1;\n    void add() { n++; }\n};\nBox b;\nb.add(); b.add();\ncout << b.n;",o:["3","1","2","0"],a:0,e:"n стартует с 1, два add() → 3."},
+ {t:"mc",q:"Как называется метод, задающий поля при создании объекта?",o:["Деструктор","Конструктор","Цикл","Оператор"],a:1,e:"Конструктор (имя = имя класса) вызывается при создании объекта."},
+ {t:"pairs",q:"Соедини понятие с ролью",pairs:[["класс","шаблон типа"],["объект","экземпляр класса"],["поле","данные объекта"],["метод","действие объекта"]],e:"Класс — чертёж, объект — изделие, поля — данные, методы — действия."},
+ {t:"bug",q:"Почему не скомпилируется?",code:["class Dog {","    string name;","};","Dog d;","d.name = \"Rex\";"],a:1,e:"По умолчанию поля класса private. Нужно public:, чтобы обращаться снаружи."},
+ {t:"cloze",q:"Дострой доступ и вызов метода",code:"class Player {\n{0}:\n    int level = 1;\n    void up() { level++; }\n};\nPlayer p;\np.{1}();",gaps:["public","up"],e:"public открывает доступ; p.up() вызывает метод объекта."},
+ {q:"Что значит private?",o:["Доступно всем","Доступно только внутри класса","Ускоряет код","Это цикл"],a:1,e:"private прячет поля/методы: снаружи ими пользоваться нельзя — только внутри класса."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> описываем свои классы.</p>`,
+ tasks:[
+  {t:"Напиши класс Rectangle с полями width, height и методом area(). Создай объект и выведи площадь.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]},
+  {t:"Добавь классу конструктор, задающий поля при создании.",link:["ООП в C++ — разбор","yt","c++ классы ооп для начинающих"]},
+  {t:"Пройди тему «Классы / ООП» на курсе по C++.",link:["Stepik — курсы C++","url","https://stepik.org/catalog/search?query=C%2B%2B"]}]},
+res:[
+ ["ООП и классы в C++ — просто","yt","c++ классы ооп для начинающих"],
+ ["learncpp.com — classes","url","https://www.learncpp.com/cpp-tutorial/introduction-to-object-oriented-programming/"],
+ ["Stepik — курсы по C++","url","https://stepik.org/catalog/search?query=C%2B%2B"],
+ ["acmp.ru — задачи","url","https://acmp.ru/index.asp?main=tasks"]]},
+
+{id:"e3",title:"Инструменты · Git и GitHub",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> git хранит историю твоего кода (можно откатиться), а GitHub выкладывает её в интернет — это твоё портфолио, которое смотрят работодатели. С git работает вообще вся индустрия. Складывай туда все решения с этого этапа.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Четыре команды, которые решают 90%</h3>
+<pre class="demo">git init                    # создать репозиторий в папке
+git add .                   # подготовить все изменения
+git commit -m "add task 5"  # зафиксировать их в истории
+git push                    # отправить на GitHub</pre>
+<p>Разбор: <code>init</code> — один раз в начале. Дальше цикл: поменял код → <code>add</code> (выбрать изменения) → <code>commit</code> (сохранить снимок с описанием) → <code>push</code> (залить на GitHub).</p>
+<svg viewBox="0 0 600 110" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="e3a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="14" y="42" width="110" height="40" rx="8" fill="#1C201E" stroke="#B9FF47"/><text x="69" y="60" text-anchor="middle" fill="#B9FF47" font-size="10" font-weight="700">твои файлы</text><text x="69" y="74" text-anchor="middle" fill="#9BA39D" font-size="8">рабочая папка</text>
+  <line x1="126" y1="62" x2="168" y2="62" stroke="#B9FF47" stroke-width="2" marker-end="url(#e3a)"/><text x="147" y="54" text-anchor="middle" fill="#9BA39D" font-size="8">add</text>
+  <rect x="172" y="42" width="110" height="40" rx="8" fill="#1C201E" stroke="#FFD34D"/><text x="227" y="60" text-anchor="middle" fill="#FFD34D" font-size="10" font-weight="700">подготовлено</text><text x="227" y="74" text-anchor="middle" fill="#9BA39D" font-size="8">staging</text>
+  <line x1="284" y1="62" x2="326" y2="62" stroke="#B9FF47" stroke-width="2" marker-end="url(#e3a)"/><text x="305" y="54" text-anchor="middle" fill="#9BA39D" font-size="8">commit</text>
+  <rect x="330" y="42" width="110" height="40" rx="8" fill="#1C201E" stroke="#5BC79A"/><text x="385" y="60" text-anchor="middle" fill="#5BC79A" font-size="10" font-weight="700">история</text><text x="385" y="74" text-anchor="middle" fill="#9BA39D" font-size="8">коммиты</text>
+  <line x1="442" y1="62" x2="484" y2="62" stroke="#B9FF47" stroke-width="2" marker-end="url(#e3a)"/><text x="463" y="54" text-anchor="middle" fill="#9BA39D" font-size="8">push</text>
+  <rect x="488" y="42" width="100" height="40" rx="8" fill="#141716" stroke="#37936F"/><text x="538" y="60" text-anchor="middle" fill="#F4F6F2" font-size="11" font-weight="700">GitHub</text><text x="538" y="74" text-anchor="middle" fill="#9BA39D" font-size="8">в облаке</text>
+</svg>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Что такое коммит</h3>
+<p><b>Коммит</b> — снимок кода в момент времени с подписью («что сделал»). История коммитов — как сохранёнки в игре: всегда можно вернуться к рабочей версии. Пиши осмысленные сообщения: <code>"fix binary search bounds"</code>, а не <code>"asdf"</code>.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. GitHub — твоё лицо</h3>
+<p>Заведи репозиторий, заливай туда решения задач и проекты. Зелёные квадратики активности и живые проекты — это то, что смотрит работодатель у джуна. Профиль на GitHub часто важнее диплома.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">git commit без git add</span> → <span class="now">сначала git add .</span><br><span class="muted2">коммитятся только подготовленные (add) изменения</span></span>
+<span class="fix"><span class="was">git commit без -m</span> → <span class="now">git commit -m "описание"</span><br><span class="muted2">коммиту нужно сообщение — что именно сделал</span></span>
+<span class="fix"><span class="was">push без привязки к GitHub</span> → <span class="now">создай репозиторий и привяжи remote</span><br><span class="muted2">push отправляет в удалённый репозиторий, его нужно задать</span></span>`,
+quiz:[
+ {q:"Что делает git commit?",o:["Удаляет файлы","Сохраняет снимок изменений в историю","Открывает сайт","Запускает код"],a:1,e:"commit фиксирует текущее состояние кода в историю с описанием."},
+ {t:"order",q:"Собери типичный цикл работы с git",lines:["git add .","git commit -m \"add task\"","git push"],e:"Подготовить изменения (add), зафиксировать (commit), отправить на GitHub (push)."},
+ {t:"pairs",q:"Соедини команду с действием",pairs:[["git init","создать репозиторий"],["git add","подготовить изменения"],["git commit","сохранить снимок"],["git push","отправить на GitHub"]],e:"init — старт, add — выбрать, commit — сохранить, push — залить."},
+ {t:"bug",q:"Почему коммит пустой / не проходит как надо?",code:["git commit -m \"work\"","# изменения не были добавлены"],a:1,e:"Перед commit нужно git add — иначе изменения не попадут в снимок."},
+ {q:"Что такое хорошее сообщение коммита?",o:["\"asdf\"","Короткое описание, что сделал (\"fix search bounds\")","Пустое","Дата"],a:1,e:"Осмысленное сообщение помогает понять историю: что и зачем менялось."},
+ {q:"Зачем джуну GitHub?",o:["Ни за чем","Это портфолио, которое смотрят работодатели","Только для игр","Чтобы хранить фото"],a:1,e:"Живые проекты и история коммитов на GitHub — сильный аргумент на собеседовании."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> заводим git и выкладываем код. Это твой личный шаг из роадмапа.</p>`,
+ tasks:[
+  {t:"Установи git и создай аккаунт на GitHub.",link:["GitHub — начало работы","url","https://docs.github.com/ru/get-started/quickstart/hello-world"]},
+  {t:"Создай репозиторий, положи туда решения своих задач: add → commit → push.",link:["Git за 15 минут","yt","git и github для начинающих с нуля"]},
+  {t:"Сделай так, чтобы в репозитории было минимум 5 коммитов с осмысленными сообщениями.",link:["GitHub — твой профиль","url","https://github.com"]}]},
+res:[
+ ["Git и GitHub для начинающих","yt","git github для начинающих с нуля"],
+ ["Официальная документация Git (рус.)","url","https://git-scm.com/book/ru/v2"],
+ ["GitHub — начало работы","url","https://docs.github.com/ru/get-started"],
+ ["Интерактивный тренажёр git","url","https://learngitbranching.js.org/?locale=ru_RU"]]},
+
+{id:"e4",title:"Инструменты · Терминал и мини-проект",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> терминал — пульт управления компьютером для программиста, а первый проект длиннее 200 строк — момент, когда ты из «решателя задач» становишься тем, кто делает программы. Это чекпоинт Этапа 3 роадмапа.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Терминал: базовые команды</h3>
+<table class="simple"><tr><th>Команда</th><th>Что делает</th></tr>
+<tr><td><code>pwd</code></td><td>где я сейчас (текущая папка)</td></tr>
+<tr><td><code>ls</code></td><td>показать файлы в папке</td></tr>
+<tr><td><code>cd имя</code></td><td>зайти в папку</td></tr>
+<tr><td><code>mkdir имя</code></td><td>создать папку</td></tr></table>
+<p>Разбор: терминал — это диалог с ОС текстом. Ты уже им пользовался, когда компилировал (<code>clang++</code>, <code>./main</code>). Освой навигацию — дальше без неё никак.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Файлы в C++: сохранять и читать</h3>
+<pre class="demo">#include &lt;fstream&gt;
+ofstream out("data.txt");   // запись
+out &lt;&lt; "задача 1" &lt;&lt; endl;
+out.close();
+
+ifstream in("data.txt");    // чтение
+string line;
+getline(in, line);          // прочитать строку</pre>
+<p>Разбор: <code>ofstream</code> пишет в файл (как <code>cout</code>, но в файл), <code>ifstream</code> читает (как <code>cin</code>). Так программа <b>запоминает</b> данные между запусками — на диске, а не в исчезающей RAM.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Мини-проект: todo в консоли</h3>
+<svg viewBox="0 0 600 96" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="e4a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="30" y="34" width="120" height="40" rx="9" fill="#1C201E" stroke="#B9FF47"/><text x="90" y="52" text-anchor="middle" fill="#B9FF47" font-size="10" font-weight="700">меню</text><text x="90" y="67" text-anchor="middle" fill="#9BA39D" font-size="8">добавить/показать</text>
+  <line x1="152" y1="54" x2="204" y2="54" stroke="#B9FF47" stroke-width="2" marker-end="url(#e4a)"/>
+  <rect x="208" y="34" width="140" height="40" rx="9" fill="#1C201E" stroke="#FFD34D"/><text x="278" y="52" text-anchor="middle" fill="#FFD34D" font-size="10" font-weight="700">vector задач</text><text x="278" y="67" text-anchor="middle" fill="#9BA39D" font-size="8">в памяти</text>
+  <line x1="350" y1="54" x2="402" y2="54" stroke="#B9FF47" stroke-width="2" marker-end="url(#e4a)"/>
+  <rect x="406" y="34" width="150" height="40" rx="9" fill="#141716" stroke="#37936F"/><text x="481" y="52" text-anchor="middle" fill="#5BC79A" font-size="10" font-weight="700">файл data.txt</text><text x="481" y="67" text-anchor="middle" fill="#9BA39D" font-size="8">сохранение</text>
+</svg>
+<p>Собери консольный менеджер задач: меню (добавить / показать / удалить / выйти), задачи в <code>vector</code>, при выходе — сохранение в файл, при запуске — загрузка. Это соберёт вместе всё: циклы, функции, vector, файлы. Выложи на GitHub.</p>
+
+<p>⚠️ <b>Частые ошибки:</b></p>
+<span class="fix"><span class="was">не закрыл файл (out.close())</span> → <span class="now">закрывай после записи</span><br><span class="muted2">иначе данные могут не записаться</span></span>
+<span class="fix"><span class="was">весь проект в одном main</span> → <span class="now">разбей на функции</span><br><span class="muted2">addTask(), showTasks(), saveToFile() — так читаемо</span></span>
+<span class="fix"><span class="was">данные в RAM «сохранятся сами»</span> → <span class="now">пиши в файл</span><br><span class="muted2">без записи на диск при выходе всё пропадёт</span></span>`,
+quiz:[
+ {t:"pairs",q:"Соедини команду терминала с действием",pairs:[["pwd","где я сейчас"],["ls","показать файлы"],["cd","зайти в папку"],["mkdir","создать папку"]],e:"Базовая навигация по файловой системе из терминала."},
+ {q:"Чем ofstream отличается от ifstream?",o:["ofstream пишет в файл, ifstream читает","Ничем","Оба читают","Оба про экран"],a:0,e:"ofstream — вывод в файл (как cout), ifstream — чтение из файла (как cin)."},
+ {q:"Почему todo-список нужно сохранять в файл?",o:["Для красоты","Данные в RAM исчезают при выходе, файл — на диске","Файлы быстрее","Незачем"],a:1,e:"Память очищается при завершении программы; файл на диске переживает перезапуск."},
+ {t:"mc",q:"Как программа на C++ пишет строку в файл?",o:["cout << в файл","через ofstream: out << ...","print()","никак"],a:1,e:"ofstream out(\"f.txt\"); out << ...; — вывод направляется в файл."},
+ {q:"Как лучше устроить проект на 200+ строк?",o:["Весь код в main","Разбить на функции по задачам","В одну строку","Без функций"],a:1,e:"Функции (addTask, showTasks, saveToFile) делают код читаемым и поддерживаемым."},
+ {t:"mc",q:"Какой контейнер удобен для списка задач в памяти?",o:["int","vector<string>","bool","один char"],a:1,e:"vector<string> хранит произвольное число задач-строк и легко растёт."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> главный шаг этапа — первый настоящий проект. Отметь части по мере готовности.</p>`,
+ tasks:[
+  {t:"Освой навигацию в терминале: pwd, ls, cd, mkdir — создай папку проекта.",link:["Терминал для начинающих","yt","терминал командная строка для начинающих linux macos"]},
+  {t:"Разберись с чтением/записью файлов в C++ (ifstream/ofstream).",link:["Файлы в C++ — разбор","yt","c++ работа с файлами ifstream ofstream"]},
+  {t:"Собери консольный todo-менеджер (меню + vector + сохранение в файл, 200+ строк) и выложи на GitHub.",link:["Онлайн-компилятор C++","url","https://www.programiz.com/cpp-programming/online-compiler/"]}]},
+res:[
+ ["Работа с файлами в C++","yt","c++ работа с файлами ifstream ofstream для начинающих"],
+ ["Терминал: базовые команды","yt","терминал для начинающих команды"],
+ ["learncpp.com — file I/O","url","https://www.learncpp.com/cpp-tutorial/basic-file-io/"],
+ ["GitHub — выложить проект","url","https://docs.github.com/ru/get-started"]]},
+
+{id:"f1",title:"Дальше · Портфолио и развилка",
+theory:`
+<p>🎯 <b>Зачем это тебе:</b> ты прошёл фундамент — C++, алгоритмы, инженерную базу. Дальше два пути (и оба ведут к работе). Этот урок — карта: куда идти после основ и как не растерять форму.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">1. Держи алгоритмическую форму</h3>
+<p>Пара задач в неделю на Codeforces или LeetCode — и мозг в тонусе, и к техническим собеседованиям готов. Не бросай практику: слабый фундамент по алгоритмам — главная причина «застрял на джуниоре».</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">2. Собери портфолио</h3>
+<p>2–3 pet-проекта на GitHub, каждый чуть сложнее предыдущего. Работодатель у джуна смотрит именно на них: что ты умеешь <b>делать</b>, а не только решать задачки.</p>
+
+<h3 style="margin:16px 0 4px;font-family:var(--font-display)">3. Развилка: фронтенд или бэкенд</h3>
+<svg viewBox="0 0 600 130" class="diagram" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="f1a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#B9FF47"/></marker></defs>
+  <rect x="230" y="14" width="140" height="34" rx="9" fill="#1C201E" stroke="#B9FF47"/><text x="300" y="35" text-anchor="middle" fill="#B9FF47" font-size="12" font-weight="700">после основ</text>
+  <line x1="300" y1="48" x2="150" y2="72" stroke="#B9FF47" stroke-width="2" marker-end="url(#f1a)"/>
+  <line x1="300" y1="48" x2="450" y2="72" stroke="#B9FF47" stroke-width="2" marker-end="url(#f1a)"/>
+  <rect x="40" y="76" width="220" height="46" rx="10" fill="#141716" stroke="#FFD34D"/><text x="150" y="96" text-anchor="middle" fill="#FFD34D" font-size="12" font-weight="700">Фронтенд</text><text x="150" y="112" text-anchor="middle" fill="#9BA39D" font-size="9">HTML/CSS/JS → TypeScript + React</text>
+  <rect x="340" y="76" width="220" height="46" rx="10" fill="#141716" stroke="#5BC79A"/><text x="450" y="96" text-anchor="middle" fill="#5BC79A" font-size="12" font-weight="700">Бэкенд</text><text x="450" y="112" text-anchor="middle" fill="#9BA39D" font-size="9">Node.js + Express + база данных (SQL)</text>
+</svg>
+<p>Разбор: <b>фронтенд</b> — то, что видит пользователь (сайты, интерфейсы): путь <code>HTML/CSS/JS → React</code>. <b>Бэкенд</b> — сервер и данные: <code>Node.js + база данных</code>. Хорошая новость: следующий раздел этого тренажёра — <b>Веб (Этап 4)</b> — как раз даёт базу HTML/CSS/JS для обоих путей. Выбор направления сделаешь по ощущениям, не сейчас.</p>
+
+<p>⚠️ <b>На заметку:</b></p>
+<span class="fix"><span class="was">бросить алгоритмы после основ</span> → <span class="now">пара задач в неделю</span><br><span class="muted2">форма теряется быстро, а на собеседованиях это спрашивают</span></span>
+<span class="fix"><span class="was">учить всё сразу (и фронт, и бэк)</span> → <span class="now">выбери одно направление</span><br><span class="muted2">глубина в одном ценнее поверхностности в двух</span></span>
+<span class="fix"><span class="was">только теория, без проектов</span> → <span class="now">делай pet-проекты</span><br><span class="muted2">портфолио важнее списка пройденных курсов</span></span>`,
+quiz:[
+ {q:"Что делать, чтобы не потерять алгоритмическую форму?",o:["Ничего","Решать пару задач в неделю (Codeforces/LeetCode)","Только читать","Забыть алгоритмы"],a:1,e:"Регулярная практика держит навык и готовит к техническим собеседованиям."},
+ {t:"pairs",q:"Соедини направление с его стеком",pairs:[["Фронтенд","HTML/CSS/JS → React"],["Бэкенд","Node.js + база данных"],["портфолио","pet-проекты на GitHub"],["форма","задачи Codeforces"]],e:"Фронт — интерфейсы, бэк — сервер и данные; портфолио и практика — постоянные спутники."},
+ {q:"Что работодатель смотрит у джуна в первую очередь?",o:["Диплом","Живые pet-проекты и код на GitHub","Возраст","Количество курсов"],a:1,e:"Реальные проекты показывают, что ты умеешь делать, а не только проходить курсы."},
+ {q:"Какой раздел этого тренажёра даёт базу для обоих путей (фронт и бэк)?",o:["Английский","Веб (Этап 4): HTML/CSS/JS","Никакой","Только внешние курсы"],a:1,e:"Веб-раздел даёт HTML/CSS/JS — общий фундамент и для фронтенда, и для бэкенда на Node."},
+ {t:"mc",q:"Сколько pet-проектов стоит собрать в портфолио?",o:["0","2–3, каждый сложнее предыдущего","20 одинаковых","1 и хватит"],a:1,e:"2–3 проекта нарастающей сложности убедительно показывают рост."},
+ {q:"Как выбирать между фронтендом и бэкендом?",o:["Прямо сейчас, наугад","По ощущениям после веб-базы — что интереснее","Никогда","Бросить монетку и не менять"],a:1,e:"Сначала попробуй веб-базу, потом выбери направление по интересу — спешить не нужно."}],
+drill:{
+ intro:`<p><b>Что делаем:</b> закладываем привычки на будущее. Отметь, когда начнёшь.</p>`,
+ tasks:[
+  {t:"Заведи привычку: 1–2 задачи в неделю на Codeforces или LeetCode.",link:["Codeforces — задачи","url","https://codeforces.com/problemset"]},
+  {t:"Придумай и начни первый pet-проект (что-то полезное лично тебе).",link:["Идеи pet-проектов","yt","идеи пет проектов для портфолио junior"]},
+  {t:"Переходи к разделу «Веб» этого тренажёра — это Этап 4 твоего пути.",link:["LeetCode — практика","url","https://leetcode.com/problemset/"]}]},
+res:[
+ ["Как собрать портфолио джуна","yt","портфолио junior разработчика pet проекты"],
+ ["Codeforces — практика","url","https://codeforces.com/problemset"],
+ ["LeetCode — практика","url","https://leetcode.com/problemset/"],
+ ["roadmap.sh — карты развития","url","https://roadmap.sh"]]}
 
 ];
 

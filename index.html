@@ -891,18 +891,36 @@ function checkQuiz(qs,prefix,errKind,errId){
  save();return score;}
 
 /* ============ CODE SECTION ============ */
+/* Этапы пути «с нуля → веб»: C++ и алгоритмы как фундамент, веб — в финале */
+const PROG_BLOCKS=[
+ {n:"00",title:"Инструменты",goal:"Настроить окружение и запустить первую программу",lessons:["c0"]},
+ {n:"01",title:"Основы C++",goal:"Переменные, условия, циклы, функции, массивы",lessons:["c1","c2","c3","c4","c5"]},
+ {n:"02",title:"Как работает компьютер",goal:"Двоичная система, процессор и память, компиляция",lessons:["k1","k2","k3"]},
+ {n:"03",title:"Алгоритмы и структуры данных",goal:"Сложность, поиск, сортировки, рекурсия, STL — ядро пути",lessons:["a1","a2","a3","a4","a5","a6","a7","a8","a9"]},
+ {n:"04",title:"Инженерная база",goal:"Указатели, ООП-минимум, git, первый проект",lessons:["e1","e2","e3","e4"]},
+ {n:"05",title:"Веб-разработка",goal:"HTML, CSS, JavaScript, DOM, API — делаем сайты",lessons:["m1","m2","m3","m10","m11","m4","m5","m6","m7","m12","m13","m14","m15","m8","m16","m17","m9","m18","m19"]},
+ {n:"06",title:"Дальше",goal:"Портфолио и развилка: фронтенд или бэкенд",lessons:["f1"]}
+];
+function progBlockDone(b){return b.lessons.every(id=>{const m=PROG.find(x=>x.id===id);return m&&progDone(m);});}
 function drawCodeList(){
- main.innerHTML=`<div class="section-head"><span class="mono">Путь до junior</span>
- <h1 class="disp">Программирование</h1>
- <span class="muted">Иди по порядку: теория → тест → практика в редакторе. Тест засчитывается от 80%.</span></div>
- <div class="rowlist">`+
- PROG.map((m,i)=>{const st=S.prog[m.id]||{};
-  return `<div class="lrow" onclick="view={tab:'code',id:'${m.id}'};draw()">
-   <span class="num" ${progDone(m)?'style="color:var(--acid)"':""}>${String(i+1).padStart(2,"0")}</span>
-   <div class="mid"><span class="t">${m.title}</span><div class="pills">
-    ${st.quiz!=null?`<span class="pill ok"><i class="ph-bold ph-check-fat"></i>Тест ${st.quiz}/${m.quiz.length}</span>`:'<span class="pill">Тест не пройден</span>'}
-    ${st.practice?'<span class="pill acid"><i class="ph-bold ph-code"></i>Практика сдана</span>':'<span class="pill">Практика</span>'}</div></div>
-   <i class="ph-bold ph-arrow-right arr"></i></div>`;}).join("")+`</div>`;}
+ let curSet=false;
+ const cards=PROG_BLOCKS.map(b=>{
+  const done=progBlockDone(b);
+  const current=!done&&!curSet; if(current)curSet=true;
+  const state=done?"done":current?"current":"";
+  const statusPill=done?'<span class="pill ok"><i class="ph-bold ph-check-fat"></i>Пройдено</span>'
+    :current?'<span class="pill acid"><i class="ph-bold ph-play"></i>Ты здесь</span>':'';
+  const steps=b.lessons.map(id=>{const m=PROG.find(x=>x.id===id);if(!m)return"";const d=progDone(m);const st=S.prog[id]||{};
+   return `<div class="mstep ${d?"done":""}" onclick="view={tab:'code',id:'${id}'};draw()"><i class="ph-bold ${d?"ph-check-circle":"ph-circle"}"></i><span>${m.title}${st.quiz!=null?` · тест ${st.quiz}/${m.quiz.length}`:""}</span></div>`;}).join("");
+  return `<div class="blockcard ${state}">
+   <div class="bhead"><span class="bnum" style="color:var(--acid)">${b.n}</span><div style="flex:1"><div class="btitle">${b.title}</div></div>${statusPill}</div>
+   <div class="bsteps">${steps}</div>
+   <div class="bproject"><i class="ph-bold ph-flag-checkered"></i><span><b>Цель:</b> ${b.goal}</span></div></div>`;
+ }).join("");
+ main.innerHTML=`<div class="section-head"><span class="mono">Программирование с нуля → веб</span>
+  <h1 class="disp">Программирование</h1>
+  <span class="muted">Путь по этапам: C++ и алгоритмы — фундамент, веб — в финале. Все уроки открыты, но лучше идти по порядку. Тест засчитывается от 80%.</span></div>
+  <div class="blocklist">${cards}</div>`;}
 /* ============ PRACTICE LAB v2: код запускается, проверяется РЕЗУЛЬТАТ ============ */
 /* Задание с настоящей проверкой:
    HTML — рендерим в песочнице и смотрим получившуюся страницу (DOM/раскладку).
@@ -989,8 +1007,8 @@ function drillHTML(id){const m=PROG.find(x=>x.id===id),d=drillProg(id),done=dril
 function drawProgLesson(id){
  const m=PROG.find(x=>x.id===id),idx=PROG.indexOf(m);
  main.innerHTML=`
- <button class="backlink" onclick="view={tab:'code'};draw()"><i class="ph-bold ph-arrow-left"></i>Все модули</button>
- <div class="section-head" style="padding-top:0"><span class="mono">Модуль ${String(idx+1).padStart(2,"0")}</span>
+ <button class="backlink" onclick="view={tab:'code'};draw()"><i class="ph-bold ph-arrow-left"></i>Все этапы</button>
+ <div class="section-head" style="padding-top:0"><span class="mono">${(function(){const b=PROG_BLOCKS.find(x=>x.lessons.includes(m.id));return b?"Этап "+b.n+" · "+b.title:"Модуль "+String(idx+1).padStart(2,"0");})()}</span>
  <h1 class="disp">${m.title}</h1></div>
  <div class="widget"><div class="wlabel"><i class="ph-bold ph-brain"></i><span class="mono">Теория</span></div><div class="theory">${m.theory}</div></div>
  <div class="widget"><div class="wlabel"><i class="ph-bold ph-target"></i><span class="mono">Тест · ${m.quiz.length} вопросов</span></div>

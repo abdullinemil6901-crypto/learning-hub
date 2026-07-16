@@ -212,6 +212,23 @@ table.simple th{background:var(--surface-2);font-family:var(--font-mono);font-si
 textarea.editor{width:100%;min-height:220px;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--hairline);border-radius:var(--r-m);padding:16px;font-family:var(--font-mono);font-size:14px;line-height:1.55;resize:vertical;outline:none}
 textarea.editor:focus{border-color:var(--acid)}
 iframe.preview{width:100%;height:230px;border:1px solid var(--hairline);border-radius:var(--r-m);background:#fff;margin-top:6px}
+/* ИИ-тьютор */
+.tutor{margin-top:10px;border:1px solid var(--hairline);border-radius:var(--r-m);background:var(--surface-1);overflow:hidden}
+.tutor .thead{display:flex;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid var(--hairline)}
+.tutor .thead .ai{width:26px;height:26px;border-radius:50%;overflow:hidden;border:1.5px solid var(--acid);flex:0 0 auto}
+.tutor .thead .ai img{width:100%;height:100%;object-fit:cover;object-position:top}
+.tutor .thead .mono{color:var(--acid)}
+.tutor .tbtns{display:flex;gap:8px;flex-wrap:wrap;padding:11px 13px}
+.tutor .tbtns button{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:var(--r-pill);border:1px solid var(--hairline-strong);background:var(--surface-2);color:var(--text-1);font-family:var(--font-body);font-weight:700;font-size:13px;cursor:pointer;transition:all .14s var(--ease)}
+.tutor .tbtns button:hover{border-color:var(--acid);color:var(--acid)}
+.tutor .tbtns button:disabled{opacity:.5;cursor:default}
+.tutor .tout{padding:0 13px 13px;font-size:14px;line-height:1.55;white-space:pre-wrap;color:var(--text-1)}
+.tutor .tout:empty{display:none}
+.tutor .tout code{background:var(--code-bg);color:var(--code-ink);padding:1px 5px;border-radius:5px;font-family:var(--font-mono);font-size:12.5px}
+.tutor .task-ask{display:flex;gap:8px;padding:0 13px 13px}
+.tutor .task-ask input{flex:1;background:var(--surface-2);border:1px solid var(--hairline);border-radius:var(--r-pill);padding:9px 15px;color:var(--text-1);font-family:var(--font-body);font-size:13.5px;outline:none}
+.tutor .task-ask input:focus{border-color:var(--acid)}
+.tutor .tspin{color:var(--text-2);font-size:13px;padding:0 13px 13px}
 /* flashcard */
 .flash{width:420px;max-width:100%;height:230px;perspective:1000px;cursor:pointer;margin:8px auto}
 .flash-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s var(--ease)}
@@ -803,7 +820,7 @@ function drawBoss(id){
    <button class="btn" onclick="runCode('${q.type}')"><i class="ph-bold ph-play"></i>Запустить</button>
    <button class="btn ${done?"secondary":""}" onclick="checkBoss('${id}')"><i class="ph-bold ph-flag-checkered"></i>${done?"Проверить снова":"Сдать заказ"}</button>
    <div id="bossRes" class="verdict ${done?"ok":""}">${done?"Заказ сдан ✓":""}</div></div>
-  <iframe class="preview" id="preview"></iframe></div>
+  <iframe class="preview" id="preview"></iframe>${tutorHTML(q.t)}</div>
  <div class="widget"><span class="muted">Награда: ${q.reward.xp} XP · ${q.reward.coins} монет${q.reward.card?" · коллекционная карточка":""}. Собери всё из критериев — и заказ твой.</span></div>`;
 }
 function checkBoss(id){const q=findQuest(id),c=document.getElementById("code").value,r=document.getElementById("bossRes");
@@ -1056,7 +1073,7 @@ function drawProgLesson(id){
    <button class="btn" onclick="runCode('${m.practice.type}')"><i class="ph-bold ph-play"></i>Запустить</button>
    <button class="btn secondary" onclick="checkPractice('${id}')">Проверить задание</button>
    <div id="pracRes" class="verdict"></div></div>
-  <iframe class="preview" id="preview"></iframe></div>`}
+  <iframe class="preview" id="preview"></iframe>${tutorHTML(m.title)}</div>`}
  ${m.res?`<div class="widget"><div class="wlabel"><i class="ph-bold ph-book-open-text"></i><span class="mono">Материалы по теме · копать глубже</span></div><span class="muted" style="margin-bottom:2px">Разобрать эту тему подробнее — лучшие бесплатные источники:</span><div class="bres">${m.res.map(resChip).join("")}</div></div>`:""}
  ${noteWidget("m:"+id)}`;}
 function finishProgQuiz(id){const m=PROG.find(x=>x.id===id);const s=checkQuiz(m.quiz,"pq","prog",id);
@@ -1068,6 +1085,36 @@ function finishProgQuiz(id){const m=PROG.find(x=>x.id===id);const s=checkQuiz(m.
   if(newly){day(todayStr()).code=1;addXP(20,"урок кода");confetti(1);addCoins(10,"урок пройден");}
   if(s===m.quiz.length&&prevBest!==m.quiz.length){addCoins(5,"идеальный тест");tryDrop();}}
  else r.textContent=`${s}/${m.quiz.length}. Перечитай теорию и попробуй ещё раз (нужно ${need}).`;save();}
+/* ============ ИИ-ТЬЮТОР ============ */
+function tutorHTML(topic){return `<div class="tutor">
+ <div class="thead"><span class="ai"><img src="assets/character.png" alt=""></span><span class="mono">ИИ-тьютор Шимпа</span><span class="muted" style="font-size:11px">не даёт готовое — учит</span></div>
+ <input type="hidden" id="tutorTopic" value="${esc(topic||"")}">
+ <div class="tbtns">
+  <button onclick="askTutor('explain')"><i class="ph-bold ph-bug"></i>Объясни ошибку</button>
+  <button onclick="askTutor('review')"><i class="ph-bold ph-magnifying-glass"></i>Ревью кода</button>
+  <button onclick="askTutor('quiz')"><i class="ph-bold ph-question"></i>Спроси меня</button>
+ </div>
+ <div class="task-ask"><input id="tutorQ" placeholder="Спроси что-нибудь по теме…" onkeydown="if(event.key==='Enter')askTutor('chat')"><button class="btn sm" onclick="askTutor('chat')"><i class="ph-bold ph-paper-plane-right"></i></button></div>
+ <div class="tspin" id="tutorSpin"></div>
+ <div class="tout" id="tutorOut"></div></div>`;}
+function tutorFmt(t){return esc(t).replace(/```[a-z]*\n?([\s\S]*?)```/g,(m,c)=>'<pre class="demo">'+c.trim()+'</pre>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');}
+async function askTutor(mode){
+ const out=document.getElementById("tutorOut"),spin=document.getElementById("tutorSpin");if(!out)return;
+ const code=(document.getElementById("code")||{}).value||"";
+ const topic=(document.getElementById("tutorTopic")||{}).value||"";
+ const qEl=document.getElementById("tutorQ");
+ const question=mode==="chat"?(qEl?qEl.value.trim():""):"";
+ if(mode==="chat"&&!question){if(qEl)qEl.focus();return;}
+ let err="";try{const pf=document.getElementById("preview");err=(pf&&pf.contentWindow&&pf.contentWindow.__err)||"";}catch(e){}
+ out.textContent="";spin.textContent="Шимпа думает…";
+ document.querySelectorAll(".tutor .tbtns button, .tutor .task-ask button").forEach(b=>b.disabled=true);
+ try{
+  const r=await fetch(SB_URL+"/functions/v1/tutor",{method:"POST",headers:{"content-type":"application/json","apikey":SB_KEY,"authorization":"Bearer "+SB_KEY},body:JSON.stringify({mode,code,error:err,lesson:topic,question})});
+  const d=await r.json();spin.textContent="";
+  if(d.error){out.innerHTML='<span style="color:var(--bad)">'+esc(d.error)+'</span>';}
+  else{out.innerHTML=tutorFmt(d.text||"");if(qEl)qEl.value="";}
+ }catch(e){spin.textContent="";out.innerHTML='<span style="color:var(--bad)">Нет связи с тьютором. Проверь интернет.</span>';}
+ document.querySelectorAll(".tutor .tbtns button, .tutor .task-ask button").forEach(b=>b.disabled=false);}
 function runCode(type){
  const c=document.getElementById("code").value,f=document.getElementById("preview");
  if(type==="html"){f.srcdoc=c;}
